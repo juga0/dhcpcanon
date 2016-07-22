@@ -1,0 +1,3 @@
+scapy==2.2.0-dev
+netaddr==0.7.10
+ipaddr==2.1.11
