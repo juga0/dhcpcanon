@@ -25,5 +25,18 @@ if Debian equal/newer than Jessie (virtualenv version equal or greater than 1.9)
 or run:
     python setup.py install
 
-## Configuration
-TBD
+## Running
+
+    dhcpca.py [-h] [-d] [-l LEASE] [-v] [interface]
+
+positional arguments:
+  interface             interface to configure with DHCP
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -d, --debug           debug
+  -l LEASE, --lease     custom lease time
+  -v, --version         version
+
+To run as a non privileged user, run scripts/setup_noroot.sh, and run dhcpcanon:
+    python bin/dhcpca.py
