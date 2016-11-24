@@ -20,3 +20,4 @@
 
 __version__ = "0.1"
 __author__ = "juga"
+__author_mail__ = "juga@riseup.net"

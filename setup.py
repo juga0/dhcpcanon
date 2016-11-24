@@ -22,7 +22,7 @@ from setuptools import setup
 # To use a consistent encoding
 from os import path, listdir
 from pip.req import parse_requirements
-from dhcpcanon import __version__, __author__
+from dhcpcanon import __version__, __author__, __author_mail__
 
 DOC_DIR = 'doc'
 TEST_DIR = 'test'
@@ -43,7 +43,7 @@ setup(
      using Scapy Automaton.
      """,
     author=__author__,
-    author_email='juga at riseup dot net',
+    author_email=__author_mail__,
     license='GPLv3+',
     url='https://github.com/juga0/dhcpcanon',
     packages=['dhcpcanon'],
