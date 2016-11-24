@@ -54,13 +54,7 @@ setup(
         'test': ['coverage'],
     },
     scripts=['bin/dhcpca.py'],
-    data_files=[
-        ('share/dhcpcanon', ['INSTALL.md', 'README.md', 'TODO.md']),
-        # ('share/dhcpcanon', [
-        #    '%s/conf.py' % DOC_DIR,
-        #    '%s/Makefile' % DOC_DIR,
-        # ] + sphinx_docs),
-    ],
+    include_package_data=True,
     keywords='python scapy dhcp RFC7844 RFC2131 anonymity',
     classifiers=[
         'Development Status :: 3 - Alpha',
