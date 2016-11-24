@@ -58,12 +58,12 @@ setup(
     classifiers=[
         'Development Status :: 3 - Alpha',
         "Environment :: Console",
-        'Intended Audience :: End Users',
+        'Intended Audience :: End Users/Desktop',
         'Intended Audience :: Developers',
-        'License :: OSI Approved :: GNU General Public License v3' +
+        'License :: OSI Approved :: GNU General Public License v3 ' +
         'or later (GPLv3+)',
         'Operating System :: OS Independent',
-        'Programming Language :: Python'
+        'Programming Language :: Python',
         "Topic :: Software Development :: Libraries :: Python Modules",
     ],
 )
