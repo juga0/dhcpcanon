@@ -18,9 +18,8 @@
 #   along with dhcpcanon.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-from setuptools import setup, find_packages
+from setuptools import setup
 # To use a consistent encoding
-from codecs import open
 from os import path, listdir
 from pip.req import parse_requirements
 from dhcpcanon import __version__, __author__
@@ -61,7 +60,7 @@ setup(
         "Environment :: Console",
         'Intended Audience :: End Users',
         'Intended Audience :: Developers',
-        'License :: OSI Approved :: GNU General Public License v3' + \
+        'License :: OSI Approved :: GNU General Public License v3' +
         'or later (GPLv3+)',
         'Operating System :: OS Independent',
         'Programming Language :: Python'
