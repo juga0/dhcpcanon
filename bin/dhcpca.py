@@ -350,15 +350,27 @@ class DHCPClient(Automaton):
                      mask=self.subnet_mask_cidr)
         except NetlinkError as e:
             # FIXME: add other errors
-            logger.error(e)
-        logger.debug('Interface %s set to IP %s' %
-                     (self.iface, self.client_ip))
+            if ipr.get_addr(index=index)[0].\
+                    get_attrs('IFA_ADDRESS')[0] == self.client_ip:
+                logger.debug('Interface %s is already set to IP %s' %
+                             (self.iface, self.client_ip))
+            else:
+                logger.error(e)
+        else:
+            logger.debug('Interface %s set to IP %s' %
+                         (self.iface, self.client_ip))
         try:
             ipr.route('add', dst='0.0.0.0/0', gateway=self.router, oif=index)
         except NetlinkError as e:
             # FIXME: add other errors
-            logger.error(e)
-        logger.debug('FIXME gateway set to %s', self.router)
+            if ipr.get_routes(table=254)[0].\
+                    get_attrs('RTA_GATEWAY')[0] == self.router:
+                logger.debug('Default gateway is already set to %s' %
+                             (self.router))
+            else:
+                logger.error(e)
+        else:
+            logger.debug('Default gateway set to %s', self.router)
         ipr.close()
 
     def set_timers(self):
