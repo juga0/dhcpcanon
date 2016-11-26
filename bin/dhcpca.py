@@ -1,4 +1,4 @@
-#! /usr/bin/env python2
+#!/usr/bin/env python2
 # -*- coding: utf-8 -*-
 # vim:ts=4:sw=4:expandtab 2
 
@@ -341,7 +341,8 @@ class DHCPClient(Automaton):
         logger.debug('The gateway is sanitized')
 
     def set_net(self):
-        from pyroute2 import IPRoute, NetlinkError
+        from pyroute2 import IPRoute
+        from pyroute2.netlink import NetlinkError
         ipr = IPRoute()
         # FIXME: bring iface up if down?
         index = ipr.link_lookup(ifname=self.iface)[0]
@@ -360,7 +361,7 @@ class DHCPClient(Automaton):
             logger.debug('Interface %s set to IP %s' %
                          (self.iface, self.client_ip))
         try:
-            ipr.route('add', dst='0.0.0.0/0', gateway=self.router, oif=index)
+            ipr.route('add', dst='0.0.0.0', gateway=self.router, oif=index)
         except NetlinkError as e:
             # FIXME: add other errors
             if ipr.get_routes(table=254)[0].\
