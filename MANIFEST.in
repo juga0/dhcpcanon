@@ -1,3 +1,4 @@
 include *.md
 include AUTHORS LICENSE requirements.txt
 recursive-include doc *
+recursive-include man_pages *
