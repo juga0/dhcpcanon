@@ -24,7 +24,7 @@ from os import path, listdir
 from pip.req import parse_requirements
 from dhcpcanon import __version__, __author__, __author_mail__
 
-DOC_DIR = 'doc'
+DOC_DIR = 'docs'
 TEST_DIR = 'test'
 BIN_DIR = 'bin'
 
