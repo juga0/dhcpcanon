@@ -1,0 +1,98 @@
+#!/usr/bin/env python2
+# -*- coding: utf-8 -*-
+# vim:ts=4:sw=4:expandtab 2
+
+# Copyright 2016 juga <juga@riseup.net>
+
+# This file is part of dhcpcanon.
+#
+# dhcpcanon is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# dhcpcanon is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with dhcpcanon.  If not, see <http://www.gnu.org/licenses/>.
+
+"""DCHP client implementation of the anonymity profile (RFC7844)."""
+
+import sys
+import os
+import argparse
+import logging
+from scapy.config import conf
+
+directory, basename = os.path.split(sys.argv[0])
+path, directory = os.path.split(os.path.realpath(directory))
+if directory == 'scripts':
+    module_path = os.path.realpath(
+                    os.path.join(
+                        os.path.dirname(__file__),
+                        '..'
+                    )
+                )
+    sys.path.insert(0, module_path)
+
+from dhcpcanon import __version__
+from dhcpcanon.dhcpcanon_utils import SERVER_PORT, CLIENT_PORT
+from dhcpcanon.dhcpcanon import DHCPCAnon, DEBUG
+
+FORMAT = "%(levelname)s: %(filename)s:%(lineno)s - %(funcName)s - " + \
+      "%(message)s"
+logging.basicConfig(format=FORMAT, level=logging.DEBUG)
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('interface', nargs='?',
+                        help='interface to configure with DHCP')
+    parser.add_argument('-d', '--debug', help='debug', action='store_const',
+                        dest='loglevel', const=logging.DEBUG,
+                        default=logging.INFO)
+    parser.add_argument('-l', '--lease', help='custom lease time',
+                        default=None)
+    parser.add_argument('-v', '--version', action='version', help='version',
+                        version='%(prog)s ' + __version__)
+    args = parser.parse_args()
+    logger = logging.getLogger(__name__)
+    if args.loglevel == logging.DEBUG:
+        global DEBUG
+        DEBUG = True
+        FORMAT = "%(levelname)s: %(filename)s:%(lineno)s - %(funcName)s - " + \
+                 "%(message)s"
+        logging.basicConfig(format=FORMAT, level=args.loglevel)
+    if args.loglevel == logging.INFO:
+        from logging import handlers
+        FORMAT = "%(name)s %(module)s[%(process)s]: %(levelname)s - " + \
+                 "%(message)s"
+        h = handlers.SysLogHandler(address='/dev/log')
+        formatter = logging.Formatter(FORMAT)
+        h.setFormatter = formatter
+        logger.addHandler(h)
+    if args.lease is not None:
+        global LEASE_TIME
+        # FIXME: setting lease time here seems to don't be working
+        LEASE_TIME = int(args.lease)
+    if args.interface:
+        conf.iface = args.interface
+    logger.debug('interface %s' % conf.iface)
+    # disable so scapy does not check ip server correspond to the ip
+    # destination as discover send pkt to broadcast
+    conf.checkIPaddr = False
+    conf.verb = False
+    # FIXME: the following does not remove the log:
+    # WARNING: Failed to execute tcpdump. Check it is installed and in the PATH
+    conf.logLevel = 20
+    dhcp_client = DHCPCAnon(iface=conf.iface,
+                            server_port=SERVER_PORT,
+                            client_port=CLIENT_PORT)
+    dhcp_client.run()
+
+
+if __name__ == '__main__':
+    main()

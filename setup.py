@@ -43,11 +43,12 @@ setup(
         'dev': ['ipython'],
         'test': ['coverage'],
     },
-    entry_points={
-        'console_scripts': [
-            'dhcpcanon = bin.dhcpca:main',
-        ]
-    },
+    # entry_points={
+    #     'console_scripts': [
+    #         'dhcpcanon = scripts.dhcpcanon:main',
+    #     ]
+    # },
+    scripts=['scripts/dhcpcanon'],
     keywords='python scapy dhcp RFC7844 RFC2131 anonymity',
     classifiers=[
         'Development Status :: 3 - Alpha',

@@ -1,4 +1,3 @@
-#!/usr/bin/env python2
 # -*- coding: utf-8 -*-
 # vim:ts=4:sw=4:expandtab 2
 
@@ -21,11 +20,8 @@
 
 """DCHP client implementation of the anonymity profile (RFC7844)."""
 
-import argparse
 import logging
-
 from netaddr import IPNetwork, IPAddress, AddrFormatError
-
 from scapy.automaton import Automaton,  ATMT
 from scapy.arch import get_if_raw_hwaddr
 from scapy.layers.dhcp import DHCP, BOOTP, dhcpmagic
@@ -35,21 +31,19 @@ from scapy.sendrecv import sendp
 from scapy.utils import str2mac, mac2str
 from scapy.config import conf
 
-from dhcpcanon.libdhcpcanon import BROADCAST_MAC, META_ADDR, BROADCAST_ADDR,\
+from dhcpcanon_utils import BROADCAST_MAC, META_ADDR, BROADCAST_ADDR,\
     SERVER_PORT, CLIENT_PORT, PARAM_REQ_LIST,\
     TIMEOUT_DISCOVER, MAX_DISCOVER_RETRIES, MAX_OFFERS_COLLECTED,\
     is_Offer, is_NAK, is_ACK, parse_response, gen_xid,\
     now, gen_renewing_time, gen_rebinding_time, gen_delay_selecting
 
-from dhcpcanon import __version__
-
-DEBUG = False
-LEASE_TIME = RENEWING_TIME = REBINDING_TIME = DELAY_SELECTING = None
-
 logger = logging.getLogger(__name__)
+# TODO: move constants to configuration file
+LEASE_TIME = RENEWING_TIME = REBINDING_TIME = DELAY_SELECTING = None
+DEBUG = True
 
 
-class DHCPClient(Automaton):
+class DHCPCAnon(Automaton):
 
     def initialize(self, iface=None, client_mac=None,
                    client_ip=None, server_ip=None, server_mac=None,
@@ -423,7 +417,6 @@ class DHCPClient(Automaton):
         """
         pass
 
-
     ###########################################################################
     # State machine
     ###########################################################################
@@ -655,50 +648,3 @@ class DHCPClient(Automaton):
         self.previous_state = self.current_state
         self.current_state = 'END'
         logger.info("In END state.")
-
-
-def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument('interface', nargs='?',
-                        help='interface to configure with DHCP')
-    parser.add_argument('-d', '--debug', help='debug', action='store_const',
-                        dest='loglevel', const=logging.DEBUG,
-                        default=logging.INFO)
-    parser.add_argument('-l', '--lease', help='custom lease time',
-                        default=None)
-    parser.add_argument('-v', '--version', action='version', help='version',
-                        version='%(prog)s ' + __version__)
-    args = parser.parse_args()
-    logger = logging.getLogger(__name__)
-    if args.loglevel == logging.DEBUG:
-        global DEBUG
-        DEBUG = True
-        FORMAT = "%(levelname)s: %(filename)s:%(lineno)s - %(funcName)s - " + \
-                 "%(message)s"
-        logging.basicConfig(format=FORMAT, level=args.loglevel)
-    if args.loglevel == logging.INFO:
-        from logging import handlers
-        FORMAT = "%(name)s %(module)s[%(process)s]: %(levelname)s - " + \
-                 "%(message)s"
-        h = handlers.SysLogHandler(address='/dev/log')
-        formatter = logging.Formatter(FORMAT)
-        h.setFormatter = formatter
-        logger.addHandler(h)
-    if args.lease is not None:
-        global LEASE_TIME
-        # FIXME: setting lease time here seems to don't be working
-        LEASE_TIME = int(args.lease)
-    if args.interface:
-        conf.iface = args.interface
-    logger.debug('interface %s' % conf.iface)
-    # disable so scapy does not check ip server correspond to the ip
-    # destination as discover send pkt to broadcast
-    conf.checkIPaddr = False
-    conf.verb = False
-    dhcp_client = DHCPClient(iface=conf.iface,
-                             server_port=SERVER_PORT,
-                             client_port=CLIENT_PORT)
-    dhcp_client.run()
-
-if __name__ == '__main__':
-    main()

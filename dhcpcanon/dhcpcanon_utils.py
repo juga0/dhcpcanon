@@ -30,9 +30,6 @@ from scapy.layers.inet import UDP, IP
 from scapy.layers.l2 import Ether
 
 logger = logging.getLogger(__name__)
-FORMAT = "%(levelname)s: %(filename)s:%(lineno)s - %(funcName)s - " + \
-         "%(message)s"
-logging.basicConfig(format=FORMAT, level=logging.DEBUG)
 
 BROADCAST_MAC = 'ff:ff:ff:ff:ff:ff'
 META_MAC = '00:00:00:00:00:00'
