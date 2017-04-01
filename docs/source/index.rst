@@ -15,6 +15,8 @@ Contents:
    install
    running
    todo
+   soa
+   rfcs
 
 Indices and tables
 ==================
