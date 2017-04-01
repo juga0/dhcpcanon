@@ -1,6 +1,10 @@
 dhcpcanon - DHCP anonymity profile
 ==================================
 
+[![PyPI](https://img.shields.io/pypi/v/dhcpcanon.svg)](https://pypi.python.org/pypi/dhcpcanon)
+[![travis-ci](https://www.travis-ci.org/juga0/dhcpcanon)](https://www.travis-ci.org/juga0/dhcpcanon)
+[![coveralls](https://coveralls.io/repos/github/dhcpcanon/badge.svg)](https://coveralls.io/repos/github/dhcpcanon)
+
 DHCP client disclosing less identifying information.
 
 Python implmentation of the DHCP Anonymity Profile
