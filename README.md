@@ -94,7 +94,8 @@ License
 -------
 
 dhcpcanon is Copyright 2016 by juga ( juga at riseup dot net), and is
-covered by the [GPLv3](http://www.gnu.org/licenses/) license.
+covered by the [![GPLv3](https://www.gnu.org/graphics/gplv3-127x51.png)]
+(http://www.gnu.org/licenses/) license.
 
 Acknowledgments
 ---------------

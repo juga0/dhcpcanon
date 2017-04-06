@@ -34,7 +34,7 @@ network-manager built-in
 systemd-networkd
 --------------------
 
-``man 5 systemd.network`` => DHCP options
+    ``man 5 systemd.network`` => DHCP options
 
 udhcpc
 -----------
@@ -93,7 +93,6 @@ DHCP command-line query and testing tool. Uses pydhcplib
 GPL. Last updated: 2009
 
 `code <http://ostatic.com/pydhcpd/>`__
-`one github fork <https://github.com/lcy0321/dhquery>`__ (updated 2016)
 
 staticdhcpd
 ----------------
@@ -112,6 +111,7 @@ dhquery
 DHCP command line query and testing tool
 
 `code <http://code.google.com/p/dhquery/>`__
+`one github fork <https://github.com/lcy0321/dhquery>`__ (updated 2016)
 
 dhcpy6d
 ------------
@@ -124,3 +124,12 @@ Last updated 28/06/2017. Commiters: 2?
 `repo <https://github.com/HenriWahl/dhcpy6d>`__
 `doc <https://dhcpy6d.ifw-dresden.de/documentation/>`__
 `debian <https://packages.debian.org/stretch/dhcpy6d>`__
+
+dhcpscapy
+-----------
+
+Simple DCHP client and server implemented with scapy
+
+Last updated. 18/05/2014. Commiters: 1
+
+`repo <https://github.com/duy/dhcpscapy>`__
