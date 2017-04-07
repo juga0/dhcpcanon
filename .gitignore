@@ -5,3 +5,9 @@
 deb_dist
 dist
 build
+__pycache__
+doc/_build
+.cache
+.tox
+*/.coverage
+*/htmlcov/

@@ -40,8 +40,8 @@ setup(
         "https://pypi.python.org/simple/pyroute2==0.4.11"
     ],
     extras_require={
-        'dev': ['ipython'],
-        'test': ['coverage'],
+        'dev': ['ipython', 'pyflakes', 'pep8'],
+        'test': ['coverage', 'coveralls', 'codecov', 'tox', 'pytest'],
     },
     # entry_points={
     #     'console_scripts': [
