@@ -18,6 +18,8 @@ Contents:
    soa
    rfcs
    tech
+   integration
+   api
 
 Indices and tables
 ==================
