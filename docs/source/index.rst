@@ -17,6 +17,7 @@ Contents:
    todo
    soa
    rfcs
+   tech
 
 Indices and tables
 ==================
