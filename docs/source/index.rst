@@ -13,11 +13,13 @@ Contents:
 
    about
    install
+   download
    running
    todo
    soa
    rfcs
    tech
+   rfc7844comm
    integration
    api
 
