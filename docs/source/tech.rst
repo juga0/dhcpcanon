@@ -1,3 +1,5 @@
+.. _tech:
+
 RFC7844 implementation considerations
 ==========================================
 
@@ -10,7 +12,7 @@ tools implement already the standard.
 This is intended to be an example of the anonymity profiles implementation.
 
 ``SHOULD`` options
-----------------
+--------------------
 
 Leases
 -------

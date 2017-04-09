@@ -3,6 +3,11 @@
 Install dhcpcanon
 =================
 
+Installation in Debian testing
+-------------------------------
+
+    sudo apt install dhcpcanon
+
 Installation in Debian/Ubuntu from source code
 ----------------------------------------------
 
@@ -11,7 +16,7 @@ Install system dependencies
 
 ::
 
-    sudo apt-get install python-dev
+    sudo apt install python-dev
 
 Install dhcpcanon dependencies with virtualenv
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -23,7 +28,7 @@ Check https://virtualenv.pypa.io/en/latest/installation.html or
 if Debian equal/newer than Jessie (virtualenv version equal or greater
 than 1.9), then:
 
-    sudo apt-get install python-virtualenv
+    sudo apt install python-virtualenv
 
 Create a virtual environment
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^

@@ -60,7 +60,7 @@ State-transition diagram for DHCP clients:
 Current status
 --------------
 
-WIP, still not recommended for end users.
+Minimal version implemented, still to be improved.
 
 See :ref:`todo`
 
@@ -72,12 +72,20 @@ See :ref:`install`
 Download
 --------
 
-You can download this project in either
-`zip <http://github.com/juga0/dhcpcanon/zipball/master()>`__
-or `tar <http://github.com/juga0/dhcpcanon/tarball/master>`__ formats.
+See :ref:`download`
 
-You can also clone the project with Git by running:
-    git clone git://github.com/juga0/dhcpcanon
+Developers documentation
+--------------------------
+
+:ref:`api`
+
+:ref:`integration`
+
+:ref:`rfcs`
+
+:ref:`tech`
+
+:ref:`rfc7844comm`
 
 Bugs and features
 -----------------
