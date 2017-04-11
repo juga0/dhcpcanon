@@ -18,7 +18,7 @@ Contents:
    todo
    soa
    rfcs
-   tech
+   implementation
    rfc7844comm
    integration
    api

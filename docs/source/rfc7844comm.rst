@@ -1,34 +1,36 @@
 .. _rfc7844comm:
 
 
-RFC7844 summary and comments
-==============================
+RFC7844 DHCPv4 summary and comments
+=====================================
 
-Notes: 
+Notes:
 
-- Extracts from the RFC marked as `source code <http://docutils.sourceforge.net/docs/ref/rst/restructuredtext.html#literal-blocks>`_. 
-- Unless otherwise explicited, this document refers to DHCP clients implementing Anonymity Profiles.
+- Extracts from the RFC marked as `source code <http://docutils.sourceforge.net/docs/ref/rst/restructuredtext.html#literal-blocks>`_.
+- Unless otherwise explicited, this document refers to DHCPv4 clients implementing Anonymity Profiles.
 
 RFCs to the Comments to the RFC :)
 
 Unfortunately, the deadline for the comments officially expired around Feb 2016 [cit needed].
 
-An approved RFC can not be changed [cit need], 
+An approved RFC can not be changed [cit need],
 **if** any of the following comments are "correct" [other more "correct" word than "correct" needed here], a new RFC should be proposed.
 
 Most of the comments are regarding the verbs (``key words`` [:rfc:`2119`]) used, the author here does not have previous experience on proposing/commenting RFCs, so they might not be "correct".
 
-Basically, in order to reveal less identifying information, the options in DHCP should be reduced in number and be more "homogenous" for all implementations what here is interpreted as in either this option MUST be included or MUST NOT, instead of MAY, SHOULD, etc. 
+Basically, in order to reveal less identifying information, the options in DHCP should be reduced in number and be more "homogenous" for all implementations what here is interpreted as in either this option MUST be included or MUST NOT, instead of MAY, SHOULD, etc.
 What is a similar way to express what is stated in :rfc:`7844#2.4`. ::
 
    The design of the anonymity profiles attempts to minimize the number
    of options and the choice of values, in order to reduce the
    possibilities of operating system fingerprinting.
 
+See :ref:`implementation` for detatils about the implementation.
+
 Mesagge types
 -----------------
 
-DHCP* 
+DHCP*
 ~~~~~~
 [:rfc:`7844#3.1`] ::
 
@@ -176,6 +178,21 @@ This is like INIT-REBOOT state?
 There is not a way to know ``if`` the link-layer address changed without leaking the link-layer?
 
 
+Client Hardware Address Field
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[ :rfc:`7844#3.4` ] ::
+
+   The presence of this address is necessary for the proper operation of the DHCP
+   service.
+
+What should be interpreted as MUST::
+
+   If the hardware address is reset to a new
+   randomized value, the DHCP client SHOULD use the new randomized value
+   in the DHCP messages
+
+The client should be restarted when the hardware address changes and use the current address instead of the permanent one.
+
 Client Identifier Option (code 61)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 [ :rfc:`7844#3.5` ] ::
@@ -204,9 +221,9 @@ Parameter Request List Option (PRL) (code 55)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 [:rfc:`7844#3.6`] ::
 
-   SHOULD only request a minimal number of options in the PRL and 
+   SHOULD only request a minimal number of options in the PRL and
    SHOULD also randomly shuffle the ordering of option codes in the PRL.
-   If this random ordering cannot be implemented, 
+   If this random ordering cannot be implemented,
    MAY order the option codes in the PRL by option code number (lowest to highest).
 
 As in DHCPDISCOVER_
@@ -216,7 +233,7 @@ Host Name option (code 12)
 
 [:rfc:`7844#3.7`] ::
 
-   SHOULD NOT send the Host Name option.  
+   SHOULD NOT send the Host Name option.
    If they choose to send the option [..]
 
 As in DHCPDISCOVER_
@@ -232,11 +249,11 @@ As in DHCPDISCOVER_
 
    MAY include a special-purpose FQDN using the same host name as in the
    Host Name option, with a suffix matching the connection-specific DNS
-   suffix being advertised by that DHCP server.  
-   
+   suffix being advertised by that DHCP server.
+
 
 In this case there is an explicit reason why it MAY::
-   
+
    Having a name in the
    DNS allows working with legacy systems that require one to be there
 
@@ -258,7 +275,7 @@ UUID/GUID-Based Client Machine Identifier Option (code 97)
 
    Nodes visiting untrusted networks MUST NOT send or use the PXE options.
 
-And in the hypotetical case that nodes are visiting a "trusted" network, 
+And in the hypotetical case that nodes are visiting a "trusted" network,
 must this option be included for the PXE to work properly?
 
 Regarding english expression, should s/or/nor?,
@@ -274,3 +291,43 @@ User and Vendor Class DHCP Options
    or the V-I Vendor-Specific Information option (code 125),
 
 Why not s/SHOULD NOT/MUST NOT?
+
+Operational considerations
+---------------------------
+[:rfc:`7844#5.`] ::
+
+   Implementers SHOULD provide a way for clients to control when the
+   anonymity profiles are used and when standard behavior is preferred.
+
+
+``dhcpcanon`` will not implement for now the standard behavior as
+it would require to implement more functionality and most of the current
+tools implement already the standard.
+
+Functionality not detailed in RFC7844
+---------------------------------------
+[:rfc:`2131#2.2`]::
+
+   the allocating
+   server SHOULD probe the reused address before allocating the address,
+   e.g., with an ICMP echo request, and the client SHOULD probe the
+   newly received address, e.g., with ARP.
+
+This should be interpreted as MUST.
+
+Leases
+~~~~~~~~
+
+If there is not INIT-REBOOT state and in order to keep the implementation simple, there will not be leases eiter.
+[TBD]: add more comments here.
+
+Retransmission delays
+~~~~~~~~~~~~~~~~~~~~~~
+
+There is not specification about the retransmission delays algorithms.
+[TBC]
+
+Client Identifier algorithm
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TBD]

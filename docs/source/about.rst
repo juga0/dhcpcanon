@@ -74,7 +74,7 @@ Download
 
 See :ref:`download`
 
-Developers documentation
+Developer documentation
 --------------------------
 
 :ref:`api`
@@ -83,7 +83,7 @@ Developers documentation
 
 :ref:`rfcs`
 
-:ref:`tech`
+:ref:`implementation`
 
 :ref:`rfc7844comm`
 
