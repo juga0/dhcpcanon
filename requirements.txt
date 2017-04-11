@@ -1,2 +1,8 @@
--- index-url https://pypi.python.org/simple/
--e .
+#-- index-url https://pypi.python.org/simple/
+#-e .
+scapy>=2.2
+netaddr>=0.7
+ipaddr>=2.1
+pytz>=2016.6.1
+pip>=8.1
+pyroute2>=0.4
