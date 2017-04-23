@@ -104,21 +104,21 @@ def now():
 
 
 def is_Offer(packet):
-    if DHCP in packet and packet[DHCP].options[0][1] == 'offer':
+    if DHCP in packet and DHCPTypes[packet[DHCP].options[0][1]] == 'offer':
         logger.debug('Packet is Offer.')
         return True
     return False
 
 
 def is_NAK(packet):
-    if DHCP in packet and packet[DHCP].options[0][1] == 'nak':
+    if DHCP in packet and DHCPTypes[packet[DHCP].options[0][1]] == 'nak':
         logger.debug('Packet is NAK.')
         return True
     return False
 
 
 def is_ACK(packet):
-    if DHCP in packet and packet[DHCP].options[0][1] == 'ack':
+    if DHCP in packet and DHCPTypes[packet[DHCP].options[0][1]] == 'ack':
         logger.debug('Packet is ACK.')
         return True
     return False
