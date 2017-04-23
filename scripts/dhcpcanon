@@ -25,6 +25,7 @@ import sys
 import os
 import argparse
 import logging
+import logging.config
 from scapy.config import conf
 
 directory, basename = os.path.split(sys.argv[0])
@@ -41,39 +42,34 @@ if directory == 'scripts':
 from dhcpcanon import __version__
 from dhcpcanon.dhcpcanon_utils import SERVER_PORT, CLIENT_PORT
 from dhcpcanon.dhcpcanon import DHCPCAnon, DEBUG
+from dhcpcanon.conf_log import LOGGING
 
-FORMAT = "%(levelname)s: %(filename)s:%(lineno)s - %(funcName)s - " + \
-      "%(message)s"
-logging.basicConfig(format=FORMAT, level=logging.DEBUG)
 
+logging.config.dictConfig(LOGGING)
+logger = logging.getLogger('dhcpcanon')
 
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('interface', nargs='?',
                         help='interface to configure with DHCP')
-    parser.add_argument('-d', '--debug', help='debug', action='store_const',
-                        dest='loglevel', const=logging.DEBUG,
-                        default=logging.INFO)
+    # parser.add_argument('-d', '--debug', help='debug', action='store_const',
+    #                     dest='loglevel', const=logging.DEBUG,
+    #                     default=logging.INFO)
+    parser.add_argument('-d',
+                        '--debug',
+                        help='Set logging level to debug',
+                        action='store_true')
     parser.add_argument('-l', '--lease', help='custom lease time',
                         default=None)
     parser.add_argument('-v', '--version', action='version', help='version',
                         version='%(prog)s ' + __version__)
     args = parser.parse_args()
-    logger = logging.getLogger(__name__)
-    if args.loglevel == logging.DEBUG:
-        global DEBUG
-        DEBUG = True
-        FORMAT = "%(levelname)s: %(filename)s:%(lineno)s - %(funcName)s - " + \
-                 "%(message)s"
-        logging.basicConfig(format=FORMAT, level=args.loglevel)
-    if args.loglevel == logging.INFO:
-        from logging import handlers
-        FORMAT = "%(name)s %(module)s[%(process)s]: %(levelname)s - " + \
-                 "%(message)s"
-        h = handlers.SysLogHandler(address='/dev/log')
-        formatter = logging.Formatter(FORMAT)
-        h.setFormatter = formatter
-        logger.addHandler(h)
+
+
+    if args.debug:
+        logger.setLevel(logging.DEBUG)
+        # DEBUG = True
+    logging.debug('args %s', args)
     if args.lease is not None:
         global LEASE_TIME
         # FIXME: setting lease time here seems to don't be working
