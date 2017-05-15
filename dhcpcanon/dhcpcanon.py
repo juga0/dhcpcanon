@@ -21,6 +21,8 @@
 """DCHP client implementation of the anonymity profile (RFC7844)."""
 
 import logging
+import os
+import subprocess
 from netaddr import IPNetwork, IPAddress, AddrFormatError
 from scapy.automaton import Automaton,  ATMT
 from scapy.arch import get_if_raw_hwaddr
@@ -42,8 +44,81 @@ logger = logging.getLogger(__name__)
 LEASE_TIME = RENEWING_TIME = REBINDING_TIME = DELAY_SELECTING = None
 DEBUG = True
 
+# FIXME: trying to integrate with nm
+REASONS_NM = [
+    'bound', 'renew', 'rebind',
+    'timeout',
+    'nak', 'expire',
+    'end',
+    'fail',
+    'abend'
+]
+STATES2REASONS = {
+    'INIT': 'PREINIT',
+    'BOUND': 'BOUND',
+    'END': 'END',
+    'REBINDING': 'REBIND',
+    'RENEWING': 'RENEW'
+     # "EXPIRE"
+     # "TIMEOUT"
+     # "FAIL"
+     # "STOP"
+
+}
+
+def script_go(scriptname='', clientenv=''):
+    # FIXME: trying to integrate with nm
+    #os.execve(scriptname, [scriptname], clientenv)
+    subprocess.Popen([scriptname], env=clientenv)
+    logger.debug('calling script %s with env %s', scriptname, clientenv)
+    p = subprocess.Popen([scriptname],shell=False,
+            stdin=None,stdout=None,stderr=None,close_fds=True,
+            # for windows
+            # creationflags=DETACHED_PROCESS,
+            env=clientenv)
+
+class CConfig(object):
+    pass
+
+
+class CLease(object):
+    pass
+
 
 class DHCPCAnon(Automaton):
+
+    def script_init(self, reason='PREINIT', medium=''):
+        # FIXME: trying to integrate with nm
+        if reason is None:
+            reason = STATES2REASONS[self.current_state]
+        pid = os.getpid()
+        logger.debug('pid %s', pid)
+        self.env['reason'] = reason
+        self.env['interface'] = self.iface
+        self.env['client'] = 'dhcpcanon'
+        self.env['medium'] = medium
+
+        self.env['ip_address'] = str(self.client_ip)
+        self.env['subnet_mask'] = self.subnet_mask
+        self.env['network_number'] = str(self.network)
+        self.env['broadcast_address'] = self.broadcast_address
+        self.env['domain_name_servers'] = self.name_server
+        self.env['routers'] = self.router
+        self.env['dhcp_server_identifier'] = str(self.server_ip)
+        self.env['next_server'] = self.router
+        self.env['domain_name'] = self.domain
+        self.env['expiry'] = str(self.lease_time)
+        self.env['dhcp_lease_time'] = str(self.lease_time)
+        self.env['dhcp_renewal_time'] = str(self.renewing_time)
+        self.env['dhcp_rebinding_time'] = str(self.rebinding_time)
+
+        self.env['pid'] = str(pid)
+        logger.debug('env %s', self.env)
+
+
+    def script_write_params(self, prefix, lease):
+        # FIXME: trying to integrate with nm
+        pass
 
     def initialize(self, iface=None, client_mac=None,
                    client_ip=None, server_ip=None, server_mac=None,
@@ -84,25 +159,29 @@ class DHCPCAnon(Automaton):
         self.client_ip_offered = ''
         # dhcp option
         self.subnet_mask = ''
+        self.broadcast_address = ''
         self.router = ''
         self.name_server = ''
         self.domain = ''
         self.lease_time = 0
         self.options = []
         self.subnet_mask_cidr = ''
+        self.subnet = ''
 
         # dhcp logic
-        # renewal_time
         self.renewing_time = None
-        # rebinding_time
         self.rebinding_time = None
         self.time_sent_request = None
         self.cur_discover_retry = 0
         self.offers = []
 
+        # FIXME: trying to integrate with nm
+        self.env = dict()
+
     def parse_args(self, iface=None,  server_port=None, client_port=None,
                    client_ip=None, server_ip=None, server_mac=None,
-                   client_mac=None, **kargs):
+                   client_mac=None,
+                   scriptfile='', **kargs):
         # NOTE: an external program should randomize MAC prior running this.
         Automaton.parse_args(self, **kargs)
         logger.debug('Automaton parsing args.')
@@ -125,23 +204,31 @@ class DHCPCAnon(Automaton):
         self.previous_state = None
         self.current_state = 'INIT'
 
+        # FIXME: trying to integrate with nm
+        self.scriptname = scriptfile
         self.initialize(iface=iface, client_mac=client_mac,
                         client_ip=client_ip, server_ip=server_ip,
                         server_mac=server_mac)
 
     def master_filter(self, pkt):
         # the server may probe the offered address with an ICMP Echo Request.
+        # FIXME: this logger shows all the packets received,
+        # Automaton methods has to be overwritten to don't capture all the packets.
+        # logger.debug(pkt.summary())
         return (BOOTP in pkt and pkt[BOOTP].options == dhcpmagic and
-                pkt[BOOTP].chaddr[:6] == mac2str(self.client_mac) and
-                # NOTE: xid not being used.
+                pkt[BOOTP].chaddr[:6] == mac2str(self.client_mac)
+                # FIXME, RFC7844: xid should not be used, but some DHCP servers
+                # won't give an IP without it, so it might be needed, and it 
+                # should be the MAC address 
+                # RFC2131:
                 # Any DHCPACK messages that arrive with an 'xid' that does
                 # not match
                 # the 'xid' of the client's DHCPREQUEST message are silently
                 #  discarded.
                 # pkt[BOOTP].xid == self.client_xid and
-                pkt[UDP].sport == self.server_port and
-                # FIXME: need to check client port?
-                pkt[UDP].dport == self.client_port
+                # FIXME: there is no need to check UDP
+                # pkt[UDP].sport == self.server_port and
+                # pkt[UDP].dport == self.client_port
                 # FIXME: only for replies after bound,
                 # this can be done with scapy conf.checkIPaddr:
                 # and pkt[IP].dst == self.client_ip
@@ -317,6 +404,7 @@ class DHCPCAnon(Automaton):
         # TODO: catch possible exception
         ipn = IPNetwork(self.client_ip + '/' + self.subnet_mask)
         self.subnet_mask_cidr = ipn.prefixlen
+        self.network = ipn.network
         self.info_net()
 
     def sanitize_net_values(self):
@@ -327,6 +415,7 @@ class DHCPCAnon(Automaton):
             logger.error(e)
         logger.debug('The IP address and network mask are sanitized')
         self.subnet_mask_cidr = ipn.prefixlen
+        self.subnet = ipn.network
         try:
             ipn = IPAddress(self.router)
         except AddrFormatError as e:
@@ -557,12 +646,16 @@ class DHCPCAnon(Automaton):
         # NOTE: not recording lease
         self.set_timers()
         self.sanitize_net_values()
-        self.set_net()
+        # FIXME: this script should not set the IP, but an external one
+        # (nm-dhcp-helper or dhclient-script)
+        # self.set_net()
 
     @ATMT.state()
     def BOUND(self):
         self.previous_state = self.current_state
         self.current_state = 'BOUND'
+        self.script_init()
+        script_go(self.scriptname, self.env)
         logger.debug("In BOUND state.")
         logger.info('(%s) state changed %s -> bound' %
                     (self.iface, self.previous_state.lower()))

@@ -31,6 +31,12 @@ from scapy.layers.l2 import Ether
 
 logger = logging.getLogger(__name__)
 
+DHCP_FIELDS = [
+    'server_id', 'subnet_mask', 'broadcast_address',
+    'router', 'domain', 'name_server', 'lease_time', 'renewal_time',
+    'rebinding_time'
+]
+
 BROADCAST_MAC = 'ff:ff:ff:ff:ff:ff'
 META_MAC = '00:00:00:00:00:00'
 BROADCAST_ADDR = '255.255.255.255'
@@ -131,41 +137,12 @@ def parse_response(packet, debug=False):
     pkt_dict['server_port'] = packet[UDP].sport
     pkt_dict['client_ip_offered'] = packet[BOOTP].yiaddr
     logger.debug('offered ip %s', pkt_dict['client_ip_offered'])
-    # pkt_dict['client_mac'] = str2mac(packet[BOOTP].chaddr)
-    # pkt_dict['client_xid'] = packet[BOOTP].xid
-
-    from collections import OrderedDict
-    pkt_dict.update(packet[BOOTP].fields)
-    # {'giaddr': '0.0.0.0',
-    #  'op': 2,
-    #  'siaddr': '127.0.0.1',
-    #  'xid': 1234,
-    #  'yiaddr': '127.0.0.1'}
-    tuple_options_dict = OrderedDict([opt for opt in
+    tuple_options_dict = dict([opt for opt in
                                       packet[DHCP].options
-                                      if type(opt) is tuple])
+                                      if type(opt) is tuple and
+                                          opt[0] in DHCP_FIELDS])
+    logger.debug('tuple_options_dict %s', tuple_options_dict)
     pkt_dict.update(tuple_options_dict)
-    logger.debug('pkt_dict %s', pkt_dict)
-    # for option in packet[DHCP].options:
-    #     if type(option) == tuple:
-    #         if option[0] == 'server_id':
-    #             pkt_dict['server_id'] = option[1]
-    #         if option[0] == 'subnet_mask':
-    #             pkt_dict['subnet_mask'] = option[1]
-    #         if option[0] == 'broadcast_address':
-    #             pkt_dict['broadcast_address'] = option[1]
-    #         if option[0] == 'router':
-    #             pkt_dict['router'] = option[1]
-    #         if option[0] == 'domain':
-    #             pkt_dict['domain'] = option[1]
-    #         if option[0] == 'name_server':
-    #             pkt_dict['name_server'] = option[1]
-    #         if option[0] == 'lease_time':
-    #             pkt_dict['lease_time'] = option[1]
-    #         if option[0] == 'renewal_time':
-    #             pkt_dict['renewal_time'] = option[1]
-    #         if option[0] == 'rebinding_time':
-    #             pkt_dict['rebinding_time'] = option[1]
     return pkt_dict
 
 
