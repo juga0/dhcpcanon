@@ -40,13 +40,13 @@ if directory == 'scripts':
     sys.path.insert(0, module_path)
 
 from dhcpcanon import __version__
-from dhcpcanon.dhcpcanon_utils import SERVER_PORT, CLIENT_PORT
-from dhcpcanon.dhcpcanon import DHCPCAnon, DEBUG
-from dhcpcanon.conf_log import LOGGING
-
+from dhcpcanon.constants import SERVER_PORT, CLIENT_PORT
+from dhcpcanon.dhcpcapfsm import DHCPCAPFSM
+from dhcpcanon.conflog import LOGGING
 
 logging.config.dictConfig(LOGGING)
 logger = logging.getLogger('dhcpcanon')
+
 
 def main():
     parser = argparse.ArgumentParser()
@@ -61,39 +61,39 @@ def main():
                         help='version',
                         version='%(prog)s ' + __version__)
     # options to looks like dhclient
-    parser.add_argument('-sf', metavar='script-file', nargs='?',
-                        default='/sbin/dhclient-script',
-                        help=\
-      'Path  to  the  network configuration script invoked by dhclient'
-      'when  it  gets  a   lease.    If   unspecified,   the   default'
-      '/sbin/dhclient-script  is  used.   See dhclient-script(8) for a'
-      'description of this file.')
-    parser.add_argument('-pf', metavar='pid-file', nargs='?',
-                        default='/var/run/dhclient.pid',
-                        help=\
-      'Path  to  the  process  ID  file.   If unspecified, the default'
-      '/var/run/dhclient.pid is used')
-    parser.add_argument('-lf', metavar='lease-file', nargs='?',
-                        default='/var/lib/dhcp/dhclient.leases',
-                        help=\
-      'Path  to  the lease database file.  If unspecified, the default'
-      '/var/lib/dhcp/dhclient.leases is used.  See  dhclient.leases(5)'
-      'for a description of this file.')
-    parser.add_argument('-cf', metavar='config-file', nargs='?',
-                        default='/etc/dhcp/dhclient.conf',
-                        help=\
-      'Path  to  the  client  configuration file.  If unspecified, the'
-      'default /etc/dhcp/dhclient.conf is used.  See  dhclient.conf(5)'
-      'for a description of this file.')
+    parser.add_argument(
+        '-sf', metavar='script-file', nargs='?',
+        default='/sbin/dhclient-script',
+        help='Path to the network configuration script invoked by '
+             'dhclient when it gets a lease. If unspecified, the '
+             'default /sbin/dhclient-script is used. See '
+             'dhclient-script(8) for a description of this file.')
+    parser.add_argument(
+        '-pf', metavar='pid-file', nargs='?',
+        default='/var/run/dhclient.pid',
+        help='Path to the process ID file. If unspecified, the'
+             'default /var/run/dhclient.pid is used')
+    parser.add_argument(
+        '-lf', metavar='lease-file', nargs='?',
+        default='/var/lib/dhcp/dhclient.leases',
+        help='Path to the lease database file. If unspecified, the'
+             'default /var/lib/dhcp/dhclient.leases is used. See '
+             'dhclient.leases(5) for a description of this file.')
+    parser.add_argument(
+        '-cf', metavar='config-file', nargs='?',
+        default='/etc/dhcp/dhclient.conf',
+        help='Path to the client configuration file. If unspecified,'
+             'the default /etc/dhcp/dhclient.conf is used. See '
+             'dhclient.conf(5) for a description of this file.')
     parser.add_argument('-d',
-                        action='store_true',
-                        help='Force dhclient to run as a foreground  process.'
-      '   Normally  the'
-      'DHCP  client will run in the foreground until is has configured'
-      'an interface at which time it will revert  to  running  in  the'
-      'background.   This  option  is  useful  when running the client'
-      'under a debugger, or when running it out of inittab on System V'
-      'systems.  This implies -v.')
+        action='store_true',
+        help='Force dhclient to run as a foreground  process. '
+             'Normally the DHCP  client will run in the foreground '
+             'until is has configured an interface at which time it '
+             'will revert to running in the background. This '
+             'option is useful when running the client under a '
+             'debugger, or when running it out of inittab on System V'
+             ' systems.  This implies -v.')
     parser.add_argument('-q',
                         action='store_true',
                         help='Be quiet at startup, this is the default.')
@@ -101,7 +101,6 @@ def main():
     parser.add_argument('-6', action='store_true')
     parser.add_argument('-4', action='store_true')
     args = parser.parse_args()
-
 
     logger.info('args %s', args)
     if args.verbose:
@@ -127,12 +126,12 @@ def main():
         pidfile = PIDLockFile(args.pf)
         logger.debug('using pid file %s', pidfile)
         #with daemon.DaemonContext(pidfile=pidfile):
-        
-    dhcp_client = DHCPCAnon(iface=conf.iface,
-                                server_port=SERVER_PORT,
-                                client_port=CLIENT_PORT,
-                                scriptfile=args.sf)
-    dhcp_client.run()
+
+    dhcpcap = DHCPCAPFSM(iface=conf.iface,
+                         server_port=SERVER_PORT,
+                         client_port=CLIENT_PORT,
+                         scriptfile=args.sf)
+    dhcpcap.run()
 
 
 if __name__ == '__main__':

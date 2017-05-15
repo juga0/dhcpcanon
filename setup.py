@@ -38,6 +38,7 @@ setup(
         "https://pypi.python.org/simple/pytz==2016.6.1",
         "https://pypi.python.org/simple/pip==8.1.2",
         "https://pypi.python.org/simple/pyroute2==0.4.11"
+        "https://pypi.python.org/simple/attrs==16.3.0"
     ],
     extras_require={
         'dev': ['ipython', 'pyflakes', 'pep8'],

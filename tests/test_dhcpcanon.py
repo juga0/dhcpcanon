@@ -10,7 +10,7 @@ logging.basicConfig(format=FORMAT, level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 
-class TestDHCPCAnon:
+class TestDHCPCAPFSM:
 
     def test_intialize(self, dhcpcanon):
         assert dhcpcanon.client_ip == '0.0.0.0'

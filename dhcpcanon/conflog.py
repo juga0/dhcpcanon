@@ -7,7 +7,8 @@ LOGGING = {
     'disable_existing_loggers': True,
     'formatters': {
         'verbose': {
-            'format': '%(levelname)s %(module)s[%(process)d.%(thread)d]'\
+            'format': '%(asctime)s %(levelname)s'\
+                      '%(module)s[%(process)d.]'\
                       ' %(filename)s:%(lineno)s -'\
                       ' %(funcName)s - %(message)s',
             'datefmt': '%Y-%m-%d %H:%M:%S'
