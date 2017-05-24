@@ -7,15 +7,17 @@ LOGGING = {
     'disable_existing_loggers': True,
     'formatters': {
         'verbose': {
-            'format': '%(asctime)s %(levelname)s'\
-                      '%(module)s[%(process)d.]'\
-                      ' %(filename)s:%(lineno)s -'\
+            'format': '%(asctime)s %(levelname)s'
+                      ' %(filename)s:%(lineno)s -'
                       ' %(funcName)s - %(message)s',
             'datefmt': '%Y-%m-%d %H:%M:%S'
             },
-        'formsys': {
-            'format': "%(asctime)s %(module)s[%(process)s.%(thread)s]: %(message)s",
-            'datefmt': "%b %d %H:%M:%S"
+        'simple': {
+            'format': "%(message)s",
+            },
+        'sys': {
+            'format': "%(module)s[%(process)s]: "
+                      "%(message)s"
             }
         },
     'handlers': {
@@ -25,10 +27,16 @@ LOGGING = {
             'formatter': 'verbose',
             'level': 'DEBUG',
             },
+        'stdoutscapy': {
+            'class': 'logging.StreamHandler',
+            'stream': sys.stdout,
+            'formatter': 'simple',
+            'level': 'DEBUG',
+            },
         'syslog': {
             'class': 'logging.handlers.SysLogHandler',
             'address': '/dev/log',
-            'formatter': 'formsys',
+            'formatter': 'sys',
             'level': 'INFO',
             },
         },
@@ -38,5 +46,10 @@ LOGGING = {
             'level': logging.INFO,
             'propagate': False
             },
+        "scapy.interactive": {
+            'handlers': ['stdoutscapy'],
+            'level': logging.INFO,
+            'propagate': False
+            }
         }
     }
