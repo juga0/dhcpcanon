@@ -51,8 +51,6 @@ class ClientScript(object):
     def script_go(self, scriptname=None, env=None):
         scriptname = self.scriptname or scriptname
         env = self.env or env
-        envstr = "\n".join(["%s='%s'" % (k, v) for (k, v) in
-                            env.items()])
         logger.debug('calling script %s', scriptname)
         #  with env %s', scriptname,
                     #  envstr)
