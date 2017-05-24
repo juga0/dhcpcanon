@@ -24,7 +24,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-DT_PRINT_FORMAT = '%y-%m-%d %H:%M:%S %Z'
+DT_PRINT_FORMAT = '%y-%m-%d %H:%M:%S'
 
 # client
 ##########
