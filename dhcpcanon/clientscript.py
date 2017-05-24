@@ -21,7 +21,6 @@ class ClientScript(object):
     env = attr.ib(default=attr.Factory(dict))
 
     def script_init(self, lease, state, prefix='',  medium=''):
-        logger.debug('script init with state %s', state)
         if type(state) == int:
             reason = STATES2REASONS[state]
         else:
@@ -34,29 +33,52 @@ class ClientScript(object):
         self.env['interface'] = str(lease.interface)
         self.env['ip_address'] = str(lease.address)
         self.env['subnet_mask'] = lease.subnet_mask
-        self.env['network_number'] = str(lease.network)
+        self.env['network_number'] = str(lease.subnet)
         self.env['broadcast_address'] = lease.broadcast_address
         self.env['domain_name_servers'] = lease.name_server
         self.env['routers'] = lease.router
-        self.env['dhcp_server_identifier'] = str(lease.server_address)
+        self.env['dhcp_server_identifier'] = str(lease.server_id)
         self.env['next_server'] = lease.next_server
         self.env['domain_name'] = lease.domain
-        # FIXME: what is expiry?
-        self.env['expiry'] = str(lease.lease_time)
         self.env['dhcp_lease_time'] = str(lease.lease_time)
         self.env['dhcp_renewal_time'] = str(lease.renewal_time)
         self.env['dhcp_rebinding_time'] = str(lease.rebinding_time)
+        self.env['expire'] = lease.expiry
+        self.env['renew'] = lease.renew
+        self.env['rebind'] = lease.rebind
         # logger.debug('env %s', self.env)
 
     def script_go(self, scriptname=None, env=None):
         scriptname = self.scriptname or scriptname
         env = self.env or env
-        logger.debug('calling script %s', scriptname)
-        #  with env %s', scriptname,
-                    #  envstr)
-        # os.execve(scriptname, [scriptname], clientenv)
-        p = subprocess.Popen([scriptname], shell=False,
-                             stdin=None, stdout=None, stderr=None,
-                             close_fds=True, env=env)
-        # FIXME: what to do with p?
-        return p
+        logger.debug('calling script %s with env %s', scriptname, env)
+        sp = subprocess.Popen([scriptname], stdout=subprocess.PIPE,
+                              stderr=subprocess.PIPE, env=env,
+                              close_fds=True, shell=False)
+        out, err = sp.communicate()
+        if sp.returncode != 0:
+            logger.debug('sp err %s', err)
+        return sp.returncode
+
+    def gen_lease_str(self):
+        # FIXME: what are the numbers in renew, rebind, expire?
+        text = """lease {
+  interface "{interface}";
+  fixed-address {ip_address};
+  option subnet-mask {subnet_mask};
+  option routers {routers};
+  option dhcp-lease-time {dhcp_lease_time};
+  option dhcp-message-type 5;
+  option domain-name-servers {domain_name_servers};
+  option dhcp-server-identifier {dhcp_server_identifier};
+  option dhcp-renewal-time {dhcp_renewal_time};
+  option broadcast-address {broadcast_address};
+  option dhcp-rebinding-time {dhcp_rebinding_time};
+  option host-name "";
+  option domain-name "{domain_name_servers}";
+  renew 3 {renew};
+  rebind 1 2017/06/05 17:53:07;
+  expire 3 2017/06/07 11:53:07;
+}
+""".format(self.env)
+        return text
