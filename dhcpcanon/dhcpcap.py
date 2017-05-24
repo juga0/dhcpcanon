@@ -164,18 +164,13 @@ class DHCPCAP(object):
         return dhcp_inform
 
     def handle_offer_ack(self, pkt):
-        # self.server_mac = pkt[Ether].src
-        # self.server_ip = pkt[IP].src
-        # self.server_port = pkt[UDP].sport
         lease = DHCPCAPLease()
         lease.interface = self.iface
         lease.address = pkt[BOOTP].yiaddr
         lease.next_server = pkt[BOOTP].siaddr
         [setattr(lease, opt[0], opt[1]) for opt in pkt[DHCP].options
             if type(opt) is tuple and opt[0] in DHCP_OFFER_OPTIONS]
-        return lease        # self.server_mac = pkt[Ether].src
-        # self.server_ip = pkt[IP].src
-        # self.server_port = pkt[UDP].sport
+        return lease
 
     def handle_offer(self, pkt):
         logger.debug("Handling Offer.")
