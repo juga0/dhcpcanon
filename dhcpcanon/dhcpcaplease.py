@@ -23,6 +23,9 @@ import logging
 import attr
 from netaddr import IPNetwork, IPAddress, AddrFormatError
 
+from timers import nowutc, gen_renewing_time, gen_rebinding_time
+from timers import future_dt_str
+
 logger = logging.getLogger('dhcpcanon')
 
 
@@ -30,19 +33,40 @@ logger = logging.getLogger('dhcpcanon')
 class DHCPCAPLease(object):
     interface = attr.ib(default='')
     address = attr.ib(default='')
-    server_address = attr.ib(default='')
+    server_id = attr.ib(default='')
     next_server = attr.ib(default='')
     router = attr.ib(default='')
     subnet_mask = attr.ib(default='')
     broadcast_address = attr.ib(default='')
-    router = attr.ib(default='')
     domain = attr.ib(default='')
     name_server = attr.ib(default='')
     lease_time = attr.ib(default='')
     renewal_time = attr.ib(default='')
     rebinding_time = attr.ib(default='')
     subnet_mask_cidr = attr.ib(default='')
-    network = attr.ib(default='')
+    subnet = attr.ib(default='')
+    expiry = attr.ib(default='')
+    renew = attr.ib(default='')
+    rebind = attr.ib(default='')
+
+    def set_times(self, sent_dt):
+        # RFC2131 4.4.1 The client records the lease expiration time
+        # as the sum of the time at which the original request was
+        # sent and the duration of the lease from the DHCPACK message.
+        elapsed = (nowutc() - sent_dt).seconds
+        self.renewal_time = gen_renewing_time(self.lease_time,
+                                              elapsed)
+        self.rebinding_time = gen_rebinding_time(self.lease_time,
+                                                 elapsed)
+        self.expiry = future_dt_str(sent_dt, self.lease_time)
+        self.renew = future_dt_str(sent_dt, self.renewal_time)
+        self.rebind = future_dt_str(sent_dt, self.rebinding_time)
+        logger.debug('lease time: %s, expires on %s', self.lease_time,
+                     self.expiry)
+        logger.debug('renewal_time: %s, expires on %s',
+                     self.renewal_time, self.renew)
+        logger.debug('rebinding time: %s, expires on %s',
+                     self.rebinding_time, self.rebind)
 
     def sanitize_net_values(self):
         try:
@@ -61,10 +85,10 @@ class DHCPCAPLease(object):
         logger.debug('The gateway is sanitized')
 
     def info_lease(self):
-        logger.info('address %s', self.client_ip)
+        logger.info('address %s', self.address)
         logger.info('plen %s (%s)' % (self.subnet_mask_cidr, self.subnet_mask))
         logger.info('gateway %s', self.router)
-        logger.info('server identifier %s', self.server_address)
+        logger.info('server identifier %s', self.server_id)
         logger.info('nameserver %s', self.name_server)
         logger.info('domain name %s', self.domain)
         logger.info('lease time %s', self.lease_time)
