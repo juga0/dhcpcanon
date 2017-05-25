@@ -31,18 +31,29 @@ setup(
     license='GPLv3+',
     url=dhcpcanon.__website__,
     packages=find_packages(exclude=['contrib', 'docs', 'tests*']),
-    dependency_links=[
-        "https://pypi.python.org/simple/scapy==2.2.0-dev",
-        "https://pypi.python.org/simple/netaddr==0.7.10",
-        "https://pypi.python.org/simple/ipaddr==2.1.11",
-        "https://pypi.python.org/simple/pytz==2016.6.1",
-        "https://pypi.python.org/simple/pip==8.1.2",
-        "https://pypi.python.org/simple/pyroute2==0.4.11"
-        "https://pypi.python.org/simple/attrs==16.3.0"
+    install_requires=[
+        "scapy>=2.2",
+        "netaddr>=0.7",
+        "ipaddr>=2.1",
+        "pytz>=2016.6",
+        "pip>=8.1",
+        "pyroute2>=0.4",
+        "attrs>=16.3"
     ],
+    # leaved commented to have concrete dependencies
+    # dependency_links=[
+    #     "https://pypi.python.org/simple/scapy==2.2.0-dev",
+    #     "https://pypi.python.org/simple/netaddr==0.7.10",
+    #     "https://pypi.python.org/simple/ipaddr==2.1.11",
+    #     "https://pypi.python.org/simple/pytz==2016.6.1",
+    #     "https://pypi.python.org/simple/pip==8.1.2",
+    #     "https://pypi.python.org/simple/pyroute2==0.4.11"
+    #     "https://pypi.python.org/simple/attrs==16.3.0"
+    # ],
     extras_require={
         'dev': ['ipython', 'pyflakes', 'pep8'],
         'test': ['coverage', 'coveralls', 'codecov', 'tox', 'pytest'],
+        'doc': ['sphinx']
     },
     # entry_points={
     #     'console_scripts': [
