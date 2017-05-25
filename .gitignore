@@ -6,8 +6,10 @@ deb_dist
 dist
 build
 __pycache__
-doc/_build
+docs/build
+docs/source/images/*.pdf
 .cache
 .tox
-*/.coverage
-*/htmlcov/
+.coverage
+htmlcov
+
