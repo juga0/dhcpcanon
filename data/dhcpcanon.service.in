@@ -1,0 +1,23 @@
+#/etc/systemd/system/<yournamehere>.service
+[Unit]
+Description=DHCPCAP
+Wants=network.target
+After=network-pre.target dbus.service
+Before=network.target
+
+[Service]
+ExecStart=/sbin/dhcpcanon
+Type=simple
+Restart=on-failure
+# security
+ProtectSystem=true
+ProtectHome=read-only
+PrivateTmp=yes
+InaccessibleDirectories=/home
+ReadOnlyDirectories=/var
+CapabilityBoundingSet=CAP_SETGID CAP_SETUID CAP_NET_BIND_SERVICE CAP_NET_ADMIN CAP_NET_RAW
+LimitNPROC=2
+LimitFSIZE=0
+
+[Install]
+WantedBy=multi-user.target
