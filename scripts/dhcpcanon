@@ -46,6 +46,7 @@ from dhcpcanon.conflog import LOGGING
 
 logging.config.dictConfig(LOGGING)
 logger = logging.getLogger('dhcpcanon')
+logger_scapy_interactive = logging.getLogger('scapy.interactive')
 
 
 def main():
@@ -102,31 +103,24 @@ def main():
     parser.add_argument('-4', action='store_true')
     args = parser.parse_args()
 
-    logger.info('args %s', args)
+    logger.debug('args %s', args)
     if args.verbose:
         logger.setLevel(logging.DEBUG)
+        logger_scapy_interactive.setLevel(logging.DEBUG)
         # DEBUG = True
     if args.lease is not None:
-        global LEASE_TIME
-        # FIXME: setting lease time here seems to don't be working
-        LEASE_TIME = int(args.lease)
+        # TODO
+        pass
     if args.interface:
         conf.iface = args.interface
     logger.debug('interface %s' % conf.iface)
-    # disable so scapy does not check ip server correspond to the ip
-    # destination as discover send pkt to broadcast
-    conf.checkIPaddr = False
-    conf.verb = False
-    # FIXME: the following does not remove the log:
-    # WARNING: Failed to execute tcpdump. Check it is installed and in the PATH
-    conf.logLevel = 20
     if args.pf is not None:
         import daemon
-        from lockfile.pidlockfile import PIDLockFile
-        pidfile = PIDLockFile(args.pf)
-        logger.debug('using pid file %s', pidfile)
-        #with daemon.DaemonContext(pidfile=pidfile):
-
+        from daemon import pidfile
+        pf = pidfile.TimeoutPIDLockFile(args.pf)
+        logger.debug('using pid file %s', pf)
+        context = daemon.DaemonContext(pidfile=pf)
+        # FIXME: it does not get daemonized
     dhcpcap = DHCPCAPFSM(iface=conf.iface,
                          server_port=SERVER_PORT,
                          client_port=CLIENT_PORT,
