@@ -15,7 +15,7 @@ ALLSPHINXOPTS   = -d $(BUILDDIR)/doctrees $(PAPEROPT_$(PAPER)) $(SPHINXOPTS) sou
 I18NSPHINXOPTS  = $(PAPEROPT_$(PAPER)) $(SPHINXOPTS) source
 # not in auto-generated conf
 SOURCEDIR       = source
-IMAGEDIRS       = images
+IMAGEDIRS       = source/images
 # SVG to PDF conversion
 SVG2PDF       = inkscape
 SVG2PDF_FLAGS =

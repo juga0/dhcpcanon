@@ -55,7 +55,7 @@ DHCP Finite State Machine
 """"""""""""""""""""""""""
 State-transition diagram for DHCP clients:
 
-.. image:: ./images/dhcpc_fsm.svg
+.. image:: ./images/dhcpcapfsm.*
 
 Current status
 --------------
@@ -81,11 +81,11 @@ Developer documentation
 
 :ref:`integration`
 
-:ref:`rfcs`
-
 :ref:`implementation`
 
-:ref:`rfc7844comm`
+`Related RFCs <https://rfc7844-comments.readthedocs.io/en/latest/rfcs.html>`_.
+
+`RFC 7844 summary and comments <https://rfc7844-comments.readthedocs.io/en/latest/rfc7844comm.html>`_
 
 Bugs and features
 -----------------
