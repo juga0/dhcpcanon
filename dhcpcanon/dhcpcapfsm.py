@@ -210,6 +210,7 @@ class DHCPCAPFSM(Automaton):
         if isack(pkt):
             # FIXME: check the fields match the previously offered ones?
             self.event = self.client.handle_ack(pkt)
+            self.client.lease.set_times(self.time_sent_request)
             # TODO: if error in parse, go back to SELECTING
             # TODO: if address is taken (PING?) go to INIT and send DHCPDELINE
             logger.info('DHCPACK of %s from %s' %
@@ -324,8 +325,6 @@ class DHCPCAPFSM(Automaton):
     @ATMT.action(receive_ack_requesting)
     def on_ack_requesting(self):
         # NOTE RFC78444: not recording lease
-        self.client.lease.sanitize_net_values()
-        self.client.lease.set_times(self.time_sent_request)
         self.set_timers()
 
     @ATMT.timeout(REQUESTING, TIMEOUT_REQUESTING)

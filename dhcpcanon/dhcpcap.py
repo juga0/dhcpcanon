@@ -70,7 +70,7 @@ class DHCPCAP(object):
             # BOOTP(xid=self.client_xid) /
             # 3.4. The presence of  "Client hardware address" (chaddr)
             # is necessary for the proper operation of the DHCP service.
-            BOOTP(chaddr=[mac2str(self.client_mac)])
+            BOOTP(chaddr=[mac2str(self.client_mac)], options='c\x82Sc')
         )
         return udp_bootp
 
@@ -193,5 +193,6 @@ class DHCPCAP(object):
             else:
                 event = DHCP_EVENTS['RENEW']
         self.lease = lease
+        self.lease.sanitize_net_values()
         self.event = event
         return event
