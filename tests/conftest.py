@@ -4,6 +4,23 @@
 import pytest
 
 from dhcpcanon.dhcpcap import DHCPCAP
+from dhcpcanon.dhcpcapfsm import DHCPCAPFSM
+
+
+@pytest.fixture
+def dhcpcanon_maker(request):
+    """ return a function which creates initialized dhcpcanon instances. """
+
+    def maker():
+        dhcpcanon = DHCPCAPFSM(client_mac="00:0a:0b:0c:0d:0f")
+        return dhcpcanon
+    return maker
+
+
+@pytest.fixture
+def dhcpcanon(dhcpcanon_maker):
+    """ return an initialized dhcpcanon instance. """
+    return dhcpcanon_maker()
 
 
 @pytest.fixture
