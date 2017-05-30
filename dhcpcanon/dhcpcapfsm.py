@@ -59,7 +59,7 @@ class DHCPCAPFSM(Automaton):
         self.offers = list()
 
     def parse_args(self, iface=None, server_port=None,
-                   client_port=None, client_mac=None, scriptfile=''):
+                   client_port=None, client_mac=None, scriptfile=None):
         # RFC7844: an external program should randomize MAC prior
         # running this.
         logger.debug('Automaton parsing args.')
@@ -69,8 +69,8 @@ class DHCPCAPFSM(Automaton):
                      DELAY_SELECTING, TIMEOUT_SELECTING,
                      TIMEOUT_REQUESTING, TIMEOUT_REQUEST_RENEWING,
                      TIMEOUT_REQUEST_REBINDING))
+        self.debug_level = 5
         # do not put interfaces in promiscuous mode
-        self.debug_level = 3
         conf.sniff_promisc = conf.promisc = 0
         # conf.checkIPaddr = 0
         self.reset()
@@ -348,8 +348,8 @@ class DHCPCAPFSM(Automaton):
                      STATES2NAMES[self.current_state]))
         self.current_state = STATE_BOUND
         self.script.script_init(self.client.lease, self.current_state)
-        # TODO: go daemon?
         self.script.script_go()
+        # TODO: go daemon?
 
     @ATMT.timeout(BOUND, RENEWING_TIME)
     def renewing_time_expires(self):
