@@ -21,7 +21,7 @@ class ClientScript(object):
     env = attr.ib(default=attr.Factory(dict))
 
     def script_init(self, lease, state, prefix='',  medium=''):
-            if self.scriptname is not None:
+        if self.scriptname is not None:
             if type(state) == int:
                 reason = STATES2REASONS[state]
             else:
