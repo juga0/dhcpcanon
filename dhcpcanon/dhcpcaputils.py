@@ -76,8 +76,3 @@ def detect_speed_network():
 # TODO
 def detect_initial_network():
     pass
-
-
-# TODO
-def send_ARP(client_ip,  server_ip):
-    pass

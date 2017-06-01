@@ -9,7 +9,7 @@ dhcp_discover = (
     DHCP(options=[
       ('message-type', 'discover'),
       'end']
-      )
+    )
 )
 
 dhcp_offer = (
@@ -30,7 +30,7 @@ dhcp_offer = (
         ('name_server', "192.168.1.1"),
         ('domain', "localdomain"),
         'end']
-        )
+    )
 )
 
 dhcp_request = (
@@ -43,7 +43,7 @@ dhcp_request = (
       ("requested_addr", "192.168.1.2"),
       ("server_id", "192.168.1.1"),
       'end']
-      )
+    )
 )
 
 dhcp_ack = (
@@ -64,5 +64,5 @@ dhcp_ack = (
         ('name_server', "192.168.1.1"),
         ('domain', "localdomain"),
         'end']
-        )
+    )
 )
