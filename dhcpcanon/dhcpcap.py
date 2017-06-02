@@ -20,23 +20,25 @@
 
 """"""
 import logging
+
 import attr
-from scapy.layers.dhcp import DHCP, BOOTP
-from scapy.layers.inet import UDP, IP
-from scapy.layers.l2 import Ether
+from dhcpcanon.constants import (BROADCAST_ADDR, BROADCAST_MAC, CLIENT_PORT,
+                                 DHCP_EVENTS, DHCP_OFFER_OPTIONS, META_ADDR,
+                                 SERVER_PORT)
+from dhcpcanon.dhcpcaplease import DHCPCAPLease
 from scapy.arch import get_if_raw_hwaddr
-from scapy.utils import str2mac, mac2str
 from scapy.config import conf
-from dhcpcaplease import DHCPCAPLease
-from constants import BROADCAST_ADDR, BROADCAST_MAC, META_ADDR
-from constants import CLIENT_PORT, SERVER_PORT, DHCP_OFFER_OPTIONS
-from constants import DHCP_EVENTS
+from scapy.layers.dhcp import BOOTP, DHCP
+from scapy.layers.inet import IP, UDP
+from scapy.layers.l2 import Ether
+from scapy.utils import mac2str, str2mac
 
 logger = logging.getLogger('dhcpcanon')
 
 
 @attr.s
 class DHCPCAP(object):
+    """."""
     iface = attr.ib(default=None)
 
     client_mac = attr.ib(default=None)
@@ -51,6 +53,7 @@ class DHCPCAP(object):
     event = attr.ib(default=None)
 
     def __attrs_post_init__(self):
+        """."""
         if self.iface is None:
             self.iface = conf.iface
         if self.client_mac is None:
@@ -59,11 +62,13 @@ class DHCPCAP(object):
         self.lease.interface = self.iface
 
     def gen_ether_ip(self):
+        """."""
         ether_ip = (Ether(src=self.client_mac, dst=self.server_mac) /
                     IP(src=self.client_ip, dst=self.server_ip))
         return ether_ip
 
     def gen_udp_bootp(self):
+        """."""
         udp_bootp = (
             UDP(sport=self.client_port, dport=self.server_port) /
             # MAY
@@ -75,6 +80,7 @@ class DHCPCAP(object):
         return udp_bootp
 
     def gen_discover(self):
+        """."""
         # FIXME: check if the follow also applies here:
         # 3.1. SHOULD randomize the ordering of options
         # conf.checkIPaddr = False
@@ -93,6 +99,7 @@ class DHCPCAP(object):
         return dhcp_discover
 
     def gen_request(self):
+        """."""
         # conf.checkIPaddr = True
         dhcp_req = (
             self.gen_ether_ip() /
@@ -115,6 +122,7 @@ class DHCPCAP(object):
         return dhcp_req
 
     def gen_decline(self):
+        """."""
         dhcp_decline = (
             self.gen_ether_ip(self.client_ip, self.server_mac,
                               self.server_ip) /
@@ -133,6 +141,7 @@ class DHCPCAP(object):
         return dhcp_decline
 
     def gen_release(self):
+        """."""
         dhcp_release = (
             self.gen_ether_ip(self.server_mac, self.server_ip,
                               self.client_ip) /
@@ -148,6 +157,7 @@ class DHCPCAP(object):
         return dhcp_release
 
     def gen_inform(self):
+        """."""
         dhcp_inform = (
             self.gen_ether_ip(self.client_ip, self.server_mac,
                               self.server_ip) /
@@ -164,6 +174,7 @@ class DHCPCAP(object):
         return dhcp_inform
 
     def handle_offer_ack(self, pkt):
+        """."""
         lease = DHCPCAPLease()
         lease.interface = self.iface
         lease.address = pkt[BOOTP].yiaddr
@@ -173,11 +184,13 @@ class DHCPCAP(object):
         return lease
 
     def handle_offer(self, pkt):
+        """."""
         logger.debug("Handling Offer.")
         lease = self.handle_offer_ack(pkt)
         self.lease = lease
 
     def handle_ack(self, pkt):
+        """."""
         logger.debug("Handling ACK.")
         self.server_mac = pkt[Ether].src
         self.server_ip = pkt[IP].src
@@ -188,8 +201,8 @@ class DHCPCAP(object):
         if self.lease is not None:
             if self.lease.address != lease.address or \
                 self.lease.subnet_mask != lease.subnet_mask or \
-                    self.lease.router != lease.router:
-                        event = DHCP_EVENTS['IP_CHANGE']
+                self.lease.router != lease.router:
+                    event = DHCP_EVENTS['IP_CHANGE']
             else:
                 event = DHCP_EVENTS['RENEW']
         self.lease = lease

@@ -21,28 +21,16 @@
 
 """DCHP client implementation of the anonymity profile (RFC7844)."""
 
-import sys
-import os
 import argparse
 import logging
 import logging.config
+
+from dhcpcanon.__init__ import __version__
+from dhcpcanon.conflog import LOGGING
+from dhcpcanon.constants import CLIENT_PORT, SERVER_PORT
+from dhcpcanon.dhcpcapfsm import DHCPCAPFSM
 from scapy.config import conf
 
-directory, basename = os.path.split(sys.argv[0])
-path, directory = os.path.split(os.path.realpath(directory))
-if directory == 'scripts':
-    module_path = os.path.realpath(
-                    os.path.join(
-                        os.path.dirname(__file__),
-                        '..'
-                    )
-                )
-    sys.path.insert(0, module_path)
-
-from dhcpcanon import __version__
-from dhcpcanon.constants import SERVER_PORT, CLIENT_PORT
-from dhcpcanon.dhcpcapfsm import DHCPCAPFSM
-from dhcpcanon.conflog import LOGGING
 
 logging.config.dictConfig(LOGGING)
 logger = logging.getLogger('dhcpcanon')
@@ -102,8 +90,12 @@ def main():
     parser.add_argument('-6', action='store_true')
     parser.add_argument('-4', action='store_true')
     args = parser.parse_args()
-
     logger.debug('args %s', args)
+
+    # do not put interfaces in promiscuous mode
+    conf.sniff_promisc = conf.promisc = 0
+    # conf.checkIPaddr = 0
+
     if args.verbose:
         logger.setLevel(logging.DEBUG)
         logger_scapy_interactive.setLevel(logging.DEBUG)
@@ -114,13 +106,14 @@ def main():
     if args.interface:
         conf.iface = args.interface
     logger.debug('interface %s' % conf.iface)
-    if args.pf is not None:
-        import daemon
-        from daemon import pidfile
-        pf = pidfile.TimeoutPIDLockFile(args.pf)
-        logger.debug('using pid file %s', pf)
-        context = daemon.DaemonContext(pidfile=pf)
-        # FIXME: it does not get daemonized
+    # FIXME: disabled for now
+    # if args.pf is not None:
+    #     import daemon
+    #     from daemon import pidfile
+    #     pf = pidfile.TimeoutPIDLockFile(args.pf)
+    #     logger.debug('using pid file %s', pf)
+    #     context = daemon.DaemonContext(pidfile=pf)
+    #     # FIXME: it does not get daemonized
     dhcpcap = DHCPCAPFSM(iface=conf.iface,
                          server_port=SERVER_PORT,
                          client_port=CLIENT_PORT,

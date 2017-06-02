@@ -33,18 +33,21 @@ logger = logging.getLogger(__name__)
 
 
 def future_dt_str(dt, td):
-    if type(td) is int or float:
+    """."""
+    if isinstance(td, int) or isinstance(td, float):
         td = timedelta(seconds=td)
     future_dt = dt + td
     return future_dt.strftime(DT_PRINT_FORMAT)
 
 
 def nowutc():
+    """."""
     now = datetime.utcnow().replace(tzinfo=utc)
     return now
 
 
 def gen_delay_selecting():
+    """."""
     delay = float(random.randint(0, MAX_DELAY_SELECTING))
     logger.debug('Delay to enter in SELECTING %s.' % delay)
     logger.debug('SELECTING will happen on %s',
@@ -53,6 +56,7 @@ def gen_delay_selecting():
 
 
 def gen_timeout_resend(attempts):
+    """."""
     # RFC3121: For example, in a 10Mb/sec Ethernet
     # internetwork, the delay before the first retransmission SHOULD be 4
     # seconds randomized by the value of a uniform random number chosen
@@ -69,6 +73,7 @@ def gen_timeout_resend(attempts):
 
 
 def gen_timeout_request_renew(lease):
+    """."""
     # In both RENEWING and REBINDING states,
     # if the client receives no response to its DHCPREQUEST
     # message, the client SHOULD wait one-half of the remaining
@@ -76,8 +81,7 @@ def gen_timeout_request_renew(lease):
     # remaining lease time (in REBINDING state), down to a
     # minimum of 60 seconds, before retransmitting the
     # DHCPREQUEST message.
-    time_left = (lease.rebinding_time - lease.renewing_time) \
-                * RENEW_PERC
+    time_left = (lease.rebinding_time - lease.renewing_time) * RENEW_PERC
     if time_left < 60:
         time_left = 60
     logger.debug('Next request in renew will happen on %s',
@@ -86,6 +90,7 @@ def gen_timeout_request_renew(lease):
 
 
 def gen_timeout_request_rebind(lease):
+    """."""
     time_left = (lease.lease_time - lease.rebinding_time) * RENEW_PERC
     if time_left < 60:
         time_left = 60
@@ -95,6 +100,7 @@ def gen_timeout_request_rebind(lease):
 
 
 def gen_renewing_time(lease_time, elapsed=0):
+    """."""
     # Times T1 and T2 SHOULD be chosen with some
     # random "fuzz" around a fixed value, to avoid synchronization of
     # client reacquisition.
@@ -109,6 +115,7 @@ def gen_renewing_time(lease_time, elapsed=0):
 
 
 def gen_rebinding_time(lease_time, elapsed=0):
+    """."""
     rebinding_time = lease_time * REBIND_PERC - elapsed
     # FIXME: the random intervals here could deanonymize
     range_fuzz = lease_time - rebinding_time

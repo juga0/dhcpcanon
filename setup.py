@@ -17,9 +17,11 @@
 #   You should have received a copy of the GNU General Public License
 #   along with dhcpcanon.  If not, see <http://www.gnu.org/licenses/>.
 #
+"""Setup."""
+from setuptools import find_packages, setup
 
-from setuptools import setup, find_packages
 import dhcpcanon
+
 
 setup(
     name='dhcpcanon',
@@ -38,7 +40,8 @@ setup(
         "pytz>=2016.6",
         "pip>=8.1",
         "pyroute2>=0.4",
-        "attrs>=16.3"
+        "attrs>=16.3",
+        "daemon>=1.1"
     ],
     # leaved commented to have concrete dependencies
     # dependency_links=[

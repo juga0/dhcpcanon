@@ -22,19 +22,13 @@
 module functions."""
 
 import logging
-import random
 from scapy.layers.dhcp import DHCP, DHCPTypes
-
-from constants import XID_MAX, XID_MIN
 
 logger = logging.getLogger(__name__)
 
 
-def gen_xid():
-    return random.randint(XID_MIN, XID_MAX)
-
-
 def isoffer(packet):
+    """."""
     if DHCP in packet and DHCPTypes[packet[DHCP].options[0][1]] == 'offer':
         logger.debug('Packet is Offer.')
         return True
@@ -42,6 +36,7 @@ def isoffer(packet):
 
 
 def isnak(packet):
+    """."""
     if DHCP in packet and DHCPTypes[packet[DHCP].options[0][1]] == 'nak':
         logger.debug('Packet is NAK.')
         return True
@@ -49,6 +44,7 @@ def isnak(packet):
 
 
 def isack(packet):
+    """."""
     if DHCP in packet and DHCPTypes[packet[DHCP].options[0][1]] == 'ack':
         logger.debug('Packet is ACK.')
         return True

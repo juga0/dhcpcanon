@@ -1,4 +1,4 @@
-
+"""."""
 from scapy.all import Ether, IP, UDP, BOOTP, DHCP
 
 dhcp_discover = (

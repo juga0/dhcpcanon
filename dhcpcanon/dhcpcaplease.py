@@ -18,19 +18,20 @@
 # You should have received a copy of the GNU General Public License
 # along with dhcpcanon.  If not, see <http://www.gnu.org/licenses/>.
 
-""""""
+"""Lease class."""
 import logging
-import attr
-from netaddr import IPNetwork, IPAddress, AddrFormatError
 
-from timers import nowutc, gen_renewing_time, gen_rebinding_time
-from timers import future_dt_str
+import attr
+from dhcpcanon.timers import (future_dt_str, gen_rebinding_time,
+                              gen_renewing_time, nowutc)
+from netaddr import AddrFormatError, IPAddress, IPNetwork
 
 logger = logging.getLogger('dhcpcanon')
 
 
 @attr.s
 class DHCPCAPLease(object):
+    """."""
     interface = attr.ib(default='')
     address = attr.ib(default='')
     server_id = attr.ib(default='')
@@ -50,6 +51,7 @@ class DHCPCAPLease(object):
     rebind = attr.ib(default='')
 
     def set_times(self, sent_dt):
+        """."""
         # RFC2131 4.4.1 The client records the lease expiration time
         # as the sum of the time at which the original request was
         # sent and the duration of the lease from the DHCPACK message.
@@ -69,6 +71,7 @@ class DHCPCAPLease(object):
                      self.rebinding_time, self.rebind)
 
     def sanitize_net_values(self):
+        """."""
         try:
             ipn = IPNetwork(self.address + '/' + self.subnet_mask)
         except AddrFormatError as e:
@@ -79,14 +82,15 @@ class DHCPCAPLease(object):
         self.subnet = str(ipn.network)
         try:
             ipn = IPAddress(self.router)
-        except AddrFormatError as e:
+        except AddrFormatError as err:
             # FIXME: add other errors
-            logger.error(e)
+            logger.error(err)
         logger.debug('The gateway is sanitized')
 
     def info_lease(self):
+        """Print lease information."""
         logger.info('address %s', self.address)
-        logger.info('plen %s (%s)' % (self.subnet_mask_cidr, self.subnet_mask))
+        logger.info('plen %s (%s)', self.subnet_mask_cidr, self.subnet_mask)
         logger.info('gateway %s', self.router)
         logger.info('server identifier %s', self.server_id)
         logger.info('nameserver %s', self.name_server)

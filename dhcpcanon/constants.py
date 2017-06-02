@@ -49,10 +49,6 @@ TIMEOUT_REQUEST_REBINDING = 75600
 MAX_DELAY_SELECTING = 10
 RENEW_PERC = 0.5
 REBIND_PERC = 0.875
-# FIXME:
-# MAX_TIMEOUT =
-# FIXME: microseconds per unix second?
-USEC_PER_SECS = 1000000
 
 # DHCP number packet retransmissions
 MAX_ATTEMPTS_DISCOVER = 5
@@ -131,4 +127,28 @@ DHCP_EVENTS = {
     'IP_CHANGE': 2,
     'EXPIRED': 3,
     'RENEW': 4,
+}
+
+SCRIPT_ENV_KEYS = ['reason', 'medium', 'client', 'pid', 'interface',
+                   'ip_address', 'subnet_mask', 'network_number',
+                   'broadcast_address', 'domain_name_servers', 'routers',
+                   'dhcp_server_identifier', 'next_server', 'domain_name',
+                   'dhcp_lease_time', 'dhcp_renewal_time',
+                   'dhcp_rebinding_time', 'expire', 'renew', 'rebind']
+
+LEASEATTRS_SAMEAS_ENVKEYS = [
+    'interface', 'subnet_mask', 'broadcast_address', 'next_server', 'rebind',
+    'renew']
+
+LEASEATTRS2ENVKEYS = {
+    'ip_address': 'address',
+    'routers': 'router',
+    'network_number': 'subnet',
+    'domain_name': 'domain',
+    'domain_name_servers': 'name_server',
+    'dhcp_lease_time': 'lease_time',
+    'dhcp_rebinding_time': 'rebinding_time',
+    'dhcp_renewal_time': 'renewal_time',
+    'expire': 'expiry',
+    'dhcp_server_identifier': 'server_id',
 }
