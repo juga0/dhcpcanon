@@ -7,9 +7,8 @@ dhcp_discover = (
     UDP(sport=68, dport=67) /
     BOOTP(chaddr=['\x00\x0a\x0b\x0c\x0d\x0f'], options='c\x82Sc') /
     DHCP(options=[
-      ('message-type', 'discover'),
-      'end']
-    )
+        ('message-type', 'discover'),
+        'end'])
 )
 
 dhcp_offer = (
@@ -39,11 +38,10 @@ dhcp_request = (
     UDP(sport=68, dport=67) /
     BOOTP(chaddr=['\x00\x0a\x0b\x0c\x0d\x0f'], options='c\x82Sc') /
     DHCP(options=[
-      ('message-type', 'request'),
-      ("requested_addr", "192.168.1.2"),
-      ("server_id", "192.168.1.1"),
-      'end']
-    )
+        ('message-type', 'request'),
+        ("requested_addr", "192.168.1.2"),
+        ("server_id", "192.168.1.1"),
+        'end'])
 )
 
 dhcp_ack = (
@@ -63,6 +61,5 @@ dhcp_ack = (
         ('router', "192.168.1.1"),
         ('name_server', "192.168.1.1"),
         ('domain', "localdomain"),
-        'end']
-    )
+        'end'])
 )

@@ -106,17 +106,16 @@ class DHCPCAP(object):
             self.gen_udp_bootp() /
             # DHCP(options=random.shuffle([
             DHCP(options=[
-                    ("message-type", "request"),
-                    # MAY
-                    # ("param_req_list", PARAM_REQ_LIST),
-                    # client identifier
-                    # If the message is in response
-                    # to a DHCPOFFER, it MUST contain the corresponding Server
-                    # Identifier option and the Requested IP address
-                    ("requested_addr", self.lease.address),
-                    ("server_id", self.lease.server_id),
-                    "end"
-                ])
+                ("message-type", "request"),
+                # MAY
+                # ("param_req_list", PARAM_REQ_LIST),
+                # client identifier
+                # If the message is in response
+                # to a DHCPOFFER, it MUST contain the corresponding Server
+                # Identifier option and the Requested IP address
+                ("requested_addr", self.lease.address),
+                ("server_id", self.lease.server_id),
+                "end"])
         )
         logger.debug('Generated request %s.', dhcp_req.summary())
         return dhcp_req
@@ -130,11 +129,10 @@ class DHCPCAP(object):
             # FIXME: shuffle here?
             # DHCP(options=random.shuffle([
             DHCP(options=[
-                    ("message-type", "decline"),
-                    ("server_id", self.server_ip),
-                    ("requested_addr", self.client_ip),
-                    "end"
-            ])
+                ("message-type", "decline"),
+                ("server_id", self.server_ip),
+                ("requested_addr", self.client_ip),
+                "end"])
         )
         logger.debug('Generated decline.')
         logger.debug(dhcp_decline.summary())
@@ -147,10 +145,9 @@ class DHCPCAP(object):
                               self.client_ip) /
             self.gen_udp_bootp() /
             DHCP(options=[
-                    ("message-type", "release"),
-                    ("server_id", self.server_ip),
-                    "end"
-            ])
+                ("message-type", "release"),
+                ("server_id", self.server_ip),
+                "end"])
         )
         logger.debug('Generated release.')
         logger.debug(dhcp_release.summary())
@@ -166,8 +163,7 @@ class DHCPCAP(object):
                 ("message-type", "inform"),
                 # MAY
                 # ("param_req_list", self.param_req_list)
-                "end"
-            ])
+                "end"])
         )
         logger.debug('Generated inform.')
         logger.debug(dhcp_inform.summary())
@@ -180,7 +176,7 @@ class DHCPCAP(object):
         lease.address = pkt[BOOTP].yiaddr
         lease.next_server = pkt[BOOTP].siaddr
         [setattr(lease, opt[0], opt[1]) for opt in pkt[DHCP].options
-            if type(opt) is tuple and opt[0] in DHCP_OFFER_OPTIONS]
+         if type(opt) is tuple and opt[0] in DHCP_OFFER_OPTIONS]
         return lease
 
     def handle_offer(self, pkt):

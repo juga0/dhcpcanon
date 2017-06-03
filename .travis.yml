@@ -1,16 +1,26 @@
 language: python
 sudo: required
 dist: precise
+python:
+    - '2.7'
+    - '3.5'
 
-install: "sudo apt-get update && sudo apt-get install -y python-dev && pip install -r requirements.txt"
+before_install:
+    - sudo apt update && sudo apt install -y python-dev
+
+install:
+    - pip install -U tox
 # && pip install -r dev-requirements.txt"
 env:
     - TOX_ENV=style
     - TOX_ENV=py27,stats
     - TOX_ENV=py35,stats
+    - TOX_ENV=doc
+    - TOX_ENV=lint
 
 script:
-  - tox -c tox.ini -e $TOX_ENV
+  - cd dhcpcanon
+  - tox -c tox.ini -e $TOX_ENV tests/
 
 after_success:
   - coveralls

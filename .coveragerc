@@ -12,5 +12,6 @@ source =
 
 [report]
 omit =
- */python?.?/*
- *__init__*
+    */tests/*
+    */python?.?/*
+    *__init__*

@@ -92,7 +92,7 @@ class DHCPCAPFSM(Automaton):
                       format(self.client.server_port,
                              self.client.client_port,
                              self.client.client_mac)
-            }
+        }
         self.script.scriptname = scriptfile
         self.script.script_init(self.client.lease, self.current_state)
         self.script.script_go()
