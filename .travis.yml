@@ -10,6 +10,7 @@ before_install:
 
 install:
     - pip install -U tox
+    - pip install -U coveralls
 # && pip install -r dev-requirements.txt"
 env:
     - TOX_ENV=style
@@ -18,8 +19,8 @@ env:
     - TOX_ENV=doc
 
 script:
-  - cd dhcpcanon
-  - tox -c tox.ini -e $TOX_ENV tests/
+  - tox -c tox.ini -e $TOX_ENV
+  - coverage run --source=dhcpcanon setup.py test
 
 after_success:
   - coveralls
