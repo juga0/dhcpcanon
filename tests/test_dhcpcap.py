@@ -11,7 +11,7 @@ FORMAT = "%(levelname)s: %(filename)s:%(lineno)s - %(funcName)s - " + \
 logging.basicConfig(format=FORMAT, level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
-LEASE_REQUEST = DHCPCAPLease(interface='enp0s25', address='192.168.1.2',
+LEASE_REQUEST = DHCPCAPLease(interface='eth0', address='192.168.1.2',
                              server_id='192.168.1.1',
                              next_server='192.168.1.1',
                              router='192.168.1.1', subnet_mask='255.255.255.0',
@@ -22,7 +22,7 @@ LEASE_REQUEST = DHCPCAPLease(interface='enp0s25', address='192.168.1.2',
                              subnet_mask_cidr='', subnet='', expiry='',
                              renew='', rebind='')
 
-LEASE_ACK = DHCPCAPLease(interface='enp0s25', address='192.168.1.2',
+LEASE_ACK = DHCPCAPLease(interface='eth0', address='192.168.1.2',
                          server_id='192.168.1.1', next_server='192.168.1.1',
                          router='192.168.1.1', subnet_mask='255.255.255.0',
                          broadcast_address='192.168.1.255',

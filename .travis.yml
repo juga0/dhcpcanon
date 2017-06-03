@@ -1,9 +1,9 @@
 language: python
 sudo: required
-dist: precise
+dist: trusty
 python:
     - '2.7'
-    - '3.5'
+    # - '3.5'
 
 before_install:
     - sudo apt update && sudo apt install -y python-dev
@@ -14,9 +14,8 @@ install:
 env:
     - TOX_ENV=style
     - TOX_ENV=py27,stats
-    - TOX_ENV=py35,stats
+    # - TOX_ENV=py35,stats
     - TOX_ENV=doc
-    - TOX_ENV=lint
 
 script:
   - cd dhcpcanon

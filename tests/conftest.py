@@ -13,7 +13,7 @@ def dhcpcanon_maker(request):
 
     def maker():
         """."""
-        dhcpcanon = DHCPCAPFSM(client_mac="00:0a:0b:0c:0d:0f")
+        dhcpcanon = DHCPCAPFSM(client_mac="00:0a:0b:0c:0d:0f", iface='eth0')
         return dhcpcanon
     return maker
 
@@ -29,7 +29,7 @@ def dhcpcap_maker(request):
     """Return a function which creates initialized dhcpcap instances."""
     def maker():
         """."""
-        dhcpcap = DHCPCAP(client_mac="00:0a:0b:0c:0d:0f")
+        dhcpcap = DHCPCAP(client_mac="00:0a:0b:0c:0d:0f", iface='eth0')
         return dhcpcap
     return maker
 
