@@ -123,8 +123,7 @@ class DHCPCAP(object):
     def gen_decline(self):
         """."""
         dhcp_decline = (
-            self.gen_ether_ip(self.client_ip, self.server_mac,
-                              self.server_ip) /
+            self.gen_ether_ip() /
             self.gen_udp_bootp() /
             # FIXME: shuffle here?
             # DHCP(options=random.shuffle([
@@ -141,8 +140,7 @@ class DHCPCAP(object):
     def gen_release(self):
         """."""
         dhcp_release = (
-            self.gen_ether_ip(self.server_mac, self.server_ip,
-                              self.client_ip) /
+            self.gen_ether_ip() /
             self.gen_udp_bootp() /
             DHCP(options=[
                 ("message-type", "release"),
@@ -156,8 +154,7 @@ class DHCPCAP(object):
     def gen_inform(self):
         """."""
         dhcp_inform = (
-            self.gen_ether_ip(self.client_ip, self.server_mac,
-                              self.server_ip) /
+            self.gen_ether_ip() /
             self.gen_udp_bootp() /
             DHCP(options=[
                 ("message-type", "inform"),
@@ -176,7 +173,7 @@ class DHCPCAP(object):
         lease.address = pkt[BOOTP].yiaddr
         lease.next_server = pkt[BOOTP].siaddr
         [setattr(lease, opt[0], opt[1]) for opt in pkt[DHCP].options
-         if type(opt) is tuple and opt[0] in DHCP_OFFER_OPTIONS]
+         if isinstance(opt, tuple) and opt[0] in DHCP_OFFER_OPTIONS]
         return lease
 
     def handle_offer(self, pkt):
