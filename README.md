@@ -2,8 +2,8 @@ dhcpcanon - DHCP anonymity profile
 ==================================
 
 [![PyPI](https://img.shields.io/pypi/v/dhcpcanon.svg)](https://pypi.python.org/pypi/dhcpcanon)
-[![travis-ci](https://www.travis-ci.org/juga0/dhcpcanon)](https://www.travis-ci.org/juga0/dhcpcanon)
-[![coveralls](https://coveralls.io/repos/github/dhcpcanon/badge.svg)](https://coveralls.io/repos/github/dhcpcanon)
+[![Build Status](https://www.travis-ci.org/juga0/dhcpcanon.svg?branch=master)](https://www.travis-ci.org/juga0/dhcpcanon)
+[![Coverage Status](https://coveralls.io/repos/github/juga0/dhcpcanon/badge.svg?branch=master)](https://coveralls.io/github/juga0/dhcpcanon?branch=master)
 
 DHCP client disclosing less identifying information.
 
