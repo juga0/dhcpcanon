@@ -97,8 +97,8 @@ an issue on the `dhcpcanon issue tracker
 License
 -------
 
-dhcpcanon is Copyright 2016 by juga ( juga at riseup dot net),
-and is covered by the `GPLv3 <http://www.gnu.org/licenses/>`__ license.
+dhcpcanon is copyright 2016, 2017 by juga <juga at riseup dot net>,
+and is licensed under the terms of the MIT license.
 
 Acknowledgments
 ---------------

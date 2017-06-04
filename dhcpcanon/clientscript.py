@@ -1,4 +1,6 @@
-#
+# -*- coding: utf-8 -*-
+# vim:ts=4:sw=4:expandtab 2
+# Copyright 2016, 2017 juga (juga at riseup dot net), MIT license.
 """Class to Initialize and call external script."""
 from __future__ import unicode_literals
 

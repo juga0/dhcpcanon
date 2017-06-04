@@ -1,9 +1,6 @@
 # -*- coding: utf-8 -*-
 # vim:ts=4:sw=4:expandtab 2
-
-# Copyright 2016 juga <juga@riseup.net>
-
-# This file is part of dhcpcanon.
+# Copyright 2016, 2017 juga (juga at riseup dot net), MIT license.
 """"""
 import logging
 from dhcpcanon.constants import STATE_REQUESTING

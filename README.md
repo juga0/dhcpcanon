@@ -93,9 +93,8 @@ tracker](https://github.com/juga0/dhcpcanon/issues).
 License
 -------
 
-dhcpcanon is Copyright 2016 by juga ( juga at riseup dot net), and is
-covered by the [![GPLv3](https://www.gnu.org/graphics/gplv3-127x51.png)]
-(http://www.gnu.org/licenses/) license.
+``dhcpcanon`` is copyright 2016, 2017 by juga ( juga at riseup dot net) and is
+licensed by the terms of the MIT license.
 
 Acknowledgments
 ---------------

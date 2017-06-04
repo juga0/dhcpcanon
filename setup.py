@@ -1,22 +1,8 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
+# vim:ts=4:sw=4:expandtab
+# Copyright 2016, 2017 juga (juga at riseup dot net), MIT license.
 
-#   This file is part of dhcpcanon, a set of scripts to
-#   use different tor guards depending on the network we connect to.
-#
-#   Copyright (C) 2016 juga (juga at riseup dot net)
-#
-#   dhcpcanon is free software; you can redistribute it and/or modify
-#   it under the terms of the GNU General Public License Version 3 of the
-#   License, or (at your option) any later version.
-#
-#   dhcpcanon is distributed in the hope that it will be useful,
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#   GNU General Public License for more details.
-#
-#   You should have received a copy of the GNU General Public License
-#   along with dhcpcanon.  If not, see <http://www.gnu.org/licenses/>.
-#
 """Setup."""
 from setuptools import find_packages, setup
 
@@ -30,7 +16,7 @@ setup(
     long_description=dhcpcanon.__long_description__,
     author=dhcpcanon.__author__,
     author_email=dhcpcanon.__author_mail__,
-    license='GPLv3+',
+    license='MIT',
     url=dhcpcanon.__website__,
     packages=find_packages(exclude=['contrib', 'docs', 'tests*']),
     install_requires=[
@@ -70,10 +56,9 @@ setup(
         "Environment :: Console",
         'Intended Audience :: End Users/Desktop',
         'Intended Audience :: Developers',
-        'License :: OSI Approved :: GNU General Public License v3 ' +
-        'or later (GPLv3+)',
+        'License :: OSI Approved :: MIT License',
         'Operating System :: OS Independent',
         'Programming Language :: Python',
-        "Topic :: Software Development :: Libraries :: Python Modules",
+        "Topic :: System :: Networking",
     ],
 )
