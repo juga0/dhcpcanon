@@ -9,8 +9,7 @@ before_install:
     - sudo apt update && sudo apt install -y python-dev
 
 install:
-    - pip install -U tox
-    - pip install -U coveralls
+    - pip install -U tox coveralls codecov
 # && pip install -r dev-requirements.txt"
 env:
     - TOX_ENV=style
