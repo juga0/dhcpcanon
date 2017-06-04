@@ -192,10 +192,10 @@ class DHCPCAP(object):
         # FIXME: check the fields match the previously offered ones?
         lease = self.handle_offer_ack(pkt)
         if self.lease is not None:
-            if self.lease.address != lease.address or \
-                self.lease.subnet_mask != lease.subnet_mask or \
-                self.lease.router != lease.router:
-                    event = DHCP_EVENTS['IP_CHANGE']
+            if (self.lease.address != lease.address or
+                    self.lease.subnet_mask != lease.subnet_mask or
+                    self.lease.router != lease.router):
+                event = DHCP_EVENTS['IP_CHANGE']
             else:
                 event = DHCP_EVENTS['RENEW']
         self.lease = lease
