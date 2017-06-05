@@ -4,6 +4,8 @@ dhcpcanon - DHCP anonymity profile
 [![PyPI](https://img.shields.io/pypi/v/dhcpcanon.svg)](https://pypi.python.org/pypi/dhcpcanon)
 [![Build Status](https://www.travis-ci.org/juga0/dhcpcanon.svg?branch=master)](https://www.travis-ci.org/juga0/dhcpcanon)
 [![Coverage Status](https://coveralls.io/repos/github/juga0/dhcpcanon/badge.svg?branch=master)](https://coveralls.io/github/juga0/dhcpcanon?branch=master)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/76064be9036443479e4f65bc902c1fc5)](https://www.codacy.com/app/juga0/dhcpcanon?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=juga0/dhcpcanon&amp;utm_campaign=Badge_Grade)
+[![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/1020/badge)](https://bestpractices.coreinfrastructure.org/projects/1020)
 
 DHCP client disclosing less identifying information.
 
