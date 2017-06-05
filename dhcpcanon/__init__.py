@@ -2,9 +2,10 @@
 # vim:ts=4:sw=4:expandtab 2
 # Copyright 2016, 2017 juga (juga at riseup dot net), MIT license.
 """."""
-
+from . import (clientscript, conflog, constants, dhcpcap, dhcpcapfsm,
+               dhcpcaplease, dhcpcaputils, timers)
 try:
-    from _version import version
+    from dhcpcanon._version import version
 except ImportError:
     try:
         from setuptools_scm import get_version
@@ -43,3 +44,5 @@ __license__ = """
     You should have received a copy of the GNU General Public License
     along with this package. If not, see <http://www.gnu.org/licenses/>.
 """
+__all__ = ('clientscript', 'conflog', 'dhcpcapfsm', 'dhcpcaplease',
+           'dhcpcaputils', 'timers', 'constants', 'dhcpcap')
