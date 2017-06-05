@@ -56,16 +56,10 @@ From [Wikipedia](https://en.wikipedia.org/wiki/DHCP):
 > network needs to be statically (ie., manually) assigned to an
 > IP address.
 
-#### DHCP Finite State Machine
-
-State-transition diagram for DHCP clients:
-
-![image](./doc/source/images/dhcpc_fsm.svg)
-
 Current status
 --------------
 
-WIP, still not recommended for end users.
+WIP, still not recommended for end users. Testers welcomed.
 
 See [TODO](./TODO.md)
 
@@ -101,5 +95,6 @@ licensed by the terms of the MIT license.
 Acknowledgments
 ---------------
 
-To the persons that push me to implement yet another DHCP client and to
-the person that told me about the anonymity profile.
+To the persons that push me to implement yet another DHCP client,
+the person that told me about the anonymity profile RFC, the authors of the RFC
+and all the ones that give ideas and suggestions on how to improve.
