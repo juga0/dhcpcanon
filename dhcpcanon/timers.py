@@ -9,8 +9,8 @@ import random
 from pytz import utc
 from datetime import datetime, timedelta
 
-from constants import MAX_DELAY_SELECTING, RENEW_PERC, REBIND_PERC
-from constants import DT_PRINT_FORMAT
+from .constants import MAX_DELAY_SELECTING, RENEW_PERC, REBIND_PERC
+from .constants import DT_PRINT_FORMAT
 
 logger = logging.getLogger(__name__)
 

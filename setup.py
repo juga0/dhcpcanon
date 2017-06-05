@@ -20,12 +20,11 @@ setup(
     url=dhcpcanon.__website__,
     packages=find_packages(exclude=['contrib', 'docs', 'tests*']),
     install_requires=[
-        "scapy>=2.2",
+        'scapy>=2.2";python_version<="2.7"',
+        'scapy-python3>=0.21;python_version>="3.4"',
         "netaddr>=0.7",
-        "ipaddr>=2.1",
         "pytz>=2016.6",
         "pip>=8.1",
-        "pyroute2>=0.4",
         "attrs>=16.3",
         "daemon>=1.1"
     ],
