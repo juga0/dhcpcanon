@@ -2,12 +2,11 @@
 
 API
 =====
-.. currentmodule:: dhcpcanon
 
-.. automodule:: dhcpcanon
-    :members: clientscript, dhcpcapfsm, dhcpcaplease, dhcpcap
+dhcpcanon
+-----------
 
-.. autoclass:: dhcpcanon.dhcpcapfsm.DHCPCAPFSM
-.. autoclass:: dhcpcanon.clientscript.ClientScript
-.. autoclass:: dhcpcanon.dhcpcaplease.DHCPCAPLease
-.. autoclass:: dhcpcanon.dhcpcap.DHCPCAP
+.. toctree::
+   :maxdepth: 4
+
+   dhcpcanon
