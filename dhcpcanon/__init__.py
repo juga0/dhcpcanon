@@ -2,8 +2,8 @@
 # vim:ts=4:sw=4:expandtab 2
 # Copyright 2016, 2017 juga (juga at riseup dot net), MIT license.
 """."""
-from . import (clientscript, conflog, constants, dhcpcap, dhcpcapfsm,
-               dhcpcaplease, dhcpcaputils, timers)
+# from . import (clientscript, conflog, constants, dhcpcap, dhcpcapfsm,
+#                dhcpcaplease, dhcpcaputils, timers)
 try:
     from dhcpcanon._version import version
 except ImportError:
