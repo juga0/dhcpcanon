@@ -16,10 +16,12 @@ Contents:
    download
    running
    todo
+   contributing
    soa
    implementation
    integration
    api
+   diagrams
 
 Indices and tables
 ==================

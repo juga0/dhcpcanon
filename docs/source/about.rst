@@ -51,12 +51,6 @@ From `Wikipedia <https://en.wikipedia.org/wiki/DHCP>`__:
     server, each computer or other device (eg., a printer) on the network
     needs to be statically (ie., manually) assigned to an IP address.
 
-DHCP Finite State Machine
-""""""""""""""""""""""""""
-State-transition diagram for DHCP clients:
-
-.. image:: ./images/dhcpcapfsm.*
-
 Current status
 --------------
 
@@ -74,8 +68,12 @@ Download
 
 See :ref:`download`
 
-Developer documentation
+Developers documentation
 --------------------------
+
+:ref:`contributing`
+
+:ref:`diagrams`
 
 :ref:`api`
 
