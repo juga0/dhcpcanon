@@ -3,61 +3,110 @@
 Comments about dhcpcanon implementation and the RFCs
 ==========================================================
 
-Please, see `RFC7844 comments <https://rfc7844-comments.readthedocs.io>`_
- for comments about [:rfc:`7844`].
+See `RFC7844 comments <https://rfc7844-comments.readthedocs.io>`_
+ for detailed comments about [:rfc:`7844`]. This page is focused on the
+ options and functionality implemented by ``dhcpcanon``.
 
-``dhcpcanon`` in general implements what MUST and SHOULD and does not
-what SHOULD NOT or MAY, unless found cases where a MAY options
-must be implemented in order servers reply.
+``dhcpcanon`` implements the options and functionality specified as ``MUST``
+in [:rfc:`7844`], but does not the ones specified as ``SHOULD`` or ``MAY``.
+It does not implement the ones as ``SHOULD NOT``, unless found cases where
+they have to be implemented in order servers reply.
 
-[TBC]
 
 Packet formant
 -----------------
 
-DHCPDISCOVER
+DHCPDISCOVER (always broadcast in AP)::
 
-    Message Type option
-    BOOTP: Client Hardware address (chaddr)
+    Ehter: src=client_mac, dst="ff:ff:ff:ff:ff:ff"
+    IP: src="0.0.0.0", dst="255.255.255.255"
+    UDP: sport=68, dport=67
+    BOOTP: Client Hardware address (chaddr in scapy)
+    DHCP: Message Type option (message-type in scapy)
 
 DHCPREQUEST
 
-In SELECTING state: Unicast to server id
+In SELECTING state: Broadcast in AP::
 
-    Message Type option
-    Server Identifier option
-    Requested IP option (yiaddr)
-    Client IP address (ciaddr) as 0?
+    Ehter: src=client_mac, dst="ff:ff:ff:ff:ff:ff"
+    IP: src="0.0.0.0", dst="255.255.255.255"
+    UDP: sport=68, dport=67
+    BOOTP: Client Hardware address (chaddr in scapy)
+    DHCP: Message Type option (message-type in scapy)
+    DHCP: Server Identifier option (server_id in scapy, siaddr in server BOOTP offer)
+    DHCP: Requested IP option (requested_addr in scapy, yiaddr in server BOOTP offer)
 
-In RENEWING state: Unicast to server id
+In RENEWING state: Unicast to server id::
 
-    Message Type option
-    Client IP address (ciaddr)
+    Ehter: src=client_mac, dst=server_mac
+    IP: src=client_ip, dst=server_ip
+    UDP: sport=68, dport=67
+    BOOTP: Client Hardware address (chaddr in scapy)
+    DHCP: Message Type option (message-type in scapy)
+    Client IP address (ciaddr=client_ip)?
 
-In REBINDING state: Broadcast
+In REBINDING state: Broadcast::
 
-    Message Type option
-    Client IP address (ciaddr)
+    Ehter: src=client_mac, dst="ff:ff:ff:ff:ff:ff"
+    IP: src="0.0.0.0", dst="255.255.255.255"
+    UDP: sport=68, dport=67
+    BOOTP: Client Hardware address (chaddr in scapy)
+    DHCP: Message Type option (message-type in scapy)
+    Client IP address (ciaddr=client_ip)?
 
 
-DHCPDECLINE
-    Message Type option
-    Server Identifier option
-    Requested IP option
+DHCPDECLINE (always broadcast?)::
 
-DHCPRELEASE
+    Ehter: src=client_mac, dst="ff:ff:ff:ff:ff:ff"
+    IP: src="0.0.0.0", dst="255.255.255.255"
+    UDP: sport=68, dport=67
+    BOOTP: Client Hardware address (chaddr in scapy)
+    DHCP: Message Type option (message-type in scapy)
+    DHCP: Server Identifier option (server_id in scapy, siaddr in server BOOTP offer)
+    DHCP: Requested IP option (requested_addr in scapy, yiaddr in server BOOTP offer)
 
-To don't implment
+DHCPRELEASE (always unicast)::
 
-DHCPINFORM
-    Message Type option
+    Ehter: src=client_mac, dst=server_mac
+    IP: src=client_ip, dst=server_ip
+    UDP: sport=68, dport=67
+    BOOTP: Client Hardware address (chaddr in scapy)
+    DHCP: Message Type option (message-type in scapy)
+    DHCP: Server Identifier option (server_id in scapy, siaddr in server BOOTP offer)
+
+DHCPINFORM (always broadcast in AP)::
+
+    Ehter: src=client_mac, dst="ff:ff:ff:ff:ff:ff"
+    IP: src=client_ip, dst="255.255.255.255"
+    UDP: sport=68, dport=67
+    BOOTP: Client Hardware address (chaddr in scapy)
+    BOOTP: Client IP address (ciaddr=client_ip)
+    DHCP: Message Type option (message-type in scapy)
 
 Operational considerations
 ---------------------------
 
-``dhcpcanon`` will not implement for now the standard behavior as
-it would require to implement more functionality and most of the current
-tools implement already the standard.
+``dhcpcanon`` does not currently implement the standard behavior described in
+ [:rfc:`2131`] in order to keep the implementation simple and
+ because all existing implementations already implement it.
+
+Leases
+----------
+
+For the sake of simplicity and privacy ``dhcpcanon`` does not currently
+implement the INIT-REBOOT state nor reuse previously allocated addresses.
+
+In future stages of ``dhcpcanon`` would be possible to reuse a previously
+ allocated address.
+In order to do not leak identifying information when doing so,
+it would be needed:
+* to keep a database with previously allocated addresses associated to:
+  * the link network where the address was obtained
+    (without revealing the MAC being used).
+  * the MAC address that was used in that network
+
+It is possible also that ``dhcpcanon`` will include a MAC randomization module
+ in the same distribution package or would require it in order to start.
 
 Not mentioned in RFC7844, but RFC2131:
 ---------------------------------------------
@@ -95,4 +144,4 @@ BOUND, setting rebinding_time::
 Client Identifier algorithm
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-[TBD]
+See details in `RFC7844 comments <https://rfc7844-comments.readthedocs.io#client-identifier-algorithm>`_.
