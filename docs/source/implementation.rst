@@ -3,9 +3,9 @@
 Comments about dhcpcanon implementation and the RFCs
 ==========================================================
 
-See `RFC7844 comments <https://rfc7844-comments.readthedocs.io>`_
- for detailed comments about [:rfc:`7844`]. This page is focused on the
- options and functionality implemented by ``dhcpcanon``.
+See :ref:`RFC7844 comments <rfc7844comm>` for detailed comments about
+[:rfc:`7844`]. This page is focused on the
+options and functionality implemented by ``dhcpcanon``.
 
 ``dhcpcanon`` implements the options and functionality specified as ``MUST``
 in [:rfc:`7844`], but does not the ones specified as ``SHOULD`` or ``MAY``.
@@ -86,6 +86,14 @@ DHCPINFORM (always broadcast in AP)::
 Operational considerations
 ---------------------------
 
+Operational considerations
+---------------------------
+
+[:rfc:`7844#5.`] ::
+
+   Implementers SHOULD provide a way for clients to control when the
+   anonymity profiles are used and when standard behavior is preferred.
+
 ``dhcpcanon`` does not currently implement the standard behavior described in
  [:rfc:`2131`] in order to keep the implementation simple and
  because all existing implementations already implement it.
@@ -99,10 +107,13 @@ implement the INIT-REBOOT state nor reuse previously allocated addresses.
 In future stages of ``dhcpcanon`` would be possible to reuse a previously
  allocated address.
 In order to do not leak identifying information when doing so,
-it would be needed:
+ it would be needed:
+
 * to keep a database with previously allocated addresses associated to:
+
   * the link network where the address was obtained
     (without revealing the MAC being used).
+
   * the MAC address that was used in that network
 
 It is possible also that ``dhcpcanon`` will include a MAC randomization module
@@ -144,4 +155,4 @@ BOUND, setting rebinding_time::
 Client Identifier algorithm
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-See details in `RFC7844 comments <https://rfc7844-comments.readthedocs.io#client-identifier-algorithm>`_.
+See details in :ref:`RFC7844 comments, client identifier algorithm <rfc7844_comments:client-identifier-algorithm>`

@@ -56,17 +56,16 @@ From [Wikipedia](https://en.wikipedia.org/wiki/DHCP):
 > network needs to be statically (ie., manually) assigned to an
 > IP address.
 
-Current status
+Documentation
 --------------
 
-WIP, still not recommended for end users. Testers welcomed.
-
-See [TODO](./TODO.md)
+A more extensive online documentation is available in [Read the docs](https://dhcpcanon.readthedocs.io/).
+The documentation source is in [this repository](docs/source/)
 
 Installation
 ------------
 
-See [Installation](INSTALL.md)
+See [Installation](docs/source/install.rst)
 
 Download
 --------
@@ -86,6 +85,13 @@ If you wish to signal a bug or report a feature request, please fill-in
 an issue on the [dhcpcanon issue
 tracker](https://github.com/juga0/dhcpcanon/issues).
 
+Current status
+--------------
+
+WIP, still not recommended for end users. Testers welcomed.
+
+See [TODO](./docs/source/todo.rst)
+
 License
 -------
 
@@ -95,6 +101,10 @@ licensed by the terms of the MIT license.
 Acknowledgments
 ---------------
 
-To the persons that push me to implement yet another DHCP client,
-the person that told me about the anonymity profile RFC, the authors of the RFC
-and all the ones that give ideas and suggestions on how to improve.
+To all the persons that have given suggestions and comments about this
+implementation, the authors of the
+[RFC 7844](https://tools.ietf.org/html/rfc7844)),
+the [Prototype Fund Project] (https://prototypefund.de) of the
+the [Open Knowledge Foundation Germany](https://okfn.de/) and the
+[Federal Ministry of Education and Research](https://www.bmbf.de/)
+for funding partially this project.

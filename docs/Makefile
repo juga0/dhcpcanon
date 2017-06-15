@@ -16,6 +16,10 @@ I18NSPHINXOPTS  = $(PAPEROPT_$(PAPER)) $(SPHINXOPTS) source
 # not in auto-generated conf
 SOURCEDIR       = source
 IMAGEDIRS       = source/images
+BUILDDIRIMAGES  = $(BUILDDIR)/html/_images
+# generate SVG
+PYREVERSE     = pyreverse
+PYREVERSE_FLAGS = -o svg -p dhcpcanon ../dhcpcanon
 # SVG to PDF conversion
 SVG2PDF       = inkscape
 SVG2PDF_FLAGS =
@@ -51,13 +55,25 @@ help:
 	@echo "  dummy      to check syntax errors of document sources"
 
 # Not in auto-generated conf
+FSMSVG := python -c "from dhcpcanon.dhcpcapfsm import DHCPCAPFSM; DHCPCAPFSM.graph(target='>$(IMAGEDIRS)/dhcpcapfsm.svg')";mkdir -p $(BUILDDIRIMAGES);cp $(IMAGEDIRS)/*.svg $(BUILDDIRIMAGES)
+fsmsvg:
+	@echo "Generating FSM SVG"
+	$(FSMSVG)
+
+UMLSVG := $(PYREVERSE) $(PYREVERSE_FLAGS);mv *.svg $(IMAGEDIRS);mkdir -p $(BUILDDIRIMAGES);cp $(IMAGEDIRS)/*.svg $(BUILDDIRIMAGES)
+umlsvg:
+	@echo "Generating UML SVG"
+	$($UMLSVG)
+
 # Pattern rule for converting SVG to PDF
 %.pdf : %.svg
 	$(SVG2PDF) -f $< -A $@
 # Build a list of SVG files to convert to PDFs
 PDFs := $(foreach dir, $(IMAGEDIRS), $(patsubst %.svg,%.pdf,$(wildcard $(SOURCEDIR)/$(dir)/*.svg)))
 # Make a rule to build the PDFs
-images: $(PDFs)
+images:
+	@echo "Generating PDFs"
+	$(PDFs)
 
 .PHONY: clean
 clean:
@@ -66,6 +82,8 @@ clean:
 
 .PHONY: html
 html:
+	$(FSMSVG)
+	$(UMLSVG)
 	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html
 	@echo
 	@echo "Build finished. The HTML pages are in $(BUILDDIR)/html."
@@ -143,7 +161,10 @@ epub3:
 	@echo "Build finished. The epub3 file is in $(BUILDDIR)/epub3."
 
 .PHONY: latex
-latex: $(PDFs)
+latex:
+	$(FSMSVG)
+	$(UMLSVG)
+	$(PDFs)
 	$(SPHINXBUILD) -b latex $(ALLSPHINXOPTS) $(BUILDDIR)/latex
 	@echo
 	@echo "Build finished; the LaTeX files are in $(BUILDDIR)/latex."
@@ -151,7 +172,10 @@ latex: $(PDFs)
 	      "(use \`make latexpdf' here to do that automatically)."
 
 .PHONY: latexpdf
-latexpdf: $(PDFs)
+latexpdf:
+	$(FSMSVG)
+	$(UMLSVG)
+	$(PDFs)
 	$(SPHINXBUILD) -b latex $(ALLSPHINXOPTS) $(BUILDDIR)/latex
 	@echo "Running LaTeX files through pdflatex..."
 	$(MAKE) -C $(BUILDDIR)/latex all-pdf

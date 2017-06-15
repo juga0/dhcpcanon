@@ -3,19 +3,15 @@
 TODO
 =====
 
-[ ] RFC7844 5. Implementers SHOULD provide a way for clients to control when the
-anonymity profiles are used and when standard behavior is preferred.
+[X] create debian package
 
-[ ] RFC2131 2.2 the allocating
-server SHOULD probe the reused address before allocating the address,
-e.g., with an ICMP echo request, and the client SHOULD probe the
-newly received address, e.g., with ARP.
+[X] create documentation
 
-[ ] create tests
+[X] calculate retransmission times for DISCOVER
 
-[ ] create documentation
+[ ] (WIP) create tests
 
-[ ] calculate retransmission times for DISCOVER
+[ ] (WIP) integrate with Network Manager
 
 [ ] listen in several interfaces
 
@@ -23,4 +19,10 @@ newly received address, e.g., with ARP.
 
 [ ] create init.d daemon
 
+[ ] limit privileges
+
 [ ] include MAC anonymization module
+
+[ ] create apparmor profile
+
+[ ] implement IPv6

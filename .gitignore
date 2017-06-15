@@ -10,6 +10,5 @@ docs/build
 docs/source/images/*.pdf
 .cache
 .tox
-.coverage
+.coverage*
 htmlcov
-

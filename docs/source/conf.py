@@ -18,6 +18,7 @@
 #
 import os
 import sys
+
 sys.path.insert(0, os.path.dirname(os.path.dirname(
     os.path.abspath('.'))))
 
@@ -34,11 +35,13 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(
 extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.doctest',
+    'sphinx.ext.intersphinx',
     'sphinx.ext.todo',
     'sphinx.ext.coverage',
     'sphinx.ext.imgmath',
     'sphinx.ext.viewcode',
     'sphinx.ext.githubpages',
+    'sphinx.ext.autosummary',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -434,4 +437,9 @@ epub_exclude_files = ['search.html']
 
 
 # Example configuration for intersphinx: refer to the Python standard library.
-intersphinx_mapping = {'https://docs.python.org/': None}
+# intersphinx_mapping = {'https://docs.python.org/': None}
+intersphinx_mapping = {
+    'rfc7844_comments': ('https://rfc7844-comments.readthedocs.io/en/latest',
+                         None)
+                        #  '../build/html/rfc7844_comments.inv')
+    }
