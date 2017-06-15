@@ -3,59 +3,40 @@
 # Copyright 2016, 2017 juga (juga at riseup dot net), MIT license.
 """"""
 import logging
+from datetime import datetime
 
-from dhcpcap_pkts import dhcp_discover, dhcp_offer, dhcp_request, dhcp_ack
-from dhcpcanon.dhcpcaplease import DHCPCAPLease
+from dhcpcap_leases import LEASE_ACK, LEASE_REQUEST
+from dhcpcap_pkts import dhcp_ack, dhcp_discover, dhcp_offer, dhcp_request
 
 FORMAT = "%(levelname)s: %(filename)s:%(lineno)s - %(funcName)s - " + \
          "%(message)s"
 logging.basicConfig(format=FORMAT, level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
-LEASE_REQUEST = DHCPCAPLease(interface='eth0', address='192.168.1.2',
-                             server_id='192.168.1.1',
-                             next_server='192.168.1.1',
-                             router='192.168.1.1', subnet_mask='255.255.255.0',
-                             broadcast_address='192.168.1.255',
-                             domain='localdomain',
-                             name_server='192.168.1.1', lease_time=129600,
-                             renewal_time=604800, rebinding_time=1058400,
-                             subnet_mask_cidr='', subnet='', expiry='',
-                             renew='', rebind='')
-
-LEASE_ACK = DHCPCAPLease(interface='eth0', address='192.168.1.2',
-                         server_id='192.168.1.1', next_server='192.168.1.1',
-                         router='192.168.1.1', subnet_mask='255.255.255.0',
-                         broadcast_address='192.168.1.255',
-                         domain='localdomain',
-                         name_server='192.168.1.1', lease_time=129600,
-                         renewal_time=604800, rebinding_time=1058400,
-                         subnet_mask_cidr='24', subnet='192.168.1.0',
-                         expiry='', renew='', rebind='')
-
 
 class TestDHCPCAP:
     def test_intialize(self, dhcpcap):
-        assert dhcpcap.client_mac == "00:0a:0b:0c:0d:0f"
+        assert dhcpcap.client_mac == "00:01:02:03:04:05"
+        assert dhcpcap.iface == "eth0"
 
-    def test_gen_discover(self, dhcpcap, datadir):
+    def test_gen_discover(self, dhcpcap):
         discover = dhcpcap.gen_discover()
+        logger.debug(discover)
+        logger.debug(dhcp_discover)
         assert discover == dhcp_discover
 
-    def test_handle_offer(self, dhcpcap, datadir):
+    def test_handle_offer(self, dhcpcap):
         dhcpcap.handle_offer(dhcp_offer)
         lease = dhcpcap.lease
-        logger.debug("lease %s", lease)
         assert lease == LEASE_REQUEST
 
-    def test_gen_request(self, dhcpcap, datadir):
+    def test_gen_request(self, dhcpcap):
         dhcpcap.lease = LEASE_REQUEST
         request = dhcpcap.gen_request()
         assert request == dhcp_request
 
-    def test_handle_ack(self, dhcpcap, datadir):
+    def test_handle_ack(self, dhcpcap):
         dhcpcap.lease = LEASE_REQUEST
-        dhcpcap.handle_ack(dhcp_ack)
+        dhcpcap.handle_ack(dhcp_ack, datetime(2017, 6, 23))
         lease = dhcpcap.lease
-        logger.debug("lease %s", lease)
         assert lease == LEASE_ACK

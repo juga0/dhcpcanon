@@ -76,7 +76,15 @@ using ``tox``
 
 You can then push your feature branch to your remote and open a pull request.
 
-.. note:: Partly copied from `libcloud contributing`_
+Reporting a Vulnerability
+----------------------------
+
+Please do not report security issues using the public `Issue tracker`_.
+Send a description of it to juga at riseup dot net.
+You are also encouraged to encrypt this email using GPG.
+The key can be found in the public servers.
+
+This docummentation is partly copied from `libcloud contributing`_
 
 .. _`PEP8 Python Style Guide`: http://www.python.org/dev/peps/pep-0008/
 .. _`Issue tracker`: https://github.com/juga0/dhcpcanon/issues

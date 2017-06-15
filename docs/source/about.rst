@@ -5,20 +5,20 @@ dhcpcanon - DHCP anonymity profile
 
 DHCP client disclosing less identifying information.
 
-Python implmentation of the DHCP Anonymity Profile
-(`RFC7844 <https://tools.ietf.org/html/rfc7844>`__)
+Python implmentation of the DHCP Anonymity Profile :rfc:`7844`
 designed for users that wish to remain anonymous to the visited network
 minimizing disclosure of identifying information.
 
 Technologies
 -------------
 
-This implementation uses the Python `Scapy Automata <https://www.secdev.org/projects/scapy/doc/advanced_usage.html#automata>`__
+This implementation uses the Python
+`Scapy Automata <https://www.secdev.org/projects/scapy/doc/advanced_usage.html#automata>`__
 
 What is the Anonymity Profile?
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-As the RFC7844 stats:
+As the [:rfc:`7844`] stats:
 
     Some DHCP options carry unique identifiers. These identifiers can
     enable device tracking even if the device administrator takes care of
@@ -51,23 +51,6 @@ From `Wikipedia <https://en.wikipedia.org/wiki/DHCP>`__:
     server, each computer or other device (eg., a printer) on the network
     needs to be statically (ie., manually) assigned to an IP address.
 
-Current status
---------------
-
-Minimal version implemented, still to be improved.
-
-See :ref:`todo`
-
-Installation
-------------
-
-See :ref:`install`
-
-Download
---------
-
-See :ref:`download`
-
 Developers documentation
 --------------------------
 
@@ -81,9 +64,19 @@ Developers documentation
 
 :ref:`implementation`
 
-`Related RFCs <https://rfc7844-comments.readthedocs.io/en/latest/rfcs.html>`_.
+:ref:`Related RFCs <rfcs>`
 
-`RFC 7844 summary and comments <https://rfc7844-comments.readthedocs.io/en/latest/rfc7844comm.html>`_
+:ref:`RFC7844 comments and summary <rfc7844comm>`
+
+Installation
+------------
+
+See :ref:`install`
+
+Download
+--------
+
+See :ref:`download`
 
 Bugs and features
 -----------------
@@ -91,6 +84,13 @@ Bugs and features
 If you wish to signal a bug or report a feature request, please fill-in
 an issue on the `dhcpcanon issue tracker
 <https://github.com/juga0/dhcpcanon/issues>`__.
+
+Current status
+--------------
+
+Minimal version implemented, still to be improved.
+
+See :ref:`todo`
 
 License
 -------
@@ -101,5 +101,9 @@ and is licensed under the terms of the MIT license.
 Acknowledgments
 ---------------
 
-To the persons that push me to implement yet another DHCP client
-and to the person that told me about the anonymity profile.
+To all the persons that have given suggestions and comments about this
+implementation, the authors of the :rfc:`7844`,
+the `Prototype Fund Project <https://prototypefund.de>`_ of the
+`Open Knowledge Foundation Germany <https://okfn.de/>`_ and the
+`Federal Ministry of Education and Research <https://www.bmbf.de/>`_
+for funding partially this project.

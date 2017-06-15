@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # vim:ts=4:sw=4:expandtab
 # Copyright 2016, 2017 juga (juga at riseup dot net), MIT license.
-"""."""
+"""Logging configuration."""
 import logging
 import sys
 
@@ -49,9 +49,14 @@ LOGGING = {
             'level': logging.INFO,
             'propagate': False
         },
+        "scapy": {
+            'handlers': ['stdoutscapy'],
+            'level': logging.DEBUG,
+            'propagate': False
+        },
         "scapy.interactive": {
             'handlers': ['stdoutscapy'],
-            'level': logging.INFO,
+            'level': logging.DEBUG,
             'propagate': False
         }
     }

@@ -8,7 +8,6 @@ from setuptools import find_packages, setup
 
 import dhcpcanon
 
-
 setup(
     name='dhcpcanon',
     version=dhcpcanon.__version__,
@@ -23,7 +22,6 @@ setup(
         'scapy>=2.2";python_version<="2.7"',
         'scapy-python3>=0.21;python_version>="3.4"',
         "netaddr>=0.7",
-        "pytz>=2016.6",
         "pip>=8.1",
         "attrs>=16.3",
         "daemon>=1.1"
@@ -57,7 +55,8 @@ setup(
         'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',
         'Operating System :: OS Independent',
-        'Programming Language :: Python',
+        'Programming Language :: Python :: 2',
+        'Programming Language :: Python :: 3',
         "Topic :: System :: Networking",
     ],
 )

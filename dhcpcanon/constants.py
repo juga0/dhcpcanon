@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 # vim:ts=4:sw=4:expandtab 2
 # Copyright 2016, 2017 juga (juga at riseup dot net), MIT license.
-"""."""
+"""Constants for the DHCP client implementation of the Anonymity Profile
+([:rfc:`7844`])."""
 import logging
 
 logger = logging.getLogger(__name__)
@@ -45,16 +46,6 @@ DHCP_OFFER_OPTIONS = [
     'router', 'domain', 'name_server', 'lease_time', 'renewal_time',
     'rebinding_time']
 
-# NOTE: 3.6. The choice of option numbers and the specific ordering of option
-# numbers in the PRL can be used to fingerprint the client
-# SHOULD only request a
-# minimal number of options in the PRL and SHOULD also randomly shuffle
-# the ordering of option codes in the PRL
-# PARAM_REQ_LIST = '\x01\x03\x06\x0fw\xfc'# \x1c3
-PARAM_REQ_LIST = '\x01\x1c\x02\x03\x0f\x06\x77\x0c\x2c\x2f\x1a\x79\x2a'
-XID_MIN = 1
-XID_MAX = 900000000
-
 # DHCP FSM
 #############
 STATE_ERROR = -1
@@ -93,6 +84,7 @@ REASONS_NM = [
 STATES2REASONS = {
     STATE_PREINIT: 'PREINIT',
     STATE_INIT: 'INIT',
+    STATE_SELECTING: 'SELECTING',
     STATE_BOUND: 'BOUND',
     STATE_END: 'END',
     STATE_REBINDING: 'REBIND',
@@ -135,3 +127,6 @@ LEASEATTRS2ENVKEYS = {
     'expire': 'expiry',
     'dhcp_server_identifier': 'server_id',
 }
+
+FSM_ATTRS = ['request_attempts', 'discover_attempts', 'script',
+             'time_sent_request', 'current_state', 'client']

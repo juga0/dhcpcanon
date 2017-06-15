@@ -1,17 +1,19 @@
 # -*- coding: utf-8 -*-
 # vim:ts=4:sw=4:expandtab 2
 # Copyright 2016, 2017 juga (juga at riseup dot net), MIT license.
-"""."""
+"""__init__ for the DHCP client implementation of the Anonymity Profile
+([:rfc:`7844`])."""
+from __future__ import absolute_import
 # from . import (clientscript, conflog, constants, dhcpcap, dhcpcapfsm,
 #                dhcpcaplease, dhcpcaputils, timers)
 try:
-    from dhcpcanon._version import version
+    from ._version import version
 except ImportError:
     try:
         from setuptools_scm import get_version
         version = get_version()
     except (ImportError, LookupError):
-        version = '0.2.0'
+        version = '0.3.0'
 
 __version__ = version
 __author__ = "juga"
