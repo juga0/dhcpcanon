@@ -39,7 +39,7 @@ setup(
     extras_require={
         'dev': ['ipython', 'pyflakes', 'pep8'],
         'test': ['coverage', 'coveralls', 'codecov', 'tox', 'pytest'],
-        'doc': ['sphinx']
+        'doc': ['sphinx', 'pylint']
     },
     # entry_points={
     #     'console_scripts': [
