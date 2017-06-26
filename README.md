@@ -66,6 +66,7 @@ Installation
 ------------
 
 See [Installation](docs/source/install.rst)
+and [Running](docs/source/running.rst)
 
 Download
 --------
