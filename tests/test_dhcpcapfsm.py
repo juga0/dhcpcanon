@@ -36,6 +36,9 @@ class DummySocket(object):
     def recv(self, n=0):
         return dhcp_offer
 
+    def close(self):
+        pass
+
 
 class DummySocketAck(DummySocket):
     def recv(self, n=0):
@@ -51,6 +54,8 @@ class TestDHCPCAPFSM:
                                           fsm_preinit['current_state'])
         # recvsock=DummySocket) will fail with python3
         conf.L2listen = DummySocket
+        # for sendp:
+        conf.L2socket = DummySocket
         dhcpcanon = DHCPCAPFSM(client_mac='00:01:02:03:04:05', iface='eth0',
                                scriptfile='/sbin/dhclient-script',
                                delay_selecting=1, timeout_select=1,
@@ -78,7 +83,6 @@ class TestDHCPCAPFSM:
                      dhcpcanon.get_timeout(dhcpcanon.current_state,
                                            dhcpcanon.timeout_selecting))
         # FIXME: why is needed here to press enter to don't retransmit?
-        # dhcpcanon.listen_sock.recv(dhcp_offer)
         try:
             dhcpcanon.next()
         except Automaton.Singlestep as err:

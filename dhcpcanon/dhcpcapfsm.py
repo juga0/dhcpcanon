@@ -10,6 +10,7 @@ from netaddr import AddrFormatError
 from scapy.arch import get_if_raw_hwaddr
 from scapy.automaton import ATMT, Automaton
 from scapy.config import conf
+from scapy.sendrecv import sendp
 from scapy.utils import str2mac
 
 from .clientscript import ClientScript
@@ -57,7 +58,12 @@ class DHCPCAPFSM(Automaton):
         if iface is None:
             iface = conf.iface
         if client_mac is None:
-            _, mac = get_if_raw_hwaddr(iface)
+            # scapy for python 3 returns byte, not tuple
+            tempmac = get_if_raw_hwaddr(iface)
+            if isinstance(tempmac, tuple) and len(tempmac) == 2:
+                mac = tempmac[1]
+            else:
+                mac = tempmac
             client_mac = str2mac(mac)
         self.client = DHCPCAP(iface, client_mac)
         self.script = ClientScript()
@@ -147,9 +153,7 @@ class DHCPCAPFSM(Automaton):
         assert self.current_state == STATE_INIT or \
             self.current_state == STATE_SELECTING
         pkt = self.client.gen_discover()
-        conf.checkIPaddr = 0
-        self.my_send(pkt)
-        conf.checkIPaddr = 1
+        sendp(pkt)
         # FIXME: check that this is correct,: all or only discover?
         if self.discover_attempts < MAX_ATTEMPTS_DISCOVER:
             self.discover_attempts += 1
@@ -192,9 +196,7 @@ class DHCPCAPFSM(Automaton):
             pkt = self.client.gen_request_unicast()
         else:
             pkt = self.client.gen_request()
-            conf.checkIPaddr = 0
-        self.my_send(pkt)
-        conf.checkIPaddr = 1
+        sendp(pkt)
         logger.debug('Modifying FSM obj, setting time_sent_request.')
         self.time_sent_request = nowutc()
         logger.info('DHCPREQUEST of %s on %s to %s port %s',
