@@ -24,7 +24,7 @@ setup(
         "netaddr>=0.7",
         "pip>=8.1",
         "attrs>=16.3",
-        "daemon>=1.1"
+        # "daemon>=1.1"
     ],
     # leaved commented to have concrete dependencies
     # dependency_links=[
