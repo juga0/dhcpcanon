@@ -282,9 +282,12 @@ class DHCPCAP(object):
         will be raised and catched in the FSM.
 
         """
+        assert netmask
         ipn = IPNetwork(addr + '/' + netmask)
-        ripn = IPNetwork(router + '/' + netmask)
-        assert ripn.network == ipn.network
+        if router != '':
+            ripn = IPNetwork(router + '/' + netmask)
+            assert ripn.network == ipn.network
+        # FIXME: router is not needed here, should check whether it is later
         logger.debug('Net values are valid')
         return {'subnet_mask_cidr': str(ipn.prefixlen),
                 'subnet': str(ipn.network)}
@@ -295,8 +298,8 @@ class DHCPCAP(object):
                            if isinstance(opt, tuple)
                            and opt[0] in DHCP_OFFER_OPTIONS])
         net_attrs_dict = self.gen_net_values(pkt[BOOTP].yiaddr,
-                                             attrs_dict.get('subnet_mask'),
-                                             attrs_dict.get('router'))
+                                             attrs_dict.get('subnet_mask', ''),
+                                             attrs_dict.get('router', ''))
         attrs_dict.update(net_attrs_dict)
         attrs_dict.update({
             "interface": self.iface,
