@@ -118,9 +118,9 @@ def gen_renewing_time(lease_time, elapsed=0):
         client reacquisition.
 
     """
-    renewing_time = lease_time * RENEW_PERC - elapsed
+    renewing_time = int(lease_time) * RENEW_PERC - elapsed
     # FIXME: the random intervals here could deanonymize
-    range_fuzz = lease_time * REBIND_PERC - renewing_time
+    range_fuzz = int(lease_time) * REBIND_PERC - renewing_time
     fuzz = random.uniform(-(range_fuzz),
                           +(range_fuzz))
     renewing_time += fuzz
@@ -130,9 +130,9 @@ def gen_renewing_time(lease_time, elapsed=0):
 
 def gen_rebinding_time(lease_time, elapsed=0):
     """."""
-    rebinding_time = lease_time * REBIND_PERC - elapsed
+    rebinding_time = int(lease_time) * REBIND_PERC - elapsed
     # FIXME: the random intervals here could deanonymize
-    range_fuzz = lease_time - rebinding_time
+    range_fuzz = int(lease_time) - rebinding_time
     fuzz = random.uniform(-(range_fuzz),
                           +(range_fuzz))
     rebinding_time += fuzz
