@@ -64,6 +64,8 @@ Developers documentation
 
 :ref:`implementation`
 
+:ref:`specification`
+
 :ref:`Related RFCs <rfcs>`
 
 :ref:`RFC7844 comments and summary <rfc7844comm>`
