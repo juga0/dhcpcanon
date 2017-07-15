@@ -275,38 +275,63 @@ class DHCPCAP(object):
         logger.debug(dhcp_inform.summary())
         return dhcp_inform
 
-    def gen_net_values(self, addr, netmask, router):
+    def gen_check_lease_attrs(self, attrs_dict):
         """Generate network mask in CIDR format and subnet.
 
         Validate the given arguments. Otherwise AddrFormatError exception
         will be raised and catched in the FSM.
 
         """
-        assert netmask
-        ipn = IPNetwork(addr + '/' + netmask)
-        if router != '':
-            ripn = IPNetwork(router + '/' + netmask)
-            assert ripn.network == ipn.network
-        # FIXME: router is not needed here, should check whether it is later
+        # without some minimal options given by the server, is not possible
+        # to create new lease
+        assert attrs_dict['subnet_mask']
+        assert attrs_dict['address']
+        # if address and/or network are not valid this will raise an exception
+        # (AddrFormatError)
+        ipn = IPNetwork(attrs_dict['address'] + '/' +
+                        attrs_dict['subnet_mask'])
+        # FIXME: should be this option required?
+        # assert attrs_dict['server_id']
+        if attrs_dict.get('server_id') is None:
+            attrs_dict['server_id'] = self.server_ip
+        # TODO: there should be more complex checking here about getting an
+        # address in a subnet?
+        # else:
+        #     if IPAddress('server_id') not in ipn:
+        #         raise ValueError("server_id is not in the same network as"
+        #                          "the offered address.")
+        if attrs_dict.get('router') is None:
+            attrs_dict['router'] = attrs_dict['server_id']
+        ripn = IPNetwork(attrs_dict['router'] + '/' +
+                         attrs_dict['subnet_mask'])
+        assert ripn.network == ipn.network
+        # set the options that are not given by the server
+        attrs_dict['subnet_mask_cidr'] = str(ipn.prefixlen)
+        attrs_dict['subnet'] = str(ipn.network)
+        # check other options that might not be given by the server
+        if attrs_dict.get('broadcast_address') is None:
+            attrs_dict['broadcast_address'] = str(ipn.broadcast)
+        if attrs_dict.get('name_server') is None:
+            attrs_dict['name_server'] = attrs_dict['server_id']
+        if attrs_dict.get('next_server') is None:
+            attrs_dict['next_server'] = attrs_dict['server_id']
         logger.debug('Net values are valid')
-        return {'subnet_mask_cidr': str(ipn.prefixlen),
-                'subnet': str(ipn.network)}
+        return attrs_dict
 
     def handle_offer_ack(self, pkt, time_sent_request=None):
         """Create a lease object with the values in OFFER/ACK packet."""
         attrs_dict = dict([(opt[0], str(opt[1])) for opt in pkt[DHCP].options
                            if isinstance(opt, tuple)
                            and opt[0] in DHCP_OFFER_OPTIONS])
-        net_attrs_dict = self.gen_net_values(pkt[BOOTP].yiaddr,
-                                             attrs_dict.get('subnet_mask', ''),
-                                             attrs_dict.get('router', ''))
-        attrs_dict.update(net_attrs_dict)
         attrs_dict.update({
             "interface": self.iface,
             "address": pkt[BOOTP].yiaddr,
             "next_server": pkt[BOOTP].siaddr,
         })
+        # this function changes the dict
+        self.gen_check_lease_attrs(attrs_dict)
         logger.debug('Creating Lease obj.')
+        logger.debug('with attrs %s', attrs_dict)
         lease = DHCPCAPLease(**attrs_dict)
         return lease
 
