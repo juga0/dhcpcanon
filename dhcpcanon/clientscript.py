@@ -65,6 +65,7 @@ class ClientScript(object):
         if scriptname is not None:
             env = self.env or env
             logger.debug('Calling script %s', scriptname)
+            logger.debug('with env %s', env)
             sp = subprocess.Popen([scriptname], stdout=subprocess.PIPE,
                                   stderr=subprocess.PIPE, env=env,
                                   close_fds=True, shell=False)
