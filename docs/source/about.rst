@@ -66,6 +66,8 @@ Developers documentation
 
 :ref:`specification`
 
+:ref:`privileges`
+
 :ref:`Related RFCs <rfcs>`
 
 :ref:`RFC7844 comments and summary <rfc7844comm>`
