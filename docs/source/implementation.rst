@@ -7,6 +7,9 @@ See :ref:`RFC7844 comments <rfc7844comm>` for detailed comments about
 [:rfc:`7844`]. This page is focused on the
 options and functionality implemented by ``dhcpcanon``.
 
+See :ref:`specification` for the specification of ``dhcpcanon`` as an RFC
+more restrictive than the previous one.
+
 ``dhcpcanon`` implements the options and functionality specified as ``MUST``
 in [:rfc:`7844`], but does not the ones specified as ``SHOULD`` or ``MAY``.
 It does not implement the ones as ``SHOULD NOT``, unless found cases where

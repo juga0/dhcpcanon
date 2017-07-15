@@ -19,6 +19,7 @@ Contents:
    contributing
    soa
    implementation
+   specification
    integration
    api
    diagrams
