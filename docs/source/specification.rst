@@ -351,3 +351,10 @@ Leases
     address.
 
 See requesting IP address option
+
+Implementation specific
+-------------------------
+
+- is it needed to check that the ACK options match with the OFFER ones?
+- is it needed to check that all options make sense?, which ones?
+- which are the random intervals for renewing/rebinding?
