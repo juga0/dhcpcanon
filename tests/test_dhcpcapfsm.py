@@ -82,7 +82,7 @@ class TestDHCPCAPFSM:
         logger.debug('Test timeout selecting %s',
                      dhcpcanon.get_timeout(dhcpcanon.current_state,
                                            dhcpcanon.timeout_selecting))
-        # FIXME: why is needed here to press enter to don't retransmit?
+        # FIXME:110 why is needed here to press enter to don't retransmit?
         try:
             dhcpcanon.next()
         except Automaton.Singlestep as err:

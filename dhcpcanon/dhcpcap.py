@@ -290,7 +290,7 @@ class DHCPCAP(object):
         # (AddrFormatError)
         ipn = IPNetwork(attrs_dict['address'] + '/' +
                         attrs_dict['subnet_mask'])
-        # FIXME: should be this option required?
+        # FIXME:70 should be this option required?
         # assert attrs_dict['server_id']
         if attrs_dict.get('server_id') is None:
             attrs_dict['server_id'] = self.server_ip
@@ -349,8 +349,8 @@ class DHCPCAP(object):
         self.server_ip = pkt[IP].src
         self.server_port = pkt[UDP].sport
         event = DHCP_EVENTS['IP_ACQUIRE']
-        # FIXME: check the fields match the previously offered ones?
-        # FIXME: create a new object also on renewing/rebinding
+        # FIXME:0 check the fields match the previously offered ones?
+        # FIXME:50 create a new object also on renewing/rebinding
         # or only set_times?
         lease = self.handle_offer_ack(pkt, time_sent_request)
         lease.set_times(time_sent_request)

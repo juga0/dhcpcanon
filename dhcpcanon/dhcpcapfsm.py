@@ -154,7 +154,7 @@ class DHCPCAPFSM(Automaton):
             self.current_state == STATE_SELECTING
         pkt = self.client.gen_discover()
         sendp(pkt)
-        # FIXME: check that this is correct,: all or only discover?
+        # FIXME:20 check that this is correct,: all or only discover?
         if self.discover_attempts < MAX_ATTEMPTS_DISCOVER:
             self.discover_attempts += 1
         timeout = gen_timeout_resend(self.discover_attempts)
@@ -203,7 +203,7 @@ class DHCPCAPFSM(Automaton):
                     self.client.iface, self.client.client_ip,
                     self.client.server_ip, self.client.server_port)
 
-        # FIXME: check that this is correct,: all of only discover?
+        # FIXME:10 check that this is correct,: all of only discover?
         # and if > MAX_DISCOVER_RETRIES?
         if self.request_attempts < MAX_ATTEMPTS_REQUEST:
             self.request_attempts *= 2
@@ -248,7 +248,7 @@ class DHCPCAPFSM(Automaton):
 
         """
         if isack(pkt):
-            # FIXME: check the fields match the previously offered ones?
+            # FIXME:30 check the fields match the previously offered ones?
             try:
                 self.event = self.client.handle_ack(pkt,
                                                     self.time_sent_request)
@@ -325,7 +325,7 @@ class DHCPCAPFSM(Automaton):
                 self.select_offer()
                 raise self.REQUESTING()
             else:
-                # FIXME: neeeded?
+                # FIXME:60 neeeded?
                 raise self.SELECTING()
 
     @ATMT.action(receive_offer)
@@ -349,7 +349,7 @@ class DHCPCAPFSM(Automaton):
                 logger.debug('No offer was received')
                 raise self.ERROR()
             else:
-                # FIXME: correct?
+                # FIXME:40 correct?
                 logger.debug('needed? Use the offers received')
                 raise self.REQUESTING()
         # else self.discover_attempts < MAX_ATTEMPTS_DISCOVER
@@ -447,7 +447,7 @@ class DHCPCAPFSM(Automaton):
     @ATMT.action(renewing_time_expires)
     def on_renewing_time_expires(self):
         """Action on renewing time expires on BOUND state."""
-        # FIXME: udp
+        # FIXME:100 udp
         self.send_request()
 
     @ATMT.state()

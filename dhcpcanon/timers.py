@@ -119,7 +119,7 @@ def gen_renewing_time(lease_time, elapsed=0):
 
     """
     renewing_time = int(lease_time) * RENEW_PERC - elapsed
-    # FIXME: the random intervals here could deanonymize
+    # FIXME:80 the random intervals here could deanonymize
     range_fuzz = int(lease_time) * REBIND_PERC - renewing_time
     logger.debug('rebinding fuzz range %s', range_fuzz)
     fuzz = random.uniform(-(range_fuzz),
@@ -132,7 +132,7 @@ def gen_renewing_time(lease_time, elapsed=0):
 def gen_rebinding_time(lease_time, elapsed=0):
     """."""
     rebinding_time = int(lease_time) * REBIND_PERC - elapsed
-    # FIXME: the random intervals here could deanonymize
+    # FIXME:90 the random intervals here could deanonymize
     range_fuzz = int(lease_time) - rebinding_time
     logger.debug('rebinding fuzz range %s', range_fuzz)
     fuzz = random.uniform(-(range_fuzz),
