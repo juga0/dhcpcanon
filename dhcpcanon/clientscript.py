@@ -66,11 +66,12 @@ class ClientScript(object):
             env = self.env or env
             logger.debug('Calling script %s', scriptname)
             logger.debug('with env %s', env)
-            sp = subprocess.Popen([scriptname], stdout=subprocess.PIPE,
-                                  stderr=subprocess.PIPE, env=env,
-                                  close_fds=True, shell=False)
-            _, err = sp.communicate()
-            if sp.returncode != 0:
-                logger.debug('sp err %s', err)
-            return sp.returncode
+            sp = None
+            try:
+                sp = subprocess.check_output([scriptname],
+                                             stderr=subprocess.STDOUT, env=env)
+            except subprocess.CalledProcessError as e:
+                sp = e.output
+                logger.debug('sp err %s', sp)
+                return sp
         return None
