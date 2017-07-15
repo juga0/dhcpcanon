@@ -13,7 +13,12 @@ Classes diagram
 
 .. image:: ./images/classes_dhcpcanon.*
 
-Package diagram
+Packages diagram
 --------------------
 
 .. image:: ./images/packages_dhcpcanon.*
+
+Calls diagram
+---------------
+
+.. image:: ./images/calls_dhcpcanon.*
