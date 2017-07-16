@@ -20,6 +20,7 @@ Contents:
    soa
    implementation
    specification
+   privileges
    integration
    api
    diagrams
