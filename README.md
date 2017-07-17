@@ -60,7 +60,10 @@ Documentation
 --------------
 
 A more extensive online documentation is available in [Read the docs](https://dhcpcanon.readthedocs.io/).
-The documentation source is in [this repository](docs/source/)
+The documentation source is in [this repository](docs/source/).
+
+Visit [DHCPAP](https://github.com/dhcpap) for an overview of all the repositories
+related to the RFC7844 implementation work.
 
 Installation
 ------------
@@ -104,7 +107,7 @@ Acknowledgments
 
 To all the persons that have given suggestions and comments about this
 implementation, the authors of the
-[RFC 7844](https://tools.ietf.org/html/rfc7844)),
+[RFC 7844](https://tools.ietf.org/html/rfc7844),
 the [Prototype Fund Project](https://prototypefund.de) of the
 the [Open Knowledge Foundation Germany](https://okfn.de/) and the
 [Federal Ministry of Education and Research](https://www.bmbf.de/)
