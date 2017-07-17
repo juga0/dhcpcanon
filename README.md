@@ -77,7 +77,7 @@ You can download this project in either
 
 You can also clone the project with Git by running:
 
-   git clone https://github.com/juga0/dhcpcanon
+    git clone https://github.com/juga0/dhcpcanon
 
 Bugs and features
 -----------------
@@ -105,7 +105,7 @@ Acknowledgments
 To all the persons that have given suggestions and comments about this
 implementation, the authors of the
 [RFC 7844](https://tools.ietf.org/html/rfc7844)),
-the [Prototype Fund Project] (https://prototypefund.de) of the
+the [Prototype Fund Project](https://prototypefund.de) of the
 the [Open Knowledge Foundation Germany](https://okfn.de/) and the
 [Federal Ministry of Education and Research](https://www.bmbf.de/)
-for funding partially this project.
+who partially funds this work.
