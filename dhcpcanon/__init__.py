@@ -19,7 +19,7 @@ __version__ = version
 __author__ = "juga"
 __author_mail__ = "juga@riseup.net"
 __description__ = "DHCP client disclosing less identifying information"
-__long_description__ = "Python implmentation of the DHCP Anonymity Profile \
+__long_description__ = "Python implmentation of the DHCP Anonymity Profiles \
                         (RFC7844) designed for users that \
                         wish to remain anonymous to the visited network \
                         minimizing disclosure of identifying information."

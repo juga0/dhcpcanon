@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # vim:ts=4:sw=4:expandtab
 # Copyright 2016, 2017 juga (juga at riseup dot net), MIT license.
-"""DCHP client implementation of the Anonymity Profile [:rfc:`7844`]."""
+"""DCHP client implementation of the Anonymity Profiles [:rfc:`7844`]."""
 from __future__ import absolute_import, unicode_literals
 
 import logging
@@ -79,7 +79,7 @@ class DHCPCAPFSM(Automaton):
                  debug_level=5, *args, **kargs):
         """Overwrites Automaton __init__ method.
 
-        [ :rfc:`7844#3.4` ] ::
+        [ :rfc:`7844#section-3.4` ] ::
             If the hardware address is reset to a new
             randomized value, the DHCP client SHOULD use the new randomized
             value in the DHCP messages
@@ -168,12 +168,12 @@ class DHCPCAPFSM(Automaton):
     def select_offer(self):
         """Select an offer from the offers received.
 
-        [:rfc:`2131#4.2`]::
+        [:rfc:`2131#section-4.2`]::
 
             DHCP clients are free to use any strategy in selecting a DHCP
             server among those from which the client receives a DHCPOFFER.
 
-        [:rfc:`2131#4.4.1`]::
+        [:rfc:`2131#section-4.4.1`]::
 
             The time
             over which the client collects messages and the mechanism used to
@@ -239,7 +239,7 @@ class DHCPCAPFSM(Automaton):
     def process_received_ack(self, pkt):
         """Process a received ACK packet.
 
-        Not specifiyed in[:rfc:`7844`], [:rfc:`2131#2.2.`]::
+        Not specifiyed in[:rfc:`7844`], [:rfc:`2131#section-2.2.`]::
 
             the allocating
             server SHOULD probe the reused address before allocating the
@@ -283,7 +283,7 @@ class DHCPCAPFSM(Automaton):
         if self.current_state is not STATE_PREINIT:
             self.reset()
         self.current_state = STATE_INIT
-        # [:rfc:`2131#4.4.1`]::
+        # [:rfc:`2131#section-4.4.1`]::
         # The client SHOULD wait a random time between one and ten
         #  seconds to desynchronize the use of DHCP at startup
         if self.delay_selecting is None:
@@ -337,7 +337,7 @@ class DHCPCAPFSM(Automaton):
     def timeout_selecting(self):
         """Timeout of selecting on SELECTING state.
 
-        Not specifiyed in [:rfc:`7844#`].See comments in
+        Not specifiyed in [:rfc:`7844#section-`].See comments in
         :func:`dhcpcapfsm.DHCPCAPFSM.timeout_request`.
 
         """
@@ -406,7 +406,7 @@ class DHCPCAPFSM(Automaton):
 
         Not specifiyed in [:rfc:`7844`]
 
-        [:rfc:`2131#3.1`]::
+        [:rfc:`2131#section-3.1`]::
 
             might retransmit the
             DHCPREQUEST message four times, for a total delay of 60 seconds
@@ -526,7 +526,7 @@ class DHCPCAPFSM(Automaton):
         """Timeout of lease on REBINDING state.
         Not sending DHCPRELEASE to minimize deanonymization
 
-        [:rfc:`2131#4.4.6`]::
+        [:rfc:`2131#section-4.4.6`]::
 
             Note that the correct operation
             of DHCP does not depend on the transmission of DHCPRELEASE.

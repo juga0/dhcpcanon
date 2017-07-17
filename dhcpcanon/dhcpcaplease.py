@@ -48,7 +48,7 @@ class DHCPCAPLease(object):
         """
         Set timers for the lease given the time in which the request was sent.
 
-        [:rfc:`2131#4.4.1`]::
+        [:rfc:`2131#section-4.4.1`]::
 
             The client records the lease expiration time
             as the sum of the time at which the original request was

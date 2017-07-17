@@ -92,12 +92,12 @@ class DHCPCAP(object):
     def gen_bootp(self):
         """Generates BOOTP layer part of DHCP packet.
 
-        [ :rfc:`7844#3.4` ] ::
+        [ :rfc:`7844#section-3.4` ] ::
 
             The presence of this address is necessary for the proper operation
             of the DHCP service.
 
-        [:rfc:`7844#3.`] ::
+        [:rfc:`7844#section-3.`] ::
             MAY contain the Client Identifier option,
 
         """
@@ -123,14 +123,14 @@ class DHCPCAP(object):
         """
         Generate DHCP DISCOVER packet.
 
-        [:rfc:`7844#3.1`] ::
+        [:rfc:`7844#section-3.1`] ::
 
             SHOULD randomize the ordering of options
 
             If this can not be implemented
             MAY order the options by option code number (lowest to highest).
 
-        [:rfc:`7844#3.`] ::
+        [:rfc:`7844#section-3.`] ::
             MAY contain the Parameter Request List option.
 
         """
@@ -150,14 +150,14 @@ class DHCPCAP(object):
         """
         Generate DHCP REQUEST packet.
 
-        [:rfc:`7844#3.1`] ::
+        [:rfc:`7844#section-3.1`] ::
 
             SHOULD randomize the ordering of options
 
             If this can not be implemented
             MAY order the options by option code number (lowest to highest).
 
-        [:rfc:`7844#3.`] ::
+        [:rfc:`7844#section-3.`] ::
             MAY contain the Parameter Request List option.
 
         If in response to a DHCPOFFER,::
@@ -204,7 +204,7 @@ class DHCPCAP(object):
         """
         Generate DHCP decline packet (broadcast).
 
-        [:rfc:`7844#3.`] ::
+        [:rfc:`7844#section-3.`] ::
 
             MUST contain the Message Type option,
             MUST contain the Server Identifier option,
@@ -231,7 +231,7 @@ class DHCPCAP(object):
         """
         Generate DHCP release packet (broadcast?).
 
-        [:rfc:`7844#3.`] ::
+        [:rfc:`7844#section-3.`] ::
 
             MUST contain the Message Type option and
             MUST contain the Server Identifier option,
@@ -256,7 +256,7 @@ class DHCPCAP(object):
         """
         Generate DHCP inform packet (unicast).
 
-        [:rfc:`7844#3.`] ::
+        [:rfc:`7844#section-3.`] ::
 
             MUST contain the Message Type option,
 

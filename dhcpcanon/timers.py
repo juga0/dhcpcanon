@@ -34,7 +34,7 @@ def nowutc():
 def gen_delay_selecting():
     """Generate the delay in seconds in which the DISCOVER will be sent.
 
-    [:rfc:`2131#4.4.1`]::
+    [:rfc:`2131#section-4.4.1`]::
 
         The client SHOULD wait a random time between one and ten seconds to
         desynchronize the use of DHCP at startup.
@@ -50,12 +50,12 @@ def gen_delay_selecting():
 def gen_timeout_resend(attempts):
     """Generate the time in seconds in which DHCPDISCOVER wil be retransmited.
 
-    [:rfc:`2131#3.1`]::
+    [:rfc:`2131#section-3.1`]::
 
         might retransmit the
         DHCPREQUEST message four times, for a total delay of 60 seconds
 
-    [:rfc:`2131#4.1`]::
+    [:rfc:`2131#section-4.1`]::
 
         For example, in a 10Mb/sec Ethernet
         internetwork, the delay before the first retransmission SHOULD be 4
@@ -77,7 +77,7 @@ def gen_timeout_resend(attempts):
 def gen_timeout_request_renew(lease):
     """Generate time in seconds to retransmit DHCPREQUEST.
 
-    [:rfc:`2131#4..4.5`]::
+    [:rfc:`2131#section-4..4.5`]::
 
         In both RENEWING and REBINDING states,
         if the client receives no response to its DHCPREQUEST
@@ -109,7 +109,7 @@ def gen_timeout_request_rebind(lease):
 def gen_renewing_time(lease_time, elapsed=0):
     """Generate RENEWING time.
 
-    [:rfc:`2131#4.4.5`]::
+    [:rfc:`2131#section-4.4.5`]::
 
         T1
         defaults to (0.5 * duration_of_lease).  T2 defaults to (0.875 *
@@ -119,7 +119,9 @@ def gen_renewing_time(lease_time, elapsed=0):
 
     """
     renewing_time = int(lease_time) * RENEW_PERC - elapsed
-    # FIXME:80 the random intervals here could deanonymize
+    # FIXME:80 [:rfc:`2131#section-4.4.5`]: the chosen "fuzz" could fingerprint
+    # the implementation
+    # NOTE: here using same "fuzz" as systemd?
     range_fuzz = int(lease_time) * REBIND_PERC - renewing_time
     logger.debug('rebinding fuzz range %s', range_fuzz)
     fuzz = random.uniform(-(range_fuzz),
@@ -132,7 +134,9 @@ def gen_renewing_time(lease_time, elapsed=0):
 def gen_rebinding_time(lease_time, elapsed=0):
     """."""
     rebinding_time = int(lease_time) * REBIND_PERC - elapsed
-    # FIXME:90 the random intervals here could deanonymize
+    # FIXME:90 [:rfc:`2131#section-4.4.5`]: the chosen "fuzz" could fingerprint
+    # the implementation
+    # NOTE: here using same "fuzz" as systemd?
     range_fuzz = int(lease_time) - rebinding_time
     logger.debug('rebinding fuzz range %s', range_fuzz)
     fuzz = random.uniform(-(range_fuzz),
