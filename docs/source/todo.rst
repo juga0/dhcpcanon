@@ -15,11 +15,11 @@ TODO
 
 [ ] listen in several interfaces
 
-[ ] create systemd service
+[X] create systemd service
 
 [ ] create init.d daemon
 
-[ ] limit privileges
+[X] limit privileges
 
 [ ] include MAC anonymization module
 
