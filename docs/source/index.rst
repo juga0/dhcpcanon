@@ -18,8 +18,9 @@ Contents:
    todo
    contributing
    soa
-   implementation
    specification
+   questions
+   implementation
    privileges
    integration
    api

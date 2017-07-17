@@ -5,7 +5,7 @@ dhcpcanon - DHCP anonymity profile
 
 DHCP client disclosing less identifying information.
 
-Python implmentation of the DHCP Anonymity Profile :rfc:`7844`
+Python implmentation of the DHCP Anonymity Profiles :rfc:`7844`
 designed for users that wish to remain anonymous to the visited network
 minimizing disclosure of identifying information.
 
@@ -51,27 +51,6 @@ From `Wikipedia <https://en.wikipedia.org/wiki/DHCP>`__:
     server, each computer or other device (eg., a printer) on the network
     needs to be statically (ie., manually) assigned to an IP address.
 
-Developers documentation
---------------------------
-
-:ref:`contributing`
-
-:ref:`diagrams`
-
-:ref:`api`
-
-:ref:`integration`
-
-:ref:`implementation`
-
-:ref:`specification`
-
-:ref:`privileges`
-
-:ref:`Related RFCs <rfcs>`
-
-:ref:`RFC7844 comments and summary <rfc7844comm>`
-
 Installation
 ------------
 
@@ -95,6 +74,33 @@ Current status
 Minimal version implemented, still to be improved.
 
 See :ref:`todo`
+
+Documentation for developers
+-----------------------------
+
+:ref:`contributing`
+
+:ref:`soa`
+
+:ref:`specification`
+
+:ref:`questions`
+
+:ref:`implementation`
+
+:ref:`privileges`
+
+:ref:`integration`
+
+:ref:`api`
+
+:ref:`diagrams`
+
+Recommended documentation not included in this repository:
+
+:ref:`Related RFCs <rfcs>`
+
+:ref:`RFC7844 comments and summary <rfc7844comm>`
 
 License
 -------
