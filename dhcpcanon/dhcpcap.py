@@ -19,7 +19,7 @@ from scapy.utils import mac2str, str2mac
 
 from .constants import (BROADCAST_ADDR, BROADCAST_MAC, CLIENT_PORT,
                         DHCP_EVENTS, DHCP_OFFER_OPTIONS, META_ADDR,
-                        SERVER_PORT)
+                        SERVER_PORT, PRL)
 from .dhcpcaplease import DHCPCAPLease
 
 logger = logging.getLogger('dhcpcanon')
@@ -140,6 +140,8 @@ class DHCPCAP(object):
             self.gen_bootp() /
             DHCP(options=[
                 ("message-type", "discover"),
+                ("param_req_list", PRL),
+                ("client_id", b"\x01", mac2str(self.client_mac)),
                 "end"
             ])
         )
@@ -175,6 +177,8 @@ class DHCPCAP(object):
             self.gen_bootp() /
             DHCP(options=[
                 ("message-type", "request"),
+                ("param_req_list", PRL),
+                ("client_id", b"\x01", mac2str(self.client_mac)),
                 ("requested_addr", self.lease.address),
                 ("server_id", self.lease.server_id),
                 "end"])
@@ -195,6 +199,8 @@ class DHCPCAP(object):
             self.gen_bootp_unicast() /
             DHCP(options=[
                 ("message-type", "request"),
+                ("param_req_list", PRL),
+                ("client_id", b"\x01", mac2str(self.client_mac)),
                 "end"])
         )
         logger.debug('Generated request %s.', dhcp_req.summary())
