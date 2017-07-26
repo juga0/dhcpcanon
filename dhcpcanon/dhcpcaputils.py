@@ -6,9 +6,12 @@
 from __future__ import absolute_import
 
 import logging
+import random
 
 from scapy.arch.linux import get_if_list
 from scapy.layers.dhcp import DHCP, DHCPTypes
+
+from .constants import XID_MIN, XID_MAX
 
 logger = logging.getLogger(__name__)
 
@@ -38,6 +41,10 @@ def isack(packet):
         logger.debug('Packet is ACK.')
         return True
     return False
+
+
+def gen_xid():
+    return random.randint(XID_MIN, XID_MAX)
 
 
 def discover_ifaces():

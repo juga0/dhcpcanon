@@ -20,6 +20,7 @@ from scapy.utils import mac2str, str2mac
 from .constants import (BROADCAST_ADDR, BROADCAST_MAC, CLIENT_PORT,
                         DHCP_EVENTS, DHCP_OFFER_OPTIONS, META_ADDR,
                         SERVER_PORT, PRL)
+from dhcpcaputils import gen_xid
 from .dhcpcaplease import DHCPCAPLease
 
 logger = logging.getLogger('dhcpcanon')
@@ -40,6 +41,8 @@ class DHCPCAP(object):
 
     lease = attr.ib(default=attr.Factory(DHCPCAPLease))
     event = attr.ib(default=None)
+    prl = attr.ib(default=None)
+    xid = attr.ib(default=None)
 
     def __attrs_post_init__(self):
         """Initializes attributes after attrs __init__.
@@ -47,11 +50,14 @@ class DHCPCAP(object):
         These attributes do not change during the life of the object.
 
         """
+        logger.debug('Creating new DHCPCAP obj.')
         if self.iface is None:
             self.iface = conf.iface
         if self.client_mac is None:
             _, client_mac = get_if_raw_hwaddr(self.iface)
             self.client_mac = str2mac(client_mac)
+        self.prl = PRL
+        self.xid = gen_xid()
         logger.debug('Modifying Lease obj, setting iface.')
         self.lease.interface = self.iface
 
@@ -102,7 +108,7 @@ class DHCPCAP(object):
 
         """
         bootp = (
-            BOOTP(chaddr=[mac2str(self.client_mac)])
+            BOOTP(chaddr=[mac2str(self.client_mac)], xid=self.xid)
             # , ciaddr=META_ADDR)
         )
         return bootp
@@ -114,8 +120,8 @@ class DHCPCAP(object):
 
         """
         bootp = (
-            BOOTP(chaddr=[mac2str(self.client_mac)])
-            # , ciaddr=self.client_ip)
+            BOOTP(chaddr=[mac2str(self.client_mac)], xid=self.xid,
+                  ciaddr=self.client_ip)
         )
         return bootp
 
@@ -140,7 +146,7 @@ class DHCPCAP(object):
             self.gen_bootp() /
             DHCP(options=[
                 ("message-type", "discover"),
-                ("param_req_list", PRL),
+                ("param_req_list", self.prl),
                 ("client_id", b"\x01", mac2str(self.client_mac)),
                 "end"
             ])
@@ -177,8 +183,8 @@ class DHCPCAP(object):
             self.gen_bootp() /
             DHCP(options=[
                 ("message-type", "request"),
-                ("param_req_list", PRL),
                 ("client_id", b"\x01", mac2str(self.client_mac)),
+                ("param_req_list", self.prl),
                 ("requested_addr", self.lease.address),
                 ("server_id", self.lease.server_id),
                 "end"])
@@ -199,8 +205,8 @@ class DHCPCAP(object):
             self.gen_bootp_unicast() /
             DHCP(options=[
                 ("message-type", "request"),
-                ("param_req_list", PRL),
                 ("client_id", b"\x01", mac2str(self.client_mac)),
+                ("param_req_list", self.prl),
                 "end"])
         )
         logger.debug('Generated request %s.', dhcp_req.summary())
@@ -251,6 +257,7 @@ class DHCPCAP(object):
             self.gen_bootp() /
             DHCP(options=[
                 ("message-type", "release"),
+                ("client_id", b"\x01", mac2str(self.client_mac)),
                 ("server_id", self.server_ip),
                 "end"])
         )
@@ -275,6 +282,7 @@ class DHCPCAP(object):
             self.gen_bootp_unicast() /
             DHCP(options=[
                 ("message-type", "inform"),
+                ("client_id", b"\x01", mac2str(self.client_mac)),
                 "end"])
         )
         logger.debug('Generated inform.')
