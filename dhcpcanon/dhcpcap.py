@@ -20,7 +20,7 @@ from scapy.utils import mac2str, str2mac
 from .constants import (BROADCAST_ADDR, BROADCAST_MAC, CLIENT_PORT,
                         DHCP_EVENTS, DHCP_OFFER_OPTIONS, META_ADDR,
                         SERVER_PORT, PRL)
-from dhcpcaputils import gen_xid
+from .dhcpcaputils import gen_xid
 from .dhcpcaplease import DHCPCAPLease
 
 logger = logging.getLogger('dhcpcanon')
