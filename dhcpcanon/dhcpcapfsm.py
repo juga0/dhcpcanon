@@ -184,13 +184,27 @@ class DHCPCAPFSM(Automaton):
 
         .. todo::
              * Check other implementations algorithm to select offer.
+
         """
         logger.debug('Selecting offer.')
         pkt = self.offers[0]
         self.client.handle_offer(pkt)
 
     def send_request(self):
-        """Send request."""
+        """Send request.
+
+        [:rfc:`2131#section-3.1`]::
+
+        a client retransmitting as described in section 4.1 might retransmit the
+        DHCPREQUEST message four times, for a total delay of 60 seconds
+
+        ...todo::
+             * The maximum number of retransmitted REQUESTs is per state or in
+               total?
+             * Are the retransmitted REQUESTs independent to the retransmitted
+               DISCOVERs?
+
+        """
         assert self.client
         if self.current_state == STATE_BOUND:
             pkt = self.client.gen_request_unicast()
@@ -203,8 +217,8 @@ class DHCPCAPFSM(Automaton):
                     self.client.iface, self.client.client_ip,
                     self.client.server_ip, self.client.server_port)
 
-        # FIXME:10 check that this is correct,: all of only discover?
-        # and if > MAX_DISCOVER_RETRIES?
+        # NOTE: see previous TODO, maybe the MAX_ATTEMPTS_REQUEST needs to be
+        # calculated per state.
         if self.request_attempts < MAX_ATTEMPTS_REQUEST:
             self.request_attempts *= 2
             logger.debug('Increased request attempts to %s',
@@ -239,25 +253,38 @@ class DHCPCAPFSM(Automaton):
     def process_received_ack(self, pkt):
         """Process a received ACK packet.
 
-        Not specifiyed in[:rfc:`7844`], [:rfc:`2131#section-2.2.`]::
+        Not specifiyed in [:rfc:`7844`].
+        Probe the offered IP in [:rfc:`2131#section-2.2.`]::
 
             the allocating
             server SHOULD probe the reused address before allocating the
             address, e.g., with an ICMP echo request, and the client SHOULD
             probe the newly received address, e.g., with ARP.
 
+            The client SHOULD broadcast an ARP
+            reply to announce the client's new IP address and clear any
+            outdated ARP cache entries in hosts on the client's subnet.
+
+        It is also not specifiyed in [:rfc:`7844`] nor [:rfc:`2131`] how to
+        check that the offered IP is valid.
+
+        ... todo::
+            * Check that nor ``dhclient`` nor ``systemd-networkd`` send an ARP.
+            * Check how other implementations check that the ACK paremeters
+              are valid, ie, if the ACK fields match the fields in the OFFER.
+            * Check to which state the client should go back to when the
+              offered parameters are not valid.
+
         """
         if isack(pkt):
-            # FIXME:30 check the fields match the previously offered ones?
             try:
                 self.event = self.client.handle_ack(pkt,
                                                     self.time_sent_request)
             except AddrFormatError as err:
                 logger.error(err)
-                # the net values are not valid, go back to SELECTING state
-                # (or just previous state?)
+                # NOTE: see previous TODO, maybe should go back to other state.
                 raise self.SELECTING()
-            # TODO: if address is taken (PING?) go to INIT and send DHCPDELINE
+            # NOTE: see previous TODO, not checking address with ARP.
             logger.info('DHCPACK of %s from %s' %
                         (self.client.client_ip, self.client.server_ip))
             return True
@@ -280,16 +307,24 @@ class DHCPCAPFSM(Automaton):
 
     @ATMT.state(initial=1)
     def INIT(self):
-        """INIT state."""
-        # in case INIT is reached from other state, initialize attributes
+        """INIT state.
+
+        [:rfc:`2131#section-4.4.1`]::
+
+            The client SHOULD wait a random time between one and ten
+            seconds to desynchronize the use of DHCP at startup
+
+        ...todo::
+            * The initial delay is implemented, but probably is not in other
+              implementations. Check what other implementations do.
+        """
+        # NOTE: in case INIT is reached from other state, initialize attributes
         # reset all variables.
         logger.debug('In state: INIT')
         if self.current_state is not STATE_PREINIT:
             self.reset()
         self.current_state = STATE_INIT
-        # [:rfc:`2131#section-4.4.1`]::
-        # The client SHOULD wait a random time between one and ten
-        #  seconds to desynchronize the use of DHCP at startup
+        # NOTE: see previous TODO, maybe this is not needed.
         if self.delay_before_selecting is None:
             delay_before_selecting = gen_delay_selecting()
         else:
@@ -305,7 +340,6 @@ class DHCPCAPFSM(Automaton):
     @ATMT.state()
     def SELECTING(self):
         """SELECTING state."""
-        # S1.
         logger.debug('In state: SELECTING')
         self.current_state = STATE_SELECTING
 
@@ -384,7 +418,8 @@ class DHCPCAPFSM(Automaton):
                      self.current_state)
 
         if len(self.offers) >= MAX_OFFERS_COLLECTED:
-            logger.debug('C2.2: T Maximum number of offers reached, raise REQUESTING.')
+            logger.debug('C2.2: T Maximum number of offers reached, '
+                         'raise REQUESTING.')
             raise self.REQUESTING()
 
         if self.discover_attempts >= MAX_ATTEMPTS_DISCOVER:
@@ -392,12 +427,15 @@ class DHCPCAPFSM(Automaton):
                          ' and already sent %s.',
                          MAX_ATTEMPTS_DISCOVER, self.discover_attempts)
             if len(self.offers) <= 0:
-                logger.debug('C2.4: T. But no OFFERS where received, raise ERROR.')
+                logger.debug('C2.4: T. But no OFFERS where received, '
+                             'raise ERROR.')
                 raise self.ERROR()
-            logger.debug('C2.4: F. But there is some OFFERS, raise REQUESTING.')
+            logger.debug('C2.4: F. But there is some OFFERS, '
+                         'raise REQUESTING.')
             raise self.REQUESTING()
 
-        logger.debug('C2.2: F. Still not received all OFFERS, but not max # attemps reached, raise SELECTING.')
+        logger.debug('C2.2: F. Still not received all OFFERS, but not '
+                     'max # attemps reached, raise SELECTING.')
         raise self.SELECTING()
 
     @ATMT.timeout(REQUESTING, TIMEOUT_REQUESTING)
@@ -415,11 +453,12 @@ class DHCPCAPFSM(Automaton):
         logger.debug("C3.2: T. In %s, timeout receiving response to request, ",
                      self.current_state)
         if self.discover_requests >= MAX_ATTEMPTS_REQUEST:
-            logger.debug('??C3.2:T=>C3.2.1. Maximum number of request retries reached'
-                         ' is %s and already sent %s, raise ERROR.',
+            logger.debug('??C3.2:T=>C3.2.1. Maximum number %s of REQUESTs '
+                         'reached, already sent %s, raise ERROR.',
                          MAX_ATTEMPTS_REQUEST, self.disover_requests)
             raise self.ERROR()
-        logger.debug("C2.3: T. Maximum number of request retries not reached, raise REQUESTING.")
+        logger.debug("C2.3: T. Maximum number of REQUESTs retries not reached,'
+                     'raise REQUESTING.")
         raise self.REQUESTING()
 
     @ATMT.timeout(RENEWING, TIMEOUT_REQUEST_RENEWING)
@@ -433,11 +472,12 @@ class DHCPCAPFSM(Automaton):
         logger.debug("C5.2:T In %s, timeout receiving response to request.",
                      self.current_state)
         if self.request_attempts >= MAX_ATTEMPTS_REQUEST:
-            logger.debug('Maximum number of request retries renewing reached, is'
-                         ' %s, already sent %s, raise ERROR',
-                         MAX_ATTEMPTS_REQUEST, self.request_attempts)
+            logger.debug('??C3.2:T=>C3.2.1. Maximum number %s of REQUESTs '
+                         'reached, already sent %s, raise ERROR.',
+                         MAX_ATTEMPTS_REQUEST, self.disover_requests)
             raise self.ERROR()
-        logger.debug("C2.3: T. Maximum number of request retries not reached, raise RENEWING.")
+        logger.debug("C2.3: T. Maximum number of REQUESTs retries not reached,'
+                     'raise RENEWING.")
         raise self.RENEWING()
 
     @ATMT.timeout(REBINDING, TIMEOUT_REQUEST_REBINDING)
@@ -451,11 +491,12 @@ class DHCPCAPFSM(Automaton):
         logger.debug("C6.2:T In %s, timeout receiving response to request.",
                      self.current_state)
         if self.request_attempts >= MAX_ATTEMPTS_REQUEST:
-            logger.debug('Maximum number of request retries rebinding reached, is'
-                         ' %s, already sent %s, raise ERROR.',
-                         MAX_ATTEMPTS_REQUEST, self.request_attempts)
+            logger.debug('??C3.2:T=>C3.2.1. Maximum number %s of REQUESTs '
+                         'reached, already sent %s, raise ERROR.',
+                         MAX_ATTEMPTS_REQUEST, self.disover_requests)
             raise self.ERROR()
-        logger.debug("C2.3: T. Maximum number of request retries not reached, raise REBINDING.")
+        logger.debug("C2.3: T. Maximum number of REQUESTs retries not reached,'
+                     'raise REBINDING.")
         raise self.REBINDING()
 
     # TIMEOUTS: timers
@@ -583,10 +624,6 @@ class DHCPCAPFSM(Automaton):
                      self.current_state)
         self.send_discover()
 
-    # FIXME: are there REQUEST retratransmissions in timeouts in other than
-    # REQUESTINGS?
-    # Are they REQUESTs counted separately in each state or as a total?
-    # And in timer expirations?
     @ATMT.action(timeout_requesting)
     @ATMT.action(timeout_request_rebinding)
     @ATMT.action(rebinding_time_expires)
@@ -599,47 +636,8 @@ class DHCPCAPFSM(Automaton):
                      'send REQUEST.', self.current_state)
         self.send_request()
 
-    # # FIXME: are there REQUEST retratransmissions in timeouts in other than
-    # # REQUESTINGS?
-    # # Are they REQUESTs counted separately in each state or as a total?
-    # # And in timer expirations?
-    # @ATMT.action(timeout_request_renewing)
-    # @ATMT.action(renewing_time_expires)
-    # def on_retransmit_request_renewing(self):
-    #     """Action on timeout of request newing on RENEWING state.
-    #
-    #     Send unicast REQUEST.
-    #     """
-    #     self.send_request_unicast()
-    #
-    # @ATMT.action(timeout_request_rebinding)
-    # def on_retransmit_request_rebinding(self):
-    #     """Action on request rebinding on REBINDING state. Send REQUEST.
-    #     """
-    #     self.send_request()
-
-    # ACTIONS: on timers
-    # -------------------
-
-    # @ATMT.action(renewing_time_expires)
-    # def on_renewing_time_expires(self):
-    #     """Action on renewing time expires on BOUND state."""
-    #     # FIXME:100 udp
-    #     self.send_request()
-    #
-    # @ATMT.action(rebinding_time_expires)
-    # def on_rebinding_time_expires(self):
-    #     """Action on rebinding time expires on RENEWING state."""
-    #     self.send_request()
-
     # ACTIONS: on receive conditions
     # -------------------------------
-
-    # @ATMT.action(receive_offer)
-    # def on_select_offer(self):
-    #     """Action on receive OFFER in SELECTING state: send REQUEST."""
-    #     logger.debug('Action on receive OFFER in SELECTING state: send REQUEST.')
-    #     self.send_request()
 
     @ATMT.action(receive_ack_rebinding)
     @ATMT.action(receive_ack_requesting)
@@ -659,12 +657,3 @@ class DHCPCAPFSM(Automaton):
         self.client.lease.sanitize_net_values()
         self.client.lease.set_times(self.time_sent_request)
         self.set_timers()
-
-    # @ATMT.action(receive_ack_rebinding)
-    # def on_rebinding(self):
-    #     """Action on receive ACK rebinding on REBINDING state.
-    #
-    #     Not recording lease, but start new lease
-    #
-    #     """
-    #     self.set_timers()
