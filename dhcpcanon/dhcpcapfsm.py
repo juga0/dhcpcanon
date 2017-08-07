@@ -52,7 +52,7 @@ class DHCPCAPFSM(Automaton):
     def __eq__(self, other):
         return self.__dict__ == other.__dict__
 
-    def reset(self, iface=None, client_mac=None):
+    def reset(self, iface=None, client_mac=None, xid=None):
         """Reset object attributes when state is INIT."""
         logger.debug('Reseting attributes.')
         if iface is None:
@@ -65,7 +65,7 @@ class DHCPCAPFSM(Automaton):
             else:
                 mac = tempmac
             client_mac = str2mac(mac)
-        self.client = DHCPCAP(iface, client_mac)
+        self.client = DHCPCAP(iface=iface, client_mac=client_mac, xid=xid)
         self.script = ClientScript()
         self.time_sent_request = None
         self.discover_attempts = 0
@@ -74,9 +74,9 @@ class DHCPCAPFSM(Automaton):
         self.offers = list()
 
     def __init__(self, iface=None, server_port=None,
-                 client_port=None, client_mac=None,
-                 scriptfile=None, delay_selecting=None, timeout_select=None,
-                 debug_level=5, *args, **kargs):
+                 client_port=None, client_mac=None, xid=None,
+                 scriptfile=None, delay_before_selecting=None,
+                 timeout_select=None, debug_level=5, *args, **kargs):
         """Overwrites Automaton __init__ method.
 
         [ :rfc:`7844#section-3.4` ] ::
@@ -88,9 +88,9 @@ class DHCPCAPFSM(Automaton):
         logger.debug('Inizializating FSM.')
         super(DHCPCAPFSM, self).__init__(*args, **kargs)
         self.debug_level = debug_level
-        self.delay_selecting = delay_selecting
+        self.delay_before_selecting = delay_before_selecting
         self.timeout_select = timeout_select
-        self.reset(iface, client_mac)
+        self.reset(iface, client_mac, xid)
         self.client.server_port = server_port or SERVER_PORT
         self.client.client_port = client_port or CLIENT_PORT
         self.socket_kargs = {
@@ -274,135 +274,135 @@ class DHCPCAPFSM(Automaton):
     #################################################################
     # State machine
     #################################################################
+
+    # STATES
+    #########
+
     @ATMT.state(initial=1)
     def INIT(self):
         """INIT state."""
         # in case INIT is reached from other state, initialize attributes
         # reset all variables.
-        logger.debug('INIT')
+        logger.debug('In state: INIT')
         if self.current_state is not STATE_PREINIT:
             self.reset()
         self.current_state = STATE_INIT
         # [:rfc:`2131#section-4.4.1`]::
         # The client SHOULD wait a random time between one and ten
         #  seconds to desynchronize the use of DHCP at startup
-        if self.delay_selecting is None:
-            delay_selecting = gen_delay_selecting()
+        if self.delay_before_selecting is None:
+            delay_before_selecting = gen_delay_selecting()
         else:
-            delay_selecting = self.delay_selecting
+            delay_before_selecting = self.delay_before_selecting
         self.set_timeout(self.current_state,
-                         self.timeout_delay_selecting,
-                         delay_selecting)
+                         self.timeout_delay_before_selecting,
+                         delay_before_selecting)
         if self.timeout_select is not None:
             self.set_timeout(STATE_SELECTING,
                              self.timeout_selecting,
                              self.timeout_select)
 
-    @ATMT.timeout(INIT, DELAY_SELECTING)
-    def timeout_delay_selecting(self):
-        """Timeout of delay selecting on INIT state."""
-        raise self.SELECTING()
-
-    @ATMT.action(timeout_delay_selecting)
-    def on_timeout_delay_selecting(self):
-        """Action on timeout of delay selecting on INIT state."""
-        self.send_discover()
-        logger.debug('DISCOVER sent')
-
     @ATMT.state()
     def SELECTING(self):
         """SELECTING state."""
-        logger.debug('SELECTING')
+        # S1.
+        logger.debug('In state: SELECTING')
         self.current_state = STATE_SELECTING
 
-    @ATMT.receive_condition(SELECTING)
-    def receive_offer(self, pkt):
-        """Receive offer on SELECTING state."""
-        if isoffer(pkt):
-            logger.debug('OFFER received')
-            self.offers.append(pkt)
-            if len(self.offers) >= MAX_OFFERS_COLLECTED:
-                self.select_offer()
-                raise self.REQUESTING()
-            else:
-                # FIXME:60 neeeded?
-                raise self.SELECTING()
+    @ATMT.state()
+    def REQUESTING(self):
+        """REQUESTING state."""
+        logger.debug('In state: REQUESTING')
+        self.current_state = STATE_REQUESTING
 
-    @ATMT.action(receive_offer)
-    def on_select_offer(self):
-        """Action on receive offer on SELECTING state."""
-        self.send_request()
+    @ATMT.state()
+    def BOUND(self):
+        """BOUND state."""
+        logger.debug('In state: BOUND')
+        logger.info('(%s) state changed %s -> bound', self.client.iface,
+                    STATES2NAMES[self.current_state])
+        self.current_state = STATE_BOUND
+        self.script.script_init(self.client.lease, self.current_state)
+        self.script.script_go()
+        # TODO: go daemon?
 
-    @ATMT.timeout(SELECTING, TIMEOUT_SELECTING)
-    def timeout_selecting(self):
-        """Timeout of selecting on SELECTING state.
+    @ATMT.state()
+    def RENEWING(self):
+        """RENEWING state."""
+        logger.debug('In state: RENEWING')
+        self.current_state = STATE_RENEWING
+        self.script.script_init(self.client.lease, self.current_state)
+        self.script.script_go()
 
-        Not specifiyed in [:rfc:`7844#section-`].See comments in
-        :func:`dhcpcapfsm.DHCPCAPFSM.timeout_request`.
+    @ATMT.state()
+    def REBINDING(self):
+        """REBINDING state."""
+        logger.debug('In state: REBINDING')
+        self.current_state = STATE_REBINDING
+        self.script.script_init(self.client.lease, self.current_state)
+        self.script.script_go()
 
-        """
-        if self.discover_attempts >= MAX_ATTEMPTS_DISCOVER:
-            logger.debug('Maximum number of discover retries is %s'
-                         ' and already sent %s',
-                         MAX_ATTEMPTS_DISCOVER, self.discover_attempts)
-            if len(self.offers) < 1:
-                logger.debug('No offer was received')
-                raise self.ERROR()
-            else:
-                # FIXME:40 correct?
-                logger.debug('needed? Use the offers received')
-                raise self.REQUESTING()
-        # else self.discover_attempts < MAX_ATTEMPTS_DISCOVER
-        if len(self.offers) < MAX_OFFERS_COLLECTED:
-            logger.debug('needed? Naximum number of offers not reached')
-            raise self.SELECTING()
-
-        logger.debug('Naximum number of offers reached')
-        raise self.REQUESTING()
-
-    @ATMT.action(timeout_selecting)
-    def on_retransmit_discover(self):
-        """Action on retransmit discover on SELECTING state."""
-        self.send_discover()
-        logger.debug('DISCOVER resent')
+    @ATMT.state(final=1)
+    def END(self):
+        """END state."""
+        logger.debug('In state: END')
+        self.current_state = STATE_END
+        self.script.script_init(self.client.lease, self.current_state)
+        self.script.script_go()
+        self.reset()
 
     @ATMT.state(error=1)
     def ERROR(self):
         """ERROR state."""
-        logger.debug('ERROR')
+        logger.debug('In state: ERROR')
         self.current_state = STATE_ERROR
         self.script.script_init(self.client.lease, self.current_state)
         self.script.script_go()
         raise self.END()
 
-    @ATMT.state()
-    def REQUESTING(self):
-        """REQUESTING state."""
-        logger.debug('REQUESTING')
-        self.current_state = STATE_REQUESTING
+    # TIMEOUTS
+    ###########
 
-    @ATMT.receive_condition(REQUESTING)
-    def receive_ack_requesting(self, pkt):
-        """Receive ack on REQUESTING state."""
-        if self.process_received_ack(pkt):
-            raise self.BOUND()
+    # TIMEOUTS: retransmissions
+    # ----------------------------
+    @ATMT.timeout(INIT, DELAY_SELECTING)
+    def timeout_delay_before_selecting(self):
+        """Timeout delay selecting in INIT state."""
+        logger.debug('C1:T. In %s, timeout delay selecting, raise SELECTING',
+                     self.current_state)
+        raise self.SELECTING()
 
-    @ATMT.receive_condition(REQUESTING)
-    def receive_nak_requesting(self, pkt):
-        """Receive nak on REQUESTING state."""
-        if self.process_received_nak(pkt):
-            raise self.INIT()
+    @ATMT.timeout(SELECTING, TIMEOUT_SELECTING)
+    def timeout_selecting(self):
+        """Timeout of selecting on SELECTING state.
 
-    @ATMT.action(receive_ack_requesting)
-    def on_ack_requesting(self):
-        """Action on ack requesting on REQUESTING state."""
-        # [:rfc:`7844`]: not recording lease
-        logger.debug('Setting timers.')
-        self.set_timers()
+        Not specifiyed in [:rfc:`7844`].
+        See comments in :func:`dhcpcapfsm.DHCPCAPFSM.timeout_request`.
+
+        """
+        logger.debug('C2.1: T In %s, timeout receiving response to select.',
+                     self.current_state)
+
+        if len(self.offers) >= MAX_OFFERS_COLLECTED:
+            logger.debug('C2.2: T Maximum number of offers reached, raise REQUESTING.')
+            raise self.REQUESTING()
+
+        if self.discover_attempts >= MAX_ATTEMPTS_DISCOVER:
+            logger.debug('C2.3: T Maximum number of discover retries is %s'
+                         ' and already sent %s.',
+                         MAX_ATTEMPTS_DISCOVER, self.discover_attempts)
+            if len(self.offers) <= 0:
+                logger.debug('C2.4: T. But no OFFERS where received, raise ERROR.')
+                raise self.ERROR()
+            logger.debug('C2.4: F. But there is some OFFERS, raise REQUESTING.')
+            raise self.REQUESTING()
+
+        logger.debug('C2.2: F. Still not received all OFFERS, but not max # attemps reached, raise SELECTING.')
+        raise self.SELECTING()
 
     @ATMT.timeout(REQUESTING, TIMEOUT_REQUESTING)
     def timeout_requesting(self):
-        """Timeout of requesting on REQUESTING state.
+        """Timeout requesting in REQUESTING state.
 
         Not specifiyed in [:rfc:`7844`]
 
@@ -412,62 +412,242 @@ class DHCPCAPFSM(Automaton):
             DHCPREQUEST message four times, for a total delay of 60 seconds
 
         """
+        logger.debug("C3.2: T. In %s, timeout receiving response to request, ",
+                     self.current_state)
         if self.discover_requests >= MAX_ATTEMPTS_REQUEST:
-            logger.debug('Maximum number of reuqest retries reached'
-                         ' is %s and already sent %s',
+            logger.debug('??C3.2:T=>C3.2.1. Maximum number of request retries reached'
+                         ' is %s and already sent %s, raise ERROR.',
                          MAX_ATTEMPTS_REQUEST, self.disover_requests)
             raise self.ERROR()
+        logger.debug("C2.3: T. Maximum number of request retries not reached, raise REQUESTING.")
         raise self.REQUESTING()
 
-    @ATMT.action(timeout_requesting)
-    def on_retransmit_request(self):
-        """Action on timeout of requesting on REQUESTING state.
+    @ATMT.timeout(RENEWING, TIMEOUT_REQUEST_RENEWING)
+    def timeout_request_renewing(self):
+        """Timeout of renewing on RENEWING state.
 
-        Send REQUEST.
+        Same comments as in
+        :func:`dhcpcapfsm.DHCPCAPFSM.timeout_requesting`.
 
         """
-        self.send_request()
+        logger.debug("C5.2:T In %s, timeout receiving response to request.",
+                     self.current_state)
+        if self.request_attempts >= MAX_ATTEMPTS_REQUEST:
+            logger.debug('Maximum number of request retries renewing reached, is'
+                         ' %s, already sent %s, raise ERROR',
+                         MAX_ATTEMPTS_REQUEST, self.request_attempts)
+            raise self.ERROR()
+        logger.debug("C2.3: T. Maximum number of request retries not reached, raise RENEWING.")
+        raise self.RENEWING()
 
-    @ATMT.state()
-    def BOUND(self):
-        """BOUND state."""
-        logger.debug('BOUND')
-        logger.info('(%s) state changed %s -> bound', self.client.iface,
-                    STATES2NAMES[self.current_state])
-        self.current_state = STATE_BOUND
-        self.script.script_init(self.client.lease, self.current_state)
-        self.script.script_go()
-        # TODO: go daemon?
+    @ATMT.timeout(REBINDING, TIMEOUT_REQUEST_REBINDING)
+    def timeout_request_rebinding(self):
+        """Timeout of request rebinding on REBINDING state.
+
+        Same comments as in
+        :func:`dhcpcapfsm.DHCPCAPFSM.timeout_requesting`.
+
+        """
+        logger.debug("C6.2:T In %s, timeout receiving response to request.",
+                     self.current_state)
+        if self.request_attempts >= MAX_ATTEMPTS_REQUEST:
+            logger.debug('Maximum number of request retries rebinding reached, is'
+                         ' %s, already sent %s, raise ERROR.',
+                         MAX_ATTEMPTS_REQUEST, self.request_attempts)
+            raise self.ERROR()
+        logger.debug("C2.3: T. Maximum number of request retries not reached, raise REBINDING.")
+        raise self.REBINDING()
+
+    # TIMEOUTS: timers
+    # -----------------
 
     @ATMT.timeout(BOUND, RENEWING_TIME)
     def renewing_time_expires(self):
-        """Timout of renewing time."""
+        """Timeout renewing time (T1), transition to RENEWING."""
+        logger.debug("C4. Timeout renewing time, in BONUND state, "
+                     "raise RENEWING.")
         raise self.RENEWING()
 
-    @ATMT.action(renewing_time_expires)
-    def on_renewing_time_expires(self):
-        """Action on renewing time expires on BOUND state."""
-        # FIXME:100 udp
-        self.send_request()
+    @ATMT.timeout(RENEWING, REBINDING_TIME)
+    def rebinding_time_expires(self):
+        """Timeout rebinding time (T2), transition to REBINDING."""
+        logger.debug("C5.3. Timeout rebinding time, in RENEWING state, "
+                     "raise REBINDING.")
+        raise self.REBINDING()
 
-    @ATMT.state()
-    def RENEWING(self):
-        """RENEWING state."""
-        self.current_state = STATE_RENEWING
-        self.script.script_init(self.client.lease, self.current_state)
-        self.script.script_go()
+    @ATMT.timeout(REBINDING, LEASE_TIME)
+    def lease_expires(self):
+        """Timeout lease time, transition to INIT.
+
+        Not sending DHCPRELEASE to minimize deanonymization
+
+        [:rfc:`2131#section-4.4.6`]::
+
+            Note that the correct operation
+            of DHCP does not depend on the transmission of DHCPRELEASE.
+
+        """
+        logger.debug("C6.3. Timeout lease time, in REBINDING state, "
+                     "raise INIT.")
+        raise self.STATE_INIT()
+
+    # RECEIVE CONDITIONS
+    ####################
+
+    @ATMT.receive_condition(SELECTING)
+    def receive_offer(self, pkt):
+        """Receive offer on SELECTING state."""
+        logger.debug("C2. Received OFFER?, in SELECTING state.")
+        if isoffer(pkt):
+            logger.debug("C2:T, OFFER received")
+            self.offers.append(pkt)
+            # C2.2
+            if len(self.offers) >= MAX_OFFERS_COLLECTED:
+                logger.debug("C2.2:T, raise REQUESTING.")
+                self.select_offer()
+                raise self.REQUESTING()
+            logger.debug("??C2.2:F, raise SELECTING.")
+            # FIXME: neeeded?
+            raise self.SELECTING()
+
+    # same as
+    # @ATMT.receive_condition(RENEWING)
+    # @ATMT.receive_condition(REBINDING)
+    @ATMT.receive_condition(REQUESTING)
+    def receive_ack_requesting(self, pkt):
+        """Receive ACK in REQUESTING state."""
+        logger.debug("C3. Received ACK?, in REQUESTING state.")
+        if self.process_received_ack(pkt):
+            logger.debug("C3: T. Received ACK, in REQUESTING state, "
+                         "raise BOUND.")
+            raise self.BOUND()
+
+    # same as
+    # @ATMT.receive_condition(RENEWING)
+    # @ATMT.receive_condition(REBINDING)
+    @ATMT.receive_condition(REQUESTING)
+    def receive_nak_requesting(self, pkt):
+        """Receive NAK in REQUESTING state."""
+        logger.debug("C3.1. Received NAK?, in REQUESTING state.")
+        if self.process_received_nak(pkt):
+            logger.debug("C3.1: T. Received NAK, in REQUESTING state, "
+                         "raise INIT.")
+            raise self.INIT()
 
     @ATMT.receive_condition(RENEWING)
     def receive_ack_renewing(self, pkt):
-        """Receive ack on RENEWING state."""
+        """Receive ACK in RENEWING state."""
+        logger.debug("C3. Received ACK?, in RENEWING state.")
         if self.process_received_ack(pkt):
+            logger.debug("C3: T. Received ACK, in RENEWING state, raise BOUND.")
             raise self.BOUND()
 
     @ATMT.receive_condition(RENEWING)
     def receive_nak_renewing(self, pkt):
-        """Receive nak on RENEWING state."""
+        """Receive NAK in RENEWING state."""
+        logger.debug("C3.1. Received NAK?, in RENEWING state.")
         if self.process_received_nak(pkt):
+            logger.debug("C3.1: T. Received NAK, in RENEWING state, "
+                         " raise INIT.")
             raise self.INIT()
+
+    @ATMT.receive_condition(REBINDING)
+    def receive_ack_rebinding(self, pkt):
+        """Receive ACK in REBINDING state."""
+        logger.debug("C3. Received ACK?, in REBINDING state.")
+        if self.process_received_ack(pkt):
+            logger.debug("C3: T. Received ACK, in REBINDING state, "
+                         "raise BOUND.")
+            raise self.BOUND()
+
+    @ATMT.receive_condition(REBINDING)
+    def receive_nak_rebinding(self, pkt):
+        """Receive NAK in REBINDING state."""
+        logger.debug("C3.1. Received NAK?, in RENEWING state.")
+        if self.process_received_nak(pkt):
+            logger.debug("C3.1: T. Received NAK, in RENEWING state, "
+                         "raise INIT.")
+            raise self.INIT()
+
+    # ACTIONS
+    ##########
+
+    # ACTIONS: on timeouts
+    # -----------------------
+
+    @ATMT.action(timeout_delay_before_selecting)
+    @ATMT.action(timeout_selecting)
+    def action_transmit_discover(self):
+        """Action on timeout, send DISCOVER."""
+        logger.debug('Action on timeout, in state %s: send DISCOVER.',
+                     self.current_state)
+        self.send_discover()
+
+    # FIXME: are there REQUEST retratransmissions in timeouts in other than
+    # REQUESTINGS?
+    # Are they REQUESTs counted separately in each state or as a total?
+    # And in timer expirations?
+    @ATMT.action(timeout_requesting)
+    @ATMT.action(timeout_request_rebinding)
+    @ATMT.action(rebinding_time_expires)
+    @ATMT.action(receive_offer)
+    @ATMT.action(timeout_request_renewing)
+    @ATMT.action(renewing_time_expires)
+    def action_transmit_request(self):
+        """Action on X: send REQUEST."""
+        logger.debug('Action on timeout X/receive X, in state %s: '
+                     'send REQUEST.', self.current_state)
+        self.send_request()
+
+    # # FIXME: are there REQUEST retratransmissions in timeouts in other than
+    # # REQUESTINGS?
+    # # Are they REQUESTs counted separately in each state or as a total?
+    # # And in timer expirations?
+    # @ATMT.action(timeout_request_renewing)
+    # @ATMT.action(renewing_time_expires)
+    # def on_retransmit_request_renewing(self):
+    #     """Action on timeout of request newing on RENEWING state.
+    #
+    #     Send unicast REQUEST.
+    #     """
+    #     self.send_request_unicast()
+    #
+    # @ATMT.action(timeout_request_rebinding)
+    # def on_retransmit_request_rebinding(self):
+    #     """Action on request rebinding on REBINDING state. Send REQUEST.
+    #     """
+    #     self.send_request()
+
+    # ACTIONS: on timers
+    # -------------------
+
+    # @ATMT.action(renewing_time_expires)
+    # def on_renewing_time_expires(self):
+    #     """Action on renewing time expires on BOUND state."""
+    #     # FIXME:100 udp
+    #     self.send_request()
+    #
+    # @ATMT.action(rebinding_time_expires)
+    # def on_rebinding_time_expires(self):
+    #     """Action on rebinding time expires on RENEWING state."""
+    #     self.send_request()
+
+    # ACTIONS: on receive conditions
+    # -------------------------------
+
+    # @ATMT.action(receive_offer)
+    # def on_select_offer(self):
+    #     """Action on receive OFFER in SELECTING state: send REQUEST."""
+    #     logger.debug('Action on receive OFFER in SELECTING state: send REQUEST.')
+    #     self.send_request()
+
+    @ATMT.action(receive_ack_rebinding)
+    @ATMT.action(receive_ack_requesting)
+    def on_ack_requesting(self):
+        """Action on receive ACK requesting in REQUESTING state: set timers."""
+        # [:rfc:`7844`]: not recording lease
+        logger.debug('Action on receive ACK in REQUESTING state: set timers.')
+        self.set_timers()
 
     @ATMT.action(receive_ack_renewing)
     def on_renewing(self):
@@ -480,110 +660,11 @@ class DHCPCAPFSM(Automaton):
         self.client.lease.set_times(self.time_sent_request)
         self.set_timers()
 
-    @ATMT.timeout(RENEWING, TIMEOUT_REQUEST_RENEWING)
-    def timeout_request_renewing(self):
-        """Timeout of renewing on RENEWING state.
-
-        Same comments as in
-        :func:`dhcpcapfsm.DHCPCAPFSM.timeout_requesting`.
-
-        """
-        if self.request_attempts >= MAX_ATTEMPTS_REQUEST:
-            logger.debug('Maximum number of request retries renewing is'
-                         ' %s, already sent %s.',
-                         MAX_ATTEMPTS_REQUEST, self.request_attempts)
-            raise self.ERROR()
-        raise self.RENEWING()
-
-    @ATMT.action(timeout_request_renewing)
-    def on_retransmit_request_renewing(self):
-        """Action on timeout of request newing on RENEWING state.
-
-        Send REQUEST.
-
-        """
-        self.send_request()
-
-    @ATMT.timeout(RENEWING, REBINDING_TIME)
-    def rebinding_time_expires(self):
-        """Timeout of rebinding time on RENEWING state."""
-        raise self.REBINDING()
-
-    @ATMT.action(rebinding_time_expires)
-    def on_rebinding_time_expires(self):
-        """Action on rebinding time expires on RENEWING state."""
-        self.send_request()
-
-    @ATMT.state()
-    def REBINDING(self):
-        """REBINDING state."""
-        self.current_state = STATE_REBINDING
-        self.script.script_init(self.client.lease, self.current_state)
-        self.script.script_go()
-
-    @ATMT.timeout(REBINDING, LEASE_TIME)
-    def lease_expires(self):
-        """Timeout of lease on REBINDING state.
-        Not sending DHCPRELEASE to minimize deanonymization
-
-        [:rfc:`2131#section-4.4.6`]::
-
-            Note that the correct operation
-            of DHCP does not depend on the transmission of DHCPRELEASE.
-
-        """
-        raise self.STATE_INIT()
-
-    @ATMT.receive_condition(REBINDING)
-    def receive_ack_rebinding(self, pkt):
-        """Receive ack on REBINDING state."""
-        if self.process_received_ack(pkt):
-            raise self.BOUND()
-
-    @ATMT.receive_condition(REBINDING)
-    def receive_nak_rebinding(self, pkt):
-        """Receive nak on REBINDING state."""
-        if self.process_received_nak(pkt):
-            raise self.INIT()
-
-    @ATMT.action(receive_ack_rebinding)
-    def on_rebinding(self):
-        """Action on receive ACK rebinding on REBINDING state.
-
-        Not recording lease, but start new lease
-
-        """
-        self.set_timers()
-
-    @ATMT.timeout(REBINDING, TIMEOUT_REQUEST_REBINDING)
-    def timeout_request_rebinding(self):
-        """Timeout of request rebinding on REBINDING state.
-
-        Same comments as in
-        :func:`dhcpcapfsm.DHCPCAPFSM.timeout_requesting`.
-
-        """
-        if self.request_attempts >= MAX_ATTEMPTS_REQUEST:
-            logger.debug('Maximum number of request retries rebinding is'
-                         ' %s, already sent %s.',
-                         MAX_ATTEMPTS_REQUEST, self.request_attempts)
-            raise self.ERROR()
-        raise self.REBINDING()
-
-    @ATMT.action(timeout_request_rebinding)
-    def on_retransmit_request_rebinding(self):
-        """Action on request rebinding on REBINDING state.
-
-        Send REQUEST.
-
-        """
-        self.send_request()
-
-    @ATMT.state(final=1)
-    def END(self):
-        """END state."""
-        logger.debug('END')
-        self.current_state = STATE_END
-        self.script.script_init(self.client.lease, self.current_state)
-        self.script.script_go()
-        self.reset()
+    # @ATMT.action(receive_ack_rebinding)
+    # def on_rebinding(self):
+    #     """Action on receive ACK rebinding on REBINDING state.
+    #
+    #     Not recording lease, but start new lease
+    #
+    #     """
+    #     self.set_timers()
