@@ -48,7 +48,7 @@ class DummySocketAck(DummySocket):
 class TestDHCPCAPFSM:
     """."""
 
-    def test_round_trip(self):
+    def test_init_bound(self):
         logger.debug('Test PREINIT')
         fsm_preinit['script'].script_init(fsm_preinit['client'].lease,
                                           fsm_preinit['current_state'])
@@ -57,6 +57,7 @@ class TestDHCPCAPFSM:
         # for sendp:
         conf.L2socket = DummySocket
         dhcpcanon = DHCPCAPFSM(client_mac='00:01:02:03:04:05', iface='eth0',
+                               xid=900000000,
                                scriptfile='/sbin/dhclient-script',
                                delay_selecting=1, timeout_select=1,
                                ll=DummySocket)

@@ -11,7 +11,8 @@ def dhcpcap_maker(request):
     """ return a function which creates initialized dhcpcap instances. """
 
     def maker():
-        dhcpcap = DHCPCAP(client_mac="00:01:02:03:04:05", iface='eth0')
+        dhcpcap = DHCPCAP(client_mac="00:01:02:03:04:05", iface='eth0',
+                          xid=900000000)
         return dhcpcap
     return maker
 
