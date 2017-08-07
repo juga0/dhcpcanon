@@ -195,8 +195,8 @@ class DHCPCAPFSM(Automaton):
 
         [:rfc:`2131#section-3.1`]::
 
-        a client retransmitting as described in section 4.1 might retransmit the
-        DHCPREQUEST message four times, for a total delay of 60 seconds
+        a client retransmitting as described in section 4.1 might retransmit
+        the DHCPREQUEST message four times, for a total delay of 60 seconds
 
         ...todo::
              * The maximum number of retransmitted REQUESTs is per state or in
@@ -457,8 +457,8 @@ class DHCPCAPFSM(Automaton):
                          'reached, already sent %s, raise ERROR.',
                          MAX_ATTEMPTS_REQUEST, self.disover_requests)
             raise self.ERROR()
-        logger.debug("C2.3: T. Maximum number of REQUESTs retries not reached,'
-                     'raise REQUESTING.")
+        logger.debug("C2.3: T. Maximum number of REQUESTs retries not reached,"
+                     "raise REQUESTING.")
         raise self.REQUESTING()
 
     @ATMT.timeout(RENEWING, TIMEOUT_REQUEST_RENEWING)
@@ -476,8 +476,8 @@ class DHCPCAPFSM(Automaton):
                          'reached, already sent %s, raise ERROR.',
                          MAX_ATTEMPTS_REQUEST, self.disover_requests)
             raise self.ERROR()
-        logger.debug("C2.3: T. Maximum number of REQUESTs retries not reached,'
-                     'raise RENEWING.")
+        logger.debug("C2.3: T. Maximum number of REQUESTs retries not reached,"
+                     "raise RENEWING.")
         raise self.RENEWING()
 
     @ATMT.timeout(REBINDING, TIMEOUT_REQUEST_REBINDING)
@@ -495,8 +495,8 @@ class DHCPCAPFSM(Automaton):
                          'reached, already sent %s, raise ERROR.',
                          MAX_ATTEMPTS_REQUEST, self.disover_requests)
             raise self.ERROR()
-        logger.debug("C2.3: T. Maximum number of REQUESTs retries not reached,'
-                     'raise REBINDING.")
+        logger.debug("C2.3: T. Maximum number of REQUESTs retries not reached,"
+                     "raise REBINDING.")
         raise self.REBINDING()
 
     # TIMEOUTS: timers
@@ -551,7 +551,7 @@ class DHCPCAPFSM(Automaton):
             # FIXME: neeeded?
             raise self.SELECTING()
 
-    # same as
+    # same as:, but would can not be overloaded
     # @ATMT.receive_condition(RENEWING)
     # @ATMT.receive_condition(REBINDING)
     @ATMT.receive_condition(REQUESTING)
@@ -563,7 +563,7 @@ class DHCPCAPFSM(Automaton):
                          "raise BOUND.")
             raise self.BOUND()
 
-    # same as
+    # same as:, but would can not be overloaded
     # @ATMT.receive_condition(RENEWING)
     # @ATMT.receive_condition(REBINDING)
     @ATMT.receive_condition(REQUESTING)
@@ -580,7 +580,8 @@ class DHCPCAPFSM(Automaton):
         """Receive ACK in RENEWING state."""
         logger.debug("C3. Received ACK?, in RENEWING state.")
         if self.process_received_ack(pkt):
-            logger.debug("C3: T. Received ACK, in RENEWING state, raise BOUND.")
+            logger.debug("C3: T. Received ACK, in RENEWING state, "
+                         "raise BOUND.")
             raise self.BOUND()
 
     @ATMT.receive_condition(RENEWING)
@@ -643,7 +644,7 @@ class DHCPCAPFSM(Automaton):
     @ATMT.action(receive_ack_requesting)
     def on_ack_requesting(self):
         """Action on receive ACK requesting in REQUESTING state: set timers."""
-        # [:rfc:`7844`]: not recording lease
+        # NOTE: not recording lease
         logger.debug('Action on receive ACK in REQUESTING state: set timers.')
         self.set_timers()
 
