@@ -48,7 +48,7 @@ variables.
 .. parsed-literal::
 
    FIXME: Are these variables documented somewhere?.
-   
+
 In ``man  dhclient-script`` there is the list of values that the variable ``reason`` can take::
 
     The following reasons
@@ -102,6 +102,31 @@ specification.
 There's also a Python API, `python-networkmanager <https://pythonhosted.org/python-networkmanager/>`_,
 so ``dhcpcanon`` could communicate directly with ``NetworkManager`` instead
 communicating with  ``nm-dhcp-helper``.
+
+
+nm notes
+---------
+
+Debugging:
+
+    [logging]
+    level=DEBUG
+
+
+It is not possible to set ``dhcp-send-hostname``
+(`Bug 768076 - No way to set dhcp-send-hostname globally  <https://bugzilla.gnome.org/show_bug.cgi?id=768076#c5>`_)
+globally.
+
+To modify ``dhcp-send-hostname`` per interface:
+
+    nmcli connection modify "Wired connection" ipv4.dhcp-send-hostname no
+    nmcli connection show "Wired connection"
+
+Or the files:
+    /etc/NetworkManager/system-connections/Wired\ connection
+
+There is currently no way that when a new device is create it defaults to a configuration.
+
 
 Integration with ``wicd``
 ---------------------------
