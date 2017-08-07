@@ -1,7 +1,19 @@
 # -*- coding: utf-8 -*-
 # vim:ts=4:sw=4:expandtab 2
 # Copyright 2016, 2017 juga (juga at riseup dot net), MIT license.
-"""."""
+"""Tests for the FSM of the DHCP client implementation of the Anonymity Profile
+([:rfc:`7844`]).
+
+.. todo::
+
+   Test for more cases:
+   - delays getting OFFERs
+   - delays getting ACK
+   - RENEWING state
+   - REBINDING state
+   - lease expires
+
+"""
 import logging
 import logging.config
 from datetime import datetime
@@ -48,7 +60,8 @@ class DummySocketAck(DummySocket):
 class TestDHCPCAPFSM:
     """."""
 
-    def test_init_bound(self):
+    def test_preinit_bound(self):
+        """Test FSM from PREINIT to BOUND. No delays."""
         logger.debug('Test PREINIT')
         fsm_preinit['script'].script_init(fsm_preinit['client'].lease,
                                           fsm_preinit['current_state'])
