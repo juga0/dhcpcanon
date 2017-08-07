@@ -56,8 +56,10 @@ class DHCPCAP(object):
         if self.client_mac is None:
             _, client_mac = get_if_raw_hwaddr(self.iface)
             self.client_mac = str2mac(client_mac)
-        self.prl = PRL
-        self.xid = gen_xid()
+        if self.prl is None:
+            self.prl = PRL
+        if self.xid is None:
+            self.xid = gen_xid()
         logger.debug('Modifying Lease obj, setting iface.')
         self.lease.interface = self.iface
 
@@ -109,7 +111,6 @@ class DHCPCAP(object):
         """
         bootp = (
             BOOTP(chaddr=[mac2str(self.client_mac)], xid=self.xid)
-            # , ciaddr=META_ADDR)
         )
         return bootp
 
@@ -146,8 +147,8 @@ class DHCPCAP(object):
             self.gen_bootp() /
             DHCP(options=[
                 ("message-type", "discover"),
+                ("client_id", mac2str(self.client_mac)),
                 ("param_req_list", self.prl),
-                ("client_id", b"\x01", mac2str(self.client_mac)),
                 "end"
             ])
         )
@@ -183,7 +184,7 @@ class DHCPCAP(object):
             self.gen_bootp() /
             DHCP(options=[
                 ("message-type", "request"),
-                ("client_id", b"\x01", mac2str(self.client_mac)),
+                ("client_id", mac2str(self.client_mac)),
                 ("param_req_list", self.prl),
                 ("requested_addr", self.lease.address),
                 ("server_id", self.lease.server_id),
@@ -205,7 +206,7 @@ class DHCPCAP(object):
             self.gen_bootp_unicast() /
             DHCP(options=[
                 ("message-type", "request"),
-                ("client_id", b"\x01", mac2str(self.client_mac)),
+                ("client_id", mac2str(self.client_mac)),
                 ("param_req_list", self.prl),
                 "end"])
         )
@@ -257,7 +258,7 @@ class DHCPCAP(object):
             self.gen_bootp() /
             DHCP(options=[
                 ("message-type", "release"),
-                ("client_id", b"\x01", mac2str(self.client_mac)),
+                ("client_id", mac2str(self.client_mac)),
                 ("server_id", self.server_ip),
                 "end"])
         )
@@ -282,7 +283,7 @@ class DHCPCAP(object):
             self.gen_bootp_unicast() /
             DHCP(options=[
                 ("message-type", "inform"),
-                ("client_id", b"\x01", mac2str(self.client_mac)),
+                ("client_id", mac2str(self.client_mac)),
                 "end"])
         )
         logger.debug('Generated inform.')
