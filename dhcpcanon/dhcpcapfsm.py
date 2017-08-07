@@ -447,11 +447,11 @@ class DHCPCAPFSM(Automaton):
         logger.debug("C3.2: T. In %s, timeout receiving response to request, ",
                      self.current_state)
         if self.discover_requests >= MAX_ATTEMPTS_REQUEST:
-            logger.debug('??C3.2:T=>C3.2.1. Maximum number %s of REQUESTs '
+            logger.debug('C2.3: T. Maximum number %s of REQUESTs '
                          'reached, already sent %s, raise ERROR.',
                          MAX_ATTEMPTS_REQUEST, self.disover_requests)
             raise self.ERROR()
-        logger.debug("C2.3: T. Maximum number of REQUESTs retries not reached,"
+        logger.debug("C2.3: F. Maximum number of REQUESTs retries not reached,"
                      "raise REQUESTING.")
         raise self.REQUESTING()
 
@@ -466,11 +466,11 @@ class DHCPCAPFSM(Automaton):
         logger.debug("C5.2:T In %s, timeout receiving response to request.",
                      self.current_state)
         if self.request_attempts >= MAX_ATTEMPTS_REQUEST:
-            logger.debug('??C3.2:T=>C3.2.1. Maximum number %s of REQUESTs '
-                         'reached, already sent %s, raise ERROR.',
+            logger.debug('C2.3: T Maximum number %s of REQUESTs '
+                         'reached, already sent %s, wait to rebinding time.',
                          MAX_ATTEMPTS_REQUEST, self.disover_requests)
-            raise self.ERROR()
-        logger.debug("C2.3: T. Maximum number of REQUESTs retries not reached,"
+            # raise self.ERROR()
+        logger.debug("C2.3: F. Maximum number of REQUESTs retries not reached,"
                      "raise RENEWING.")
         raise self.RENEWING()
 
@@ -485,11 +485,11 @@ class DHCPCAPFSM(Automaton):
         logger.debug("C6.2:T In %s, timeout receiving response to request.",
                      self.current_state)
         if self.request_attempts >= MAX_ATTEMPTS_REQUEST:
-            logger.debug('??C3.2:T=>C3.2.1. Maximum number %s of REQUESTs '
-                         'reached, already sent %s, raise ERROR.',
+            logger.debug('C.2.3: T. Maximum number %s of REQUESTs '
+                         'reached, already sent %s, wait lease time expires.',
                          MAX_ATTEMPTS_REQUEST, self.disover_requests)
-            raise self.ERROR()
-        logger.debug("C2.3: T. Maximum number of REQUESTs retries not reached,"
+            # raise self.ERROR()
+        logger.debug("C2.3: F. Maximum number of REQUESTs retries not reached,"
                      "raise REBINDING.")
         raise self.REBINDING()
 
@@ -499,7 +499,7 @@ class DHCPCAPFSM(Automaton):
     @ATMT.timeout(BOUND, RENEWING_TIME)
     def renewing_time_expires(self):
         """Timeout renewing time (T1), transition to RENEWING."""
-        logger.debug("C4. Timeout renewing time, in BONUND state, "
+        logger.debug("C4. Timeout renewing time, in BOUND state, "
                      "raise RENEWING.")
         raise self.RENEWING()
 
@@ -534,15 +534,13 @@ class DHCPCAPFSM(Automaton):
         """Receive offer on SELECTING state."""
         logger.debug("C2. Received OFFER?, in SELECTING state.")
         if isoffer(pkt):
-            logger.debug("C2:T, OFFER received")
+            logger.debug("C2: T, OFFER received")
             self.offers.append(pkt)
-            # C2.2
             if len(self.offers) >= MAX_OFFERS_COLLECTED:
-                logger.debug("C2.2:T, raise REQUESTING.")
+                logger.debug("C2.5: T, raise REQUESTING.")
                 self.select_offer()
                 raise self.REQUESTING()
-            logger.debug("??C2.2:F, raise SELECTING.")
-            # FIXME: neeeded?
+            logger.debug("C2.5: F, raise SELECTING.")
             raise self.SELECTING()
 
     # same as:, but would can not be overloaded
