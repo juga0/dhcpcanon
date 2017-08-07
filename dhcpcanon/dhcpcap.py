@@ -106,6 +106,7 @@ class DHCPCAP(object):
             of the DHCP service.
 
         [:rfc:`7844#section-3.`] ::
+
             MAY contain the Client Identifier option,
 
         """
@@ -138,6 +139,7 @@ class DHCPCAP(object):
             MAY order the options by option code number (lowest to highest).
 
         [:rfc:`7844#section-3.`] ::
+
             MAY contain the Parameter Request List option.
 
         """
@@ -167,6 +169,7 @@ class DHCPCAP(object):
             MAY order the options by option code number (lowest to highest).
 
         [:rfc:`7844#section-3.`] ::
+
             MAY contain the Parameter Request List option.
 
         If in response to a DHCPOFFER,::

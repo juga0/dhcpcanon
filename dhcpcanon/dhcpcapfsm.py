@@ -32,15 +32,7 @@ logger = logging.getLogger(__name__)
 
 
 class DHCPCAPFSM(Automaton):
-    """DHCP client Finite State Machine (FSM).
-
-    ... todo::
-
-        - Group methods that do the same.
-        - Check other implementations for the functionality not specifiyed in
-          the RFCs.
-
-    """
+    """DHCP client Finite State Machine (FSM)."""
 
     def dict_self(self):
         """Return the self object attributes not inherited as dict."""
@@ -183,7 +175,8 @@ class DHCPCAPFSM(Automaton):
         Here, currently the first offer is selected.
 
         .. todo::
-             * Check other implementations algorithm to select offer.
+
+           - Check other implementations algorithm to select offer.
 
         """
         logger.debug('Selecting offer.')
@@ -198,11 +191,12 @@ class DHCPCAPFSM(Automaton):
         a client retransmitting as described in section 4.1 might retransmit
         the DHCPREQUEST message four times, for a total delay of 60 seconds
 
-        ...todo::
-             * The maximum number of retransmitted REQUESTs is per state or in
-               total?
-             * Are the retransmitted REQUESTs independent to the retransmitted
-               DISCOVERs?
+        .. todo::
+
+           - The maximum number of retransmitted REQUESTs is per state or in
+             total?
+           - Are the retransmitted REQUESTs independent to the retransmitted
+             DISCOVERs?
 
         """
         assert self.client
@@ -268,12 +262,12 @@ class DHCPCAPFSM(Automaton):
         It is also not specifiyed in [:rfc:`7844`] nor [:rfc:`2131`] how to
         check that the offered IP is valid.
 
-        ... todo::
-            * Check that nor ``dhclient`` nor ``systemd-networkd`` send an ARP.
-            * Check how other implementations check that the ACK paremeters
-              are valid, ie, if the ACK fields match the fields in the OFFER.
-            * Check to which state the client should go back to when the
-              offered parameters are not valid.
+        .. todo::
+           - Check that nor ``dhclient`` nor ``systemd-networkd`` send an ARP.
+           - Check how other implementations check that the ACK paremeters
+             are valid, ie, if the ACK fields match the fields in the OFFER.
+           - Check to which state the client should go back to when the
+             offered parameters are not valid.
 
         """
         if isack(pkt):
@@ -314,9 +308,9 @@ class DHCPCAPFSM(Automaton):
             The client SHOULD wait a random time between one and ten
             seconds to desynchronize the use of DHCP at startup
 
-        ...todo::
-            * The initial delay is implemented, but probably is not in other
-              implementations. Check what other implementations do.
+        .. todo::
+           - The initial delay is implemented, but probably is not in other
+             implementations. Check what other implementations do.
         """
         # NOTE: in case INIT is reached from other state, initialize attributes
         # reset all variables.
