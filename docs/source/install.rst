@@ -3,6 +3,12 @@
 Install dhcpcanon
 =================
 
+The recommended way to install ``dhcpcanon`` is with the Debian package manager,
+as it will also install the ``systemd`` service.
+
+The installation from source is recommended for developers or other Linux
+distributions.
+
 Installation in Debian testing
 -------------------------------
 ::

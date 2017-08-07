@@ -8,15 +8,21 @@ sudo pip install dhcpcanon or sudo python setup.py), run it just invoking::
 
     dhcpcanon
 
-If it's not installed (but a virtualenv has been created),
+If it's not installed, but a virtualenv has been created,
 it can still be run in a virtualenv with:
 
     source ~/.virtualenv/dhcpcanon/bin/activate
     pip install -e .
     sudo scripts/dhcpcanon
 
-There is no need to pass any argument, and in that case it will use the
-active interface. If there're several active interfaces the behaviour right now
+There is no need to pass any argument, most of the arguments are only used when
+``dhcpcanon`` is called by other program (``systemd`` or
+``gnome network manager``) and mimic the ``dhclient`` arguments.
+
+An useful argument when reporting bugs is ``-v``.
+
+In that case it will use the active interface.
+If there're several active interfaces the behaviour right now
 is not predictable.
 
 An updated command line usage description can be always obtained with::
