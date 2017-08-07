@@ -26,6 +26,7 @@ def future_dt_str(dt, td):
 
 def nowutc():
     """."""
+    # NOTE: Not using UTC, as all the timers are set in reference to local time
     # now = datetime.utcnow().replace(tzinfo=utc)
     now = datetime.now()
     return now
