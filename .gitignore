@@ -7,7 +7,9 @@ dist
 build
 __pycache__
 docs/build
+docs/source/images/*.dot
 docs/source/images/*.pdf
+docs/source/images/*.dia
 .cache
 .tox
 .coverage*
