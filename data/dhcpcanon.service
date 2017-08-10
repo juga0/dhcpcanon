@@ -4,7 +4,7 @@ Description=dhcpcanon DHCP client Anonymity Profile
 
 [Service]
 WorkingDirectory=/run/dhcpcanon
-ExecStart=/sbin/dhcpcanon enp0s25
+ExecStart=/sbin/dhcpcanon
 AmbientCapabilities=CAP_NET_ADMIN CAP_NET_BIND_SERVICE CAP_NET_RAW
 User=dhcpcanon
 
