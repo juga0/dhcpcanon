@@ -8,11 +8,6 @@ import sys
 from setuptools import find_packages, setup
 
 import dhcpcanon
-
-if 'install' in sys.argv:
-    packages = find_packages(exclude=['contrib', 'docs', 'tests*'])
-else:
-    packages = None
 setup(
     name='dhcpcanon',
     version=dhcpcanon.__version__,
@@ -22,26 +17,14 @@ setup(
     author_email=dhcpcanon.__author_mail__,
     license='MIT',
     url=dhcpcanon.__website__,
-    # packages=find_packages(exclude=['contrib', 'docs', 'tests*']),
-    packages=packages,
+    packages=find_packages(exclude=['contrib', 'docs', 'tests*']),
     install_requires=[
         'scapy>=2.2";python_version<="2.7"',
         'scapy-python3>=0.21;python_version>="3.4"',
         "netaddr>=0.7",
         "pip>=8.1",
         "attrs>=16.3",
-        # "daemon>=1.1"
     ],
-    # leaved commented to have concrete dependencies
-    # dependency_links=[
-    #     "https://pypi.python.org/simple/scapy==2.2.0-dev",
-    #     "https://pypi.python.org/simple/netaddr==0.7.10",
-    #     "https://pypi.python.org/simple/ipaddr==2.1.11",
-    #     "https://pypi.python.org/simple/pytz==2016.6.1",
-    #     "https://pypi.python.org/simple/pip==8.1.2",
-    #     "https://pypi.python.org/simple/pyroute2==0.4.11"
-    #     "https://pypi.python.org/simple/attrs==16.3.0"
-    # ],
     extras_require={
         'dev': ['ipython', 'pyflakes', 'pep8'],
         'test': ['coverage', 'coveralls', 'codecov', 'tox', 'pytest'],
@@ -52,10 +35,6 @@ setup(
             'dhcpcanon = dhcpcanon.dhcpcanon:main',
         ]
     },
-    data_files=[
-        ('/run/tmpfiles.d/', ['data/dhcpcanon.conf']),
-        ('/lib/systemd/system', ['data/dhcpcanon.service']),
-    ],
     include_package_data=True,
     keywords='python scapy dhcp RFC7844 RFC2131 anonymity',
     classifiers=[
