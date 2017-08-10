@@ -10,10 +10,10 @@ import logging.config
 
 from scapy.config import conf
 
-from dhcpcanon.__init__ import __version__
-from dhcpcanon.conflog import LOGGING
-from dhcpcanon.constants import CLIENT_PORT, SERVER_PORT
-from dhcpcanon.dhcpcapfsm import DHCPCAPFSM
+from . import __version__
+from .conflog import LOGGING
+from .constants import CLIENT_PORT, SERVER_PORT
+from .dhcpcapfsm import DHCPCAPFSM
 
 logging.config.dictConfig(LOGGING)
 logger = logging.getLogger('dhcpcanon')

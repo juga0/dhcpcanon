@@ -4,10 +4,15 @@
 # Copyright 2016, 2017 juga (juga at riseup dot net), MIT license.
 
 """Setup."""
+import sys
 from setuptools import find_packages, setup
 
 import dhcpcanon
 
+if 'install' in sys.argv:
+    packages = find_packages(exclude=['contrib', 'docs', 'tests*'])
+else:
+    packages = None
 setup(
     name='dhcpcanon',
     version=dhcpcanon.__version__,
@@ -17,7 +22,8 @@ setup(
     author_email=dhcpcanon.__author_mail__,
     license='MIT',
     url=dhcpcanon.__website__,
-    packages=find_packages(exclude=['contrib', 'docs', 'tests*']),
+    # packages=find_packages(exclude=['contrib', 'docs', 'tests*']),
+    packages=packages,
     install_requires=[
         'scapy>=2.2";python_version<="2.7"',
         'scapy-python3>=0.21;python_version>="3.4"',
@@ -41,12 +47,16 @@ setup(
         'test': ['coverage', 'coveralls', 'codecov', 'tox', 'pytest'],
         'doc': ['sphinx', 'pylint']
     },
-    # entry_points={
-    #     'console_scripts': [
-    #         'dhcpcanon = scripts.dhcpcanon:main',
-    #     ]
-    # },
-    scripts=['scripts/dhcpcanon'],
+    entry_points={
+        'console_scripts': [
+            'dhcpcanon = dhcpcanon.dhcpcanon:main',
+        ]
+    },
+    data_files=[
+        ('/run/tmpfiles.d/', ['data/dhcpcanon.conf']),
+        ('/lib/systemd/system', ['data/dhcpcanon.service']),
+    ],
+    include_package_data=True,
     keywords='python scapy dhcp RFC7844 RFC2131 anonymity',
     classifiers=[
         'Development Status :: 3 - Alpha',
