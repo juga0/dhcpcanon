@@ -57,7 +57,8 @@ def main():
         help='Path to the client configuration file. If unspecified,'
              'the default /etc/dhcp/dhclient.conf is used. See '
              'dhclient.conf(5) for a description of this file.')
-    parser.add_argument('-d',
+    parser.add_argument(
+        '-d',
         action='store_true',
         help='Force dhclient to run as a foreground  process. '
              'Normally the DHCP  client will run in the foreground '
