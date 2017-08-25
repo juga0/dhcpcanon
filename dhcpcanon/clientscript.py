@@ -27,7 +27,7 @@ class ClientScript(object):
 
     """
 
-    scriptname = attr.ib(default=None)
+    scriptname = attr.ib(default='/sbin/dhclient')
     env = attr.ib(default=attr.Factory(dict))
 
     def __attrs_post_init__(self, env=None):
