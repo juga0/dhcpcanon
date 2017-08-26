@@ -25,6 +25,7 @@ setup(
         "netaddr>=0.7",
         "pip>=8.1",
         "attrs>=16.3",
+        "pyroute2>=0.4"
     ],
     extras_require={
         'dev': ['ipython', 'pyflakes', 'pep8'],
