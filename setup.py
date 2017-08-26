@@ -4,10 +4,11 @@
 # Copyright 2016, 2017 juga (juga at riseup dot net), MIT license.
 
 """Setup."""
-import sys
 from setuptools import find_packages, setup
 
 import dhcpcanon
+
+
 setup(
     name='dhcpcanon',
     version=dhcpcanon.__version__,
@@ -35,10 +36,6 @@ setup(
             'dhcpcanon = dhcpcanon.dhcpcanon:main',
         ]
     },
-    data_files=[
-        ('/run/tmpfiles.d/', ['data/dhcpcanon.conf']),
-        ('/lib/systemd/system', ['data/dhcpcanon.service']),
-    ],
     include_package_data=True,
     keywords='python scapy dhcp RFC7844 RFC2131 anonymity',
     classifiers=[
