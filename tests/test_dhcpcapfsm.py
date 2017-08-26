@@ -71,7 +71,7 @@ class TestDHCPCAPFSM:
         conf.L2socket = DummySocket
         dhcpcanon = DHCPCAPFSM(client_mac='00:01:02:03:04:05', iface='eth0',
                                xid=900000000,
-                               scriptfile='/sbin/dhclient-script',
+                               scriptfile='/sbin/dhcpcanon-script',
                                delay_selecting=1, timeout_select=1,
                                ll=DummySocket)
         assert dhcpcanon.dict_self() == fsm_preinit

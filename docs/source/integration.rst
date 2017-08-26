@@ -41,7 +41,7 @@ or ``internal``, as DHCP clients instead of ``dhclient``.
 Environment variables that ``dhclient`` returns
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-When ``dhclient`` call the script, by default ``/sbin/dhclient-script``,
+When ``dhclient`` call the script, by default ``/sbin/dhcpcanon-script``,
 or when called by ``NetworkManager``, ``nm-dhcp-helper``, it pass environment
 variables.
 

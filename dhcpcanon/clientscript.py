@@ -11,7 +11,7 @@ import subprocess
 import attr
 
 from .constants import (LEASEATTRS2ENVKEYS, LEASEATTRS_SAMEAS_ENVKEYS,
-                        SCRIPT_ENV_KEYS, STATES2REASONS)
+                        SCRIPT_ENV_KEYS, STATES2REASONS, SCRIPT_PATH)
 
 logger = logging.getLogger('dhcpcanon')
 
@@ -27,12 +27,13 @@ class ClientScript(object):
 
     """
 
-    scriptname = attr.ib(default='/sbin/dhclient')
+    scriptname = attr.ib(default=None)
     env = attr.ib(default=attr.Factory(dict))
 
-    def __attrs_post_init__(self, env=None):
+    def __attrs_post_init__(self, scriptfile=None, env=None):
         """."""
         logger.debug('Modifying ClientScript obj after creating it.')
+        self.scriptname = scriptfile or SCRIPT_PATH
         if env is None:
             self.env = dict.fromkeys(SCRIPT_ENV_KEYS, str(''))
         else:

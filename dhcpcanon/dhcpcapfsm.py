@@ -44,7 +44,7 @@ class DHCPCAPFSM(Automaton):
     def __eq__(self, other):
         return self.__dict__ == other.__dict__
 
-    def reset(self, iface=None, client_mac=None, xid=None):
+    def reset(self, iface=None, client_mac=None, xid=None, scriptfile=None):
         """Reset object attributes when state is INIT."""
         logger.debug('Reseting attributes.')
         if iface is None:
@@ -58,7 +58,7 @@ class DHCPCAPFSM(Automaton):
                 mac = tempmac
             client_mac = str2mac(mac)
         self.client = DHCPCAP(iface=iface, client_mac=client_mac, xid=xid)
-        self.script = ClientScript()
+        self.script = ClientScript(scriptfile)
         self.time_sent_request = None
         self.discover_attempts = 0
         self.request_attempts = 0
@@ -82,7 +82,7 @@ class DHCPCAPFSM(Automaton):
         self.debug_level = debug_level
         self.delay_before_selecting = delay_before_selecting
         self.timeout_select = timeout_select
-        self.reset(iface, client_mac, xid)
+        self.reset(iface, client_mac, xid, scriptfile)
         self.client.server_port = server_port or SERVER_PORT
         self.client.client_port = client_port or CLIENT_PORT
         self.socket_kargs = {
@@ -92,7 +92,7 @@ class DHCPCAPFSM(Automaton):
                              self.client.client_port,
                              self.client.client_mac)
         }
-        self.script.scriptname = scriptfile
+        logger.debug('script %s', self.script.scriptname)
         self.script.script_init(self.client.lease, self.current_state)
         self.script.script_go()
         logger.debug('FSM thread id: %s.', self.threadid)

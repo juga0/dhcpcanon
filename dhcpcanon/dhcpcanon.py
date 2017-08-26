@@ -35,10 +35,10 @@ def main():
     # options to looks like dhclient
     parser.add_argument(
         '-sf', metavar='script-file', nargs='?',
-        default='/sbin/dhclient-script',
+        default='/sbin/dhcpcanon-script',
         help='Path to the network configuration script invoked by '
              'dhclient when it gets a lease. If unspecified, the '
-             'default /sbin/dhclient-script is used. See '
+             'default /sbin/dhcpcanon-script is used. See '
              'dhclient-script(8) for a description of this file.')
     parser.add_argument(
         '-pf', metavar='pid-file', nargs='?',

@@ -46,7 +46,7 @@ At the time of writing this the usage documentation is::
       --version             version
       -sf [script-file]     Path to the network configuration script invoked by
                             dhclient when it gets a lease. If unspecified, the
-                            default /sbin/dhclient-script is used. See dhclient-
+                            default /sbin/dhcpcanon-script is used. See dhclient-
                             script(8) for a description of this file.
       -pf [pid-file]        Path to the process ID file. If unspecified,
                             thedefault /var/run/dhclient.pid is used
