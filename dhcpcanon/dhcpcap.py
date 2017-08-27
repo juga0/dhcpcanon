@@ -338,9 +338,12 @@ class DHCPCAP(object):
 
     def handle_offer_ack(self, pkt, time_sent_request=None):
         """Create a lease object with the values in OFFER/ACK packet."""
-        attrs_dict = dict([(opt[0], str(opt[1])) for opt in pkt[DHCP].options
-                           if isinstance(opt, tuple)
-                           and opt[0] in DHCP_OFFER_OPTIONS])
+        attrs_dict = dict()
+        for opt in pkt[DHCP].options:
+            if isinstance(opt, tuple) and opt[0] in DHCP_OFFER_OPTIONS:
+                v = opt[1] if len(opt[1:]) < 2 else opt[1:]
+                v = v.decode('utf8') if isinstance(v, bytes) else v
+                attrs_dict[opt[0]] = v
         attrs_dict.update({
             "interface": self.iface,
             "address": pkt[BOOTP].yiaddr,
