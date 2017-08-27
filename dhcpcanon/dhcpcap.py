@@ -341,8 +341,8 @@ class DHCPCAP(object):
         attrs_dict = dict()
         for opt in pkt[DHCP].options:
             if isinstance(opt, tuple) and opt[0] in DHCP_OFFER_OPTIONS:
-                v = opt[1] if len(opt[1:]) < 2 else opt[1:]
-                v = v.decode('utf8') if isinstance(v, bytes) else v
+                v = opt[1] if len(opt[1:]) < 2 else ' '.join(opt[1:])
+                v = v.decode('utf8') if isinstance(v, bytes) else str(v)
                 attrs_dict[opt[0]] = v
         attrs_dict.update({
             "interface": self.iface,

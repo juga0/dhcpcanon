@@ -89,8 +89,8 @@ dhcp_offer = (
         ('subnet_mask', "255.255.255.0"),
         ('broadcast_address', "192.168.1.255"),
         ('router', "192.168.1.1"),
-        ('name_server', "192.168.1.1"),
-        ('domain', "localdomain"),
+        ('name_server', "192.168.1.1", "8.8.8.8"),
+        ('domain', b'localdomain'),
         'end']
     )
 )
@@ -110,8 +110,8 @@ dhcp_ack = (
         ('subnet_mask', "255.255.255.0"),
         ('broadcast_address', "192.168.1.255"),
         ('router', "192.168.1.1"),
-        ('name_server', "192.168.1.1"),
-        ('domain', "localdomain"),
+        ('name_server', "192.168.1.1", "8.8.8.8"),
+        ('domain', b'localdomain'),
         'end'])
 )
 
