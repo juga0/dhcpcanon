@@ -10,6 +10,10 @@ import logging.config
 
 from scapy.config import conf
 
+# in python3 this seems to be the only way to to disable:
+# WARNING: Failed to execute tcpdump.
+conf.logLevel = logging.ERROR
+
 from . import __version__
 from .conflog import LOGGING
 from .constants import (CLIENT_PORT, SERVER_PORT, SCRIPT_PATH, LEASE_PATH,
@@ -18,7 +22,6 @@ from .dhcpcapfsm import DHCPCAPFSM
 
 logging.config.dictConfig(LOGGING)
 logger = logging.getLogger('dhcpcanon')
-logger_scapy_interactive = logging.getLogger('scapy.interactive')
 
 
 def main():
@@ -82,8 +85,6 @@ def main():
 
     if args.verbose:
         logger.setLevel(logging.DEBUG)
-        logger_scapy_interactive.setLevel(logging.DEBUG)
-        # DEBUG = True
     logger.debug('args %s', args)
     if args.lease is not None:
         # TODO
