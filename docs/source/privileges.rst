@@ -56,6 +56,10 @@ Possible solutions to minimise privileges and their associated problems:
 5. wrapper that does the same as in 4. without a system-level process
    manager. See section "wrapper to inherit capabilities"
 
+   It could be solved with `infinity0's wrapper <https://github.com/infinity0/ambient-rs>` running::
+
+        RUST_BACKTRACE=1 ./target/debug/ambient -c NET_RAW,NET_ADMIN,NET_BIND_SERVICE /usr/bin/python3 -m dhcpcanon.dhcpcanon -v
+
 6. wrapper with privileges to disable linux Remote Path (RP) filter,
    open sockets, then call the client:
   * problems:
