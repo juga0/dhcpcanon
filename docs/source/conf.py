@@ -438,8 +438,7 @@ epub_exclude_files = ['search.html']
 
 # Example configuration for intersphinx: refer to the Python standard library.
 # intersphinx_mapping = {'https://docs.python.org/': None}
-intersphinx_mapping = {
-    'rfc7844_comments': ('https://rfc7844-comments.readthedocs.io/en/latest',
-                         None)
-                        #  '../build/html/rfc7844_comments.inv')
-    }
+# intersphinx_mapping = {
+#     'rfc7844_comments': ('https://rfc7844-comments.readthedocs.io/en/latest',
+#                          '../build/html/rfc7844_comments.inv')
+#     }

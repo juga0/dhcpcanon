@@ -152,3 +152,7 @@ XID_MIN = 1
 XID_MAX = 900000000
 
 SCRIPT_PATH = '/sbin/dhcpcanon-script'
+PID_PATH = '/var/run/dhclient.pid'
+LEASE_PATH = '/var/lib/dhcp/dhclient.leases'
+CONF_PATH = '/etc/dhcp/dhclient.conf'
+RESOLVCONF = '/sbin/resolvconf'

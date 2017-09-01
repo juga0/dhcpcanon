@@ -54,9 +54,21 @@ LOGGING = {
             'level': logging.DEBUG,
             'propagate': False
         },
+        # next ones set to ERROR to disable
+        # WARNING: Failed to execute tcpdump.
         "scapy.interactive": {
             'handlers': ['stdoutscapy'],
-            'level': logging.DEBUG,
+            'level': logging.ERROR,
+            'propagate': False
+        },
+        "scapy.runtime": {
+            'handlers': ['stdoutscapy'],
+            'level': logging.ERROR,
+            'propagate': False
+        },
+        "scapy.loading": {
+            'handlers': ['stdoutscapy'],
+            'level': logging.ERROR,
             'propagate': False
         }
     }
