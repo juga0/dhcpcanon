@@ -24,7 +24,7 @@ Possible solutions to minimise privileges and their associated problems:
 
    * problem: this would not be compliant with RFC 2131 nor 7844.
    * pro: in "usual" networks, if the client stays enough time
-     connected o the network, the lease would expire it could just restart in the
+     connected to the network, the lease would expire it could just restart in the
      INIT state.
 
      .. todo::
