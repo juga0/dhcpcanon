@@ -13,12 +13,12 @@ from .constants import RESOLVCONF
 logger = logging.getLogger(__name__)
 
 
-def set_net(self, lease):
+def set_net(lease):
     ipr = IPRoute()
     index = ipr.link_lookup(ifname=lease.interface)[0]
     try:
         ipr.addr('add', index, address=lease.address,
-                 mask=lease.subnet_mask_cidr)
+                 mask=int(lease.subnet_mask_cidr))
     except NetlinkError as e:
         if ipr.get_addr(index=index)[0].\
                 get_attrs('IFA_ADDRESS')[0] == lease.address:
