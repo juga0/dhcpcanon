@@ -41,4 +41,14 @@ def set_net(lease):
     else:
         logger.debug('Default gateway set to %s', lease.router)
     ipr.close()
-    # TODO: resolvconf
+    cmd = [RESOLVCONF, '-a', lease.interface]
+    proc = subprocess.Popen(cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+                            stderr=subprocess.PIPE)
+    stdin = '\n'.join(['nameserver ' + nm for nm in lease.name_server.split()])
+    stdin = str.encode(stdin)
+    try:
+        (stdout, stderr) = proc.communicate(stdin)
+    except TypeError as e:
+        logger.error(e)
+    logger.debug('result %s, stdout %s, stderr %s', proc.returncode, stdout,
+                 stderr)
