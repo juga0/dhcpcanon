@@ -18,8 +18,8 @@ logger = logging.getLogger(__name__)
 
 def isoffer(packet):
     """."""
-    if DHCP in packet and (DHCPTypes.get(packet[DHCP].options[0][1]) == 'offer'
-                           or packet[DHCP].options[0][1] == "offer"):
+    if DHCP in packet and (DHCPTypes.get(packet[DHCP].options[0][1]) ==
+                           'offer' or packet[DHCP].options[0][1] == "offer"):
         logger.debug('Packet is Offer.')
         return True
     return False
@@ -27,8 +27,8 @@ def isoffer(packet):
 
 def isnak(packet):
     """."""
-    if DHCP in packet and (DHCPTypes.get(packet[DHCP].options[0][1]) == 'nak'
-                           or packet[DHCP].options[0][1] == 'nak'):
+    if DHCP in packet and (DHCPTypes.get(packet[DHCP].options[0][1]) ==
+                           'nak' or packet[DHCP].options[0][1] == 'nak'):
         logger.debug('Packet is NAK.')
         return True
     return False
@@ -36,8 +36,8 @@ def isnak(packet):
 
 def isack(packet):
     """."""
-    if DHCP in packet and (DHCPTypes.get(packet[DHCP].options[0][1]) == 'ack'
-                           or packet[DHCP].options[0][1] == 'ack'):
+    if DHCP in packet and (DHCPTypes.get(packet[DHCP].options[0][1]) ==
+                           'ack' or packet[DHCP].options[0][1] == 'ack'):
         logger.debug('Packet is ACK.')
         return True
     return False
