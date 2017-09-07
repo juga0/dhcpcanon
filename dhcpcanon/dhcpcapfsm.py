@@ -71,7 +71,8 @@ class DHCPCAPFSM(Automaton):
 
     def __init__(self, iface=None, server_port=None,
                  client_port=None, client_mac=None, xid=None,
-                 scriptfile=None, delay_before_selecting=None,
+                 scriptfile=None, delay_selecting=False,
+                 delay_before_selecting=None,
                  timeout_select=None, debug_level=5, *args, **kargs):
         """Overwrites Automaton __init__ method.
 
@@ -84,6 +85,7 @@ class DHCPCAPFSM(Automaton):
         logger.debug('Inizializating FSM.')
         super(DHCPCAPFSM, self).__init__(*args, **kargs)
         self.debug_level = debug_level
+        self.delay_selecting = delay_selecting
         self.delay_before_selecting = delay_before_selecting
         self.timeout_select = timeout_select
         self.reset(iface, client_mac, xid, scriptfile)
@@ -323,10 +325,13 @@ class DHCPCAPFSM(Automaton):
             self.reset()
         self.current_state = STATE_INIT
         # NOTE: see previous TODO, maybe this is not needed.
-        if self.delay_before_selecting is None:
-            delay_before_selecting = gen_delay_selecting()
+        if self.delay_selecting:
+            if self.delay_before_selecting is None:
+                delay_before_selecting = gen_delay_selecting()
+            else:
+                delay_before_selecting = self.delay_before_selecting
         else:
-            delay_before_selecting = self.delay_before_selecting
+            delay_before_selecting = 0
         self.set_timeout(self.current_state,
                          self.timeout_delay_before_selecting,
                          delay_before_selecting)

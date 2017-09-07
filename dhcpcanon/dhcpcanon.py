@@ -36,6 +36,9 @@ def main():
     parser.add_argument('--version', action='version',
                         help='version',
                         version='%(prog)s ' + __version__)
+    parser.add_argument('-s', '--delay_selecting',
+                        help='Selecting starts after a ramdon delay.',
+                        action='store_true')
     # options to looks like dhclient
     parser.add_argument(
         '-sf', metavar='script-file', nargs='?',
@@ -104,7 +107,8 @@ def main():
     dhcpcap = DHCPCAPFSM(iface=conf.iface,
                          server_port=SERVER_PORT,
                          client_port=CLIENT_PORT,
-                         scriptfile=args.sf)
+                         scriptfile=args.sf,
+                         delay_selecting=args.delay_selecting)
     dhcpcap.run()
 
 
