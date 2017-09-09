@@ -4,8 +4,7 @@
 """__init__ for the DHCP client implementation of the Anonymity Profile
 ([:rfc:`7844`])."""
 from __future__ import absolute_import
-# from . import (clientscript, conflog, constants, dhcpcap, dhcpcapfsm,
-#                dhcpcaplease, dhcpcaputils, timers)
+
 try:
     from ._version import version
 except ImportError:
@@ -13,7 +12,7 @@ except ImportError:
         from setuptools_scm import get_version
         version = get_version()
     except (ImportError, LookupError):
-        version = '0.5'
+        version = '0.6.0'
 
 __version__ = version
 __author__ = "juga"
