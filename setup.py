@@ -45,7 +45,6 @@ if systemd_unit_dir():
     ]
 else:
     data_files = []
-print(data_files)
 setup(
     name='dhcpcanon',
     version=dhcpcanon.__version__,
@@ -74,6 +73,8 @@ setup(
             'dhcpcanon = dhcpcanon.dhcpcanon:main',
         ]
     },
+    setup_requires=['pytest-runner'],
+    tests_require=['pytest'],
     # NOTE: not installing system files as the user might want to install them
     # in a custom prefix or without systemd
     # data_files=data_files,
