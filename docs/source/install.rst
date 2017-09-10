@@ -3,59 +3,92 @@
 Install dhcpcanon
 =================
 
-The recommended way to install ``dhcpcanon`` is with the Debian package manager,
-as it will also install the ``systemd`` service.
+The recommended way to install ``dhcpcanon`` is with your package source
+distribution, as it will also install other system files.
 
-The installation from source is recommended for developers or other Linux
-distributions.
-
-Installation in Debian testing
--------------------------------
-::
+Currently is availabe for Debian unstable/testing.
+It can be installed with a package manager or in command line::
 
     sudo apt install dhcpcanon
 
-Installation in Debian/Ubuntu from source code
-----------------------------------------------
+The main script will be installed in ``/sbin/dhcpcanon``, a systemd service
+will be enabled and run by default, so there is no need to run anything manually.
 
-Install system dependencies
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Installation from source code
+==============================
 
-::
+In case you would like to have a newer version or it is not packaged for your
+distribution, you can install it from the source code.
+
+Install system dependencies, in Debian/Ubuntu::
 
     sudo apt install python-dev
 
-Install dhcpcanon dependencies with virtualenv
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Obtain the source code::
 
-Obtain virtualenv
-^^^^^^^^^^^^^^^^^
+    git clone https://github.com/juga0/dhcpcanon/
 
-Check https://virtualenv.pypa.io/en/latest/installation.html or
-if Debian equal/newer than Jessie (virtualenv version equal or greater
-than 1.9), then::
+Install ``dhcpcanon`` and system files::
+
+    sudo make install WITH_SYSTEMD=true
+
+In Debian this will install all the required files under ``/usr/local``.
+``WITH_SYSTEMD`` will install a systemd service and enable it, to run it::
+
+    systemctl start dhcpcanon
+
+for advanced users
+--------------------
+
+In the case that you would like to install without root privileges,
+you can install it without the systemd service and you can specify
+an alternative location, for instance::
+
+    make --prefix=/home/user/.local install
+
+Note however that without systemd ``dhcpcanon`` will need to be run with root
+privileges, while the systemd service drop ``dhcpcanon`` root privileges and
+only keeps the required network capabilities.
+
+An alternative to do not run ``dhcpcanon`` with root privileges nor systemd,
+is to use `ambient-rs wrapper <https://github.com/infinity0/ambient-rs>`
+and run::
+
+    RUST_BACKTRACE=1 ./target/debug/ambient -c NET_RAW,NET_ADMIN,NET_BIND_SERVICE /usr/bin/python3 -m dhcpcanon.dhcpcanon -v
+
+Installation with pip
+==========================
+
+The pip package does not install either system files and it can be installed
+without root, but it still needs to be run as root, as commented in the last
+section.::
+
+    pip install dhcpcanon
+
+In Debian this will install the files in ``/home/youruser/.local``
+Note also that if you install it in a virtualenv, when executing ``dhcpcanon``
+with ``sudo``, won't use the virtualenv. To keep the virtualenv run it with::
+
+    sudo /pathtovirtualenv/bin/dhcpcanon
+
+Installation for developers
+=============================
+
+It is recommended to install ``dhcpcanon`` in a python virtual environment.
+
+Check https://virtualenv.pypa.io/en/latest/installation.html. In Debian::
 
     sudo apt install python-virtualenv
 
-Create a virtual environment
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-::
+Create a virtual environment::
 
     mkdir ~/.virtualenvs
     virtualenv ~/.virtualenvs/dhcpcanonenv
     source ~/.virtualenvs/dhcpcanonenv/bin/activate
 
-Install dependencies in virtualenv
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
+Get the sources::
     git clone https://github.com/juga0/dhcpcanon
-    cd dhcpcanon
-    pip install -r requirements.txt
 
-or run::
+Install it::
 
-    python setup.py install
-
-or run::
-
-    pip install dhcpcanon
+    pip install -e .
