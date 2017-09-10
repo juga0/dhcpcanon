@@ -71,7 +71,7 @@ class TestDHCPCAPFSM:
         conf.L2socket = DummySocket
         dhcpcanon = DHCPCAPFSM(client_mac='00:01:02:03:04:05', iface='eth0',
                                xid=900000000,
-                            #    scriptfile='/sbin/dhcpcanon-script',
+                               # scriptfile='/sbin/dhcpcanon-script',
                                delay_selecting=1, timeout_select=1,
                                ll=DummySocket)
         assert dhcpcanon.dict_self() == fsm_preinit
@@ -145,7 +145,7 @@ class TestDHCPCAPFSM:
         logger.debug('============')
         logger.debug('State %s', STATES2NAMES[dhcpcanon.current_state])
         # fsm_bound['script'].script_init(fsm_bound['client'].lease,
-                                        # 'BOUND')
+        #                                 'BOUND')
         try:
             dhcpcanon.next()
         except Automaton.Singlestep as err:

@@ -18,7 +18,8 @@ def set_net(lease):
     try:
         index = ipr.link_lookup(ifname=lease.interface)[0]
     except IndexError as e:
-        logger.error('Interface %s not found, can not set IP.', lease.interface)
+        logger.error('Interface %s not found, can not set IP.',
+                     lease.interface)
         exit(1)
     try:
         ipr.addr('add', index, address=lease.address,
