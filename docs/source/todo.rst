@@ -9,7 +9,7 @@ TODO
 
 [X] calculate retransmission times for DISCOVER
 
-[ ] (WIP) create tests
+[X] create tests
 
 [ ] (WIP) integrate with Network Manager
 
@@ -17,12 +17,12 @@ TODO
 
 [X] create systemd service
 
-[ ] create init.d daemon
+[won't fix] create init.d daemon
 
 [X] limit privileges
 
 [ ] include MAC anonymization module
 
-[ ] create apparmor profile
+[X] create apparmor profile
 
 [ ] implement IPv6
