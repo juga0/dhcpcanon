@@ -11,6 +11,7 @@ LOGGING = {
     'formatters': {
         'verbose': {
             'format': '%(asctime)s %(levelname)s'
+                      ' %(process)s (%(threadName)-10s) '
                       ' %(filename)s:%(lineno)s -'
                       ' %(funcName)s - %(message)s',
             'datefmt': '%Y-%m-%d %H:%M:%S'
@@ -51,24 +52,24 @@ LOGGING = {
         },
         "scapy": {
             'handlers': ['stdoutscapy'],
-            'level': logging.DEBUG,
+            'level': logging.INFO,
             'propagate': False
         },
         # next ones set to ERROR to disable
         # WARNING: Failed to execute tcpdump.
         "scapy.interactive": {
             'handlers': ['stdoutscapy'],
-            'level': logging.ERROR,
+            'level': logging.INFO,
             'propagate': False
         },
         "scapy.runtime": {
             'handlers': ['stdoutscapy'],
-            'level': logging.ERROR,
+            'level': logging.INFO,
             'propagate': False
         },
         "scapy.loading": {
             'handlers': ['stdoutscapy'],
-            'level': logging.ERROR,
+            'level': logging.INFO,
             'propagate': False
         }
     }

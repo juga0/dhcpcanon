@@ -27,7 +27,7 @@ from .dhcpcap import DHCPCAP
 from .dhcpcaputils import isack, isnak, isoffer
 from .timers import (gen_delay_selecting, gen_timeout_request_rebind,
                      gen_timeout_request_renew, gen_timeout_resend, nowutc)
-from .setnet import set_net
+from .setnet import set_net, set_iff_up
 
 logger = logging.getLogger(__name__)
 
@@ -50,6 +50,7 @@ class DHCPCAPFSM(Automaton):
         logger.debug('Reseting attributes.')
         if iface is None:
             iface = conf.iface
+            set_iff_up(iface)
         if client_mac is None:
             # scapy for python 3 returns byte, not tuple
             tempmac = get_if_raw_hwaddr(iface)
@@ -84,12 +85,14 @@ class DHCPCAPFSM(Automaton):
         logger.debug('Inizializating FSM.')
         super(DHCPCAPFSM, self).__init__(*args, **kargs)
         self.debug_level = debug_level
+        logger.debug('self debug_level %s', self.debug_level)
         self.delay_before_selecting = delay_before_selecting
         self.timeout_select = timeout_select
         self.reset(iface, client_mac, xid, scriptfile)
         self.client.server_port = server_port or SERVER_PORT
         self.client.client_port = client_port or CLIENT_PORT
         self.socket_kargs = {
+            'iface': iface,
             'filter': 'udp and src port {0} and dst port {1}'
                       ' and ether dst {2}'.
                       format(self.client.server_port,
@@ -360,11 +363,19 @@ class DHCPCAPFSM(Automaton):
         else:
             set_net(self.client.lease)
         # TODO: go daemon?
+        logger.debug('Is the thread locked? %s', self.started.locked())
+        self.started.release_lock()
+        logger.debug('Is the thread locked? %s', self.started.locked())
+        #self.started.daemon = True
+        #logger.debug('Thread %s set to daemon.', self.threadid)
 
     @ATMT.state()
     def RENEWING(self):
         """RENEWING state."""
         logger.debug('In state: RENEWING')
+        logger.debug('Is the thread locked? %s', self.started.locked())
+        self.started.release_lock()
+        logger.debug('Is the thread locked? %s', self.started.locked())
         self.current_state = STATE_RENEWING
         if self.script is not None:
             self.script.script_init(self.client.lease, self.current_state)
@@ -376,6 +387,9 @@ class DHCPCAPFSM(Automaton):
     def REBINDING(self):
         """REBINDING state."""
         logger.debug('In state: REBINDING')
+        logger.debug('Is the thread locked? %s', self.started.locked())
+        self.started.release_lock()
+        logger.debug('Is the thread locked? %s', self.started.locked())
         self.current_state = STATE_REBINDING
         if self.script is not None:
             self.script.script_init(self.client.lease, self.current_state)
@@ -387,6 +401,9 @@ class DHCPCAPFSM(Automaton):
     def END(self):
         """END state."""
         logger.debug('In state: END')
+        logger.debug('Is the thread locked? %s', self.started.locked())
+        started.release_lock()
+        logger.debug('Is the thread locked? %s', self.started.locked())
         self.current_state = STATE_END
         if self.script is not None:
             self.script.script_init(self.client.lease, self.current_state)

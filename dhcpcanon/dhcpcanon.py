@@ -9,6 +9,7 @@ import logging
 import logging.config
 
 from scapy.config import conf
+from threading import Thread
 
 # in python3 this seems to be the only way to to disable:
 # WARNING: Failed to execute tcpdump.
@@ -19,9 +20,12 @@ from .conflog import LOGGING
 from .constants import (CLIENT_PORT, SERVER_PORT, SCRIPT_PATH, LEASE_PATH,
                         CONF_PATH, PID_PATH)
 from .dhcpcapfsm import DHCPCAPFSM
+from .setnet import set_iff_up, get_iffs
 
 logging.config.dictConfig(LOGGING)
 logger = logging.getLogger('dhcpcanon')
+loggerscapy = logging.getLogger('scapy')
+loggerscapyinter = logging.getLogger('scapy.interactive')
 
 
 def main():
@@ -78,35 +82,53 @@ def main():
     parser.add_argument('-6', action='store_true')
     parser.add_argument('-4', action='store_true')
     args = parser.parse_args()
-    logger.debug('args %s', args)
-
     # do not put interfaces in promiscuous mode
     conf.sniff_promisc = conf.promisc = 0
     conf.checkIPaddr = 1
 
     if args.verbose:
         logger.setLevel(logging.DEBUG)
+        loggerscapy.setLevel(logging.DEBUG)
+        loggerscapyinter.setLevel(logging.DEBUG)
     logger.debug('args %s', args)
+
     if args.lease is not None:
         # TODO
         pass
     if args.interface:
         conf.iface = args.interface
-    logger.debug('interface %s' % conf.iface)
-    # FIXME: disabled for now
-    # if args.pf is not None:
-    #     import daemon
-    #     from daemon import pidfile
-    #     pf = pidfile.TimeoutPIDLockFile(args.pf)
-    #     logger.debug('using pid file %s', pf)
-    #     context = daemon.DaemonContext(pidfile=pf)
-    #     # FIXME: it does not get daemonized
-    dhcpcap = DHCPCAPFSM(iface=conf.iface,
-                         server_port=SERVER_PORT,
-                         client_port=CLIENT_PORT,
-                         scriptfile=args.sf)
-    dhcpcap.run()
-
+        logger.debug('interface %s' % conf.iface)
+        # FIXME: disabled for now
+        # if args.pf is not None:
+        #     import daemon
+        #     from daemon import pidfile
+        #     pf = pidfile.TimeoutPIDLockFile(args.pf)
+        #     logger.debug('using pid file %s', pf)
+        #     context = daemon.DaemonContext(pidfile=pf)
+        #     # FIXME: it does not get daemonized
+        dhcpcap = DHCPCAPFSM(iface=conf.iface,
+                             server_port=SERVER_PORT,
+                             client_port=CLIENT_PORT,
+                             scriptfile=args.sf)
+        dhcpcap.run()
+    else:
+        threads = []
+        iffs = get_iffs()
+        for i in iffs:
+            conf.iface = i
+            dhcpcap = DHCPCAPFSM(iface=conf.iface,
+                                 server_port=SERVER_PORT,
+                                 client_port=CLIENT_PORT,
+                                 scriptfile=args.sf)
+            name = 'th' + i
+            logger.debug('Creating thread %s', name)
+            t = Thread(name=name, target=dhcpcap.run())
+            threads.append(t)
+            t.start()
+            # # t.setDaemon(True)
+            # t.join()
+            # have_it = lock.acquire(0)
+            # dhcpcap.run()
 
 if __name__ == '__main__':
     main()

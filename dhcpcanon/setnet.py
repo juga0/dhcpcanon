@@ -5,12 +5,51 @@
 import logging
 import subprocess
 
-from pyroute2 import IPRoute
+from pyroute2 import IPRoute, IW
 from pyroute2.netlink import NetlinkError
 
 from .constants import RESOLVCONF
 
 logger = logging.getLogger(__name__)
+
+
+def get_iffs():
+    iffs_ordered = []
+    up_wifis = []
+    down_wifis = []
+    ipr = IPRoute()
+    iw = IW()
+    up = ipr.link_lookup(operstate='UP')
+    down = ipr.link_lookup(operstate='DOWN')
+    wifi_iffs = [i[0] for i in iw.get_interfaces_dict().values()]
+    for i in wifi_iffs:
+        if i in up:
+            logger.debug('Wifi interface is up.')
+            up_wifis.append(i)
+            up.remove(i)
+        else:
+            logger.debug('Wifi interface is down.')
+            down_wifis.append(i)
+            down.remove(i)
+    iffs_ordered = up + up_wifis + down + down_wifis
+    iffs_ordered = [ipr.get_links(i)[0].get_attr('IFLA_IFNAME')
+                    for i in iffs_ordered]
+    logger.debug('Interfaces to listen %s', iffs_ordered)
+    ipr.close()
+    iw.close()
+    return iffs_ordered
+
+
+def set_iff_up(iff):
+    ipr = IPRoute()
+    index = ipr.link_lookup(ifname=iff)[0]
+    try:
+        ipr.link_up(index)
+    except NetlinkError as e:
+        if e.code == 19:
+            logger.error("The device does not exist.")
+            exit(1)
+    ipr.close()
 
 
 def set_net(lease):
