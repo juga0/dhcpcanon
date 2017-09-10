@@ -73,7 +73,7 @@ setup(
             'dhcpcanon = dhcpcanon.dhcpcanon:main',
         ]
     },
-    setup_requires=['pytest-runner'],
+    # setup_requires=['pytest-runner'],
     tests_require=['pytest'],
     # NOTE: not installing system files as the user might want to install them
     # in a custom prefix or without systemd
