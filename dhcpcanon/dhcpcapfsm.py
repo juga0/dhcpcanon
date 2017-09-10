@@ -363,7 +363,11 @@ class DHCPCAPFSM(Automaton):
             self.script.script_init(self.client.lease, self.current_state)
             self.script.script_go()
         else:
-            set_net(self.client.lease)
+            try:
+                set_net(self.client.lease)
+            except:
+                logger.error('Can not set IP')
+                raise self.END()
         # TODO: go daemon?
 
     @ATMT.state()
@@ -398,7 +402,7 @@ class DHCPCAPFSM(Automaton):
             self.script.script_go()
         else:
             set_net(self.client.lease)
-        self.reset()
+        return
 
     @ATMT.state(error=1)
     def ERROR(self):
@@ -409,7 +413,7 @@ class DHCPCAPFSM(Automaton):
             self.script.script_init(self.client.lease, self.current_state)
             self.script.script_go()
         set_net(self.client.lease)
-        raise self.END()
+        raise self.INIT()
 
     # TIMEOUTS
     ###########

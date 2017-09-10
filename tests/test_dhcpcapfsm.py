@@ -61,25 +61,25 @@ class TestDHCPCAPFSM:
     """."""
 
     def test_preinit_bound(self):
-        """Test FSM from PREINIT to BOUND. No delays."""
+        """Test FSM from PREINIT to BOUND. No delays. No script"""
         logger.debug('Test PREINIT')
-        fsm_preinit['script'].script_init(fsm_preinit['client'].lease,
-                                          fsm_preinit['current_state'])
+        # fsm_preinit['script'].script_init(fsm_preinit['client'].lease,
+        #                                   fsm_preinit['current_state'])
         # recvsock=DummySocket) will fail with python3
         conf.L2listen = DummySocket
         # for sendp:
         conf.L2socket = DummySocket
         dhcpcanon = DHCPCAPFSM(client_mac='00:01:02:03:04:05', iface='eth0',
                                xid=900000000,
-                               scriptfile='/sbin/dhcpcanon-script',
+                            #    scriptfile='/sbin/dhcpcanon-script',
                                delay_selecting=1, timeout_select=1,
                                ll=DummySocket)
         assert dhcpcanon.dict_self() == fsm_preinit
         logger.debug('Test INIT')
         logger.debug('============')
         logger.debug('state %s', STATES2NAMES[dhcpcanon.current_state])
-        fsm_init['script'].script_init(fsm_init['client'].lease,
-                                       fsm_init['current_state'] - 1)
+        # fsm_init['script'].script_init(fsm_init['client'].lease,
+        #                                fsm_init['current_state'] - 1)
         logger.debug('Test start running, INIT')
         try:
             dhcpcanon.next()
@@ -91,8 +91,8 @@ class TestDHCPCAPFSM:
         logger.debug('===============')
         logger.debug('State %s', STATES2NAMES[dhcpcanon.current_state])
         logger.debug('Num offers %s', len(dhcpcanon.offers))
-        fsm_selecting['script'].script_init(fsm_init['client'].lease,
-                                            'PREINIT')
+        # fsm_selecting['script'].script_init(fsm_init['client'].lease,
+        #                                     'PREINIT')
         logger.debug('Test timeout selecting %s',
                      dhcpcanon.get_timeout(dhcpcanon.current_state,
                                            dhcpcanon.timeout_selecting))
@@ -110,7 +110,7 @@ class TestDHCPCAPFSM:
         if len(dhcpcanon.offers) < 1:
             logger.debug('Offer not received, tests are not complete yet.')
             return
-        assert dhcpcanon.dict_self()['script'] == fsm_selecting['script']
+        # assert dhcpcanon.dict_self()['script'] == fsm_selecting['script']
         assert dhcpcanon.dict_self()['client'].lease == \
             fsm_selecting['client'].lease
         assert dhcpcanon.dict_self()['client'] == \
@@ -124,15 +124,15 @@ class TestDHCPCAPFSM:
         logger.debug('State %s', STATES2NAMES[dhcpcanon.current_state])
         # dummy socket that will receive an ACK
         dhcpcanon.listen_sock = DummySocketAck()
-        fsm_requesting['script'].script_init(fsm_init['client'].lease,
-                                             'PREINIT')
+        # fsm_requesting['script'].script_init(fsm_init['client'].lease,
+        #                                      'PREINIT')
         try:
             dhcpcanon.next()
         except Automaton.Singlestep as err:
             logger.debug('Singlestep %s in state %s', err,
                          dhcpcanon.current_state)
 
-        assert dhcpcanon.dict_self()['script'] == fsm_requesting['script']
+        # assert dhcpcanon.dict_self()['script'] == fsm_requesting['script']
         # set the timers accourding to the time pkt sent
         # dhcpcanon.client.lease.set_times(datetime(2017, 6, 23))
         dhcpcanon.set_timers()
@@ -144,17 +144,16 @@ class TestDHCPCAPFSM:
         logger.debug('Test BOUND')
         logger.debug('============')
         logger.debug('State %s', STATES2NAMES[dhcpcanon.current_state])
-        fsm_bound['script'].script_init(fsm_bound['client'].lease,
-                                        'BOUND')
+        # fsm_bound['script'].script_init(fsm_bound['client'].lease,
+                                        # 'BOUND')
         try:
             dhcpcanon.next()
         except Automaton.Singlestep as err:
             logger.debug('Singlestep %s in state %s', err,
                          dhcpcanon.current_state)
-        assert dhcpcanon.dict_self()['script'] == fsm_bound['script']
+        # assert dhcpcanon.dict_self()['script'] == fsm_bound['script']
         assert dhcpcanon.dict_self()['client'].lease == \
             fsm_bound['client'].lease
         assert dhcpcanon.dict_self()['client'] == \
             fsm_bound['client']
         assert dhcpcanon.dict_self() == fsm_bound
-        # os.kill(os.getpid(), signal.SIGINT)

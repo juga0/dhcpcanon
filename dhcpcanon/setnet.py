@@ -15,7 +15,11 @@ logger = logging.getLogger(__name__)
 
 def set_net(lease):
     ipr = IPRoute()
-    index = ipr.link_lookup(ifname=lease.interface)[0]
+    try:
+        index = ipr.link_lookup(ifname=lease.interface)[0]
+    except IndexError as e:
+        logger.error('Interface %s not found, can not set IP.', lease.interface)
+        exit(1)
     try:
         ipr.addr('add', index, address=lease.address,
                  mask=int(lease.subnet_mask_cidr))
