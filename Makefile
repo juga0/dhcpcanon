@@ -37,6 +37,9 @@ man8dir = $(mandir)/man8
 tmpfilesdir=$(prefix)/lib/tmpfiles.d
 systemunitdir=$(prefix)/lib/systemd/system
 
+# for apparmor
+apparmordir=$(sysconfdir)/apparmor.d
+
 srcdir = .
 
 SRC_MAN8 = man/dhcpcanon.8
@@ -44,6 +47,7 @@ SRC_SCRIPT = sbin/dhcpcanon-script
 SRC_DOC = README.md LICENSE
 SRC_TMPFILES = tmpfiles.d/dhcpcanon.conf
 SRC_UNITFILE = systemd/dhcpcanon.service
+SRC_APPARMOR = apparmor.d/sbin.dhcpcanon
 SRC_ALL = $(SRC_SCRIPT) $(SRC_DOC) $(SRC_MAN8)
 
 DST_MAN8 = $(SRC_MAN8)
@@ -51,6 +55,7 @@ DST_SCRIPT = $(SRC_SCRIPT)
 DST_DOC = $(SRC_DOC)
 DST_TMPFILES = $(SRC_TMPFILES)
 DST_UNITFILE = $(SRC_UNITFILE)
+DST_APPARMOR = $(SRC_APPARMOR)
 DST_ALL = $(DST_SCRIPT) $(DST_DOC) $(DST_MAN8)
 
 TEST_PY = dhcpcanon-test.py
@@ -81,6 +86,12 @@ install: all
 		systemd-tmpfiles --create --root=$(DESTDIR)$(tmpfilesdir)/dhcpcanon.conf; \
 	fi
 
+	if [ -z $(WITH_APPARMOR)]; then \
+		mkdir -p $(DESTDIR)$(apparmordir); \
+		for i in $(DST_APPARMOR); do $(INSTALL_DATA) "$$i" $(DESTDIR)$(apparmordir); done; \
+		for i in $(DST_APPARMOR); do aa-complain $(DESTDIR)$(apparmordir)/"$$i"; done; \
+	fi
+
 uninstall:
 	@echo $@
 	for i in $(notdir $(DST_SCRIPT)); do rm $(DESTDIR)$(sbindir)/"$$i"; done
@@ -91,6 +102,7 @@ uninstall:
 	# systemd files
 	for i in $(notdir $(DST_UNITFILE)); do rm $(DESTDIR)$(systemunitdir)/"$$i"; done
 	for i in $(notdir $(DST_TMPFILES)); do rm $(DESTDIR)$(tmpfilesdir)/"$$i"; done
+	for i in $(notdir $(DST_APPARMOR)); do rm $(DESTDIR)$(apparmordir)/"$$i"; done
 
 clean:
 	python setup.py clean
