@@ -27,7 +27,7 @@ from .dhcpcap import DHCPCAP
 from .dhcpcaputils import isack, isnak, isoffer
 from .timers import (gen_delay_selecting, gen_timeout_request_rebind,
                      gen_timeout_request_renew, gen_timeout_resend, nowutc)
-from .setnet import set_net
+from .netutils import set_net
 
 logger = logging.getLogger(__name__)
 
