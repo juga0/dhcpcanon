@@ -5,13 +5,13 @@
 from __future__ import absolute_import, unicode_literals
 
 import logging
-import os
 import subprocess
 
 import attr
 
-from .constants import (LEASEATTRS2ENVKEYS, LEASEATTRS_SAMEAS_ENVKEYS,
-                        SCRIPT_ENV_KEYS, STATES2REASONS, SCRIPT_PATH)
+from .constants import (ENV_OPTIONS_REQ, LEASEATTRS2ENVKEYS,
+                        LEASEATTRS_SAMEAS_ENVKEYS, SCRIPT_ENV_KEYS,
+                        SCRIPT_PATH, STATES2REASONS)
 
 logger = logging.getLogger('dhcpcanon')
 
@@ -49,14 +49,13 @@ class ClientScript(object):
                 reason = state
             self.env['reason'] = str(reason)
             self.env['medium'] = str(medium)
-            self.env['client'] = str('dhcpcanon')
-            self.env['pid'] = str(os.getpid())
-
+            # self.env['client'] = str('dhcpcanon')
+            # self.env['pid'] = str(os.getpid())
             for k in LEASEATTRS_SAMEAS_ENVKEYS:
                 self.env[k] = str(lease.__getattribute__(k))
-
             for k, v in LEASEATTRS2ENVKEYS.items():
                 self.env[k] = str(lease.__getattribute__(v))
+            self.env.update(ENV_OPTIONS_REQ)
         else:
             logger.debug('There is not script path.')
 

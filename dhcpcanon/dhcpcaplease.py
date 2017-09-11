@@ -13,6 +13,8 @@ from attr.validators import instance_of
 from .timers import (future_dt_str, gen_rebinding_time, gen_renewing_time,
                      nowutc)
 
+from.constants import (LEASE_ATTRS2LEASE_LOG, ENV_OPTIONS_REQ)
+
 logger = logging.getLogger('dhcpcanon')
 
 
@@ -73,6 +75,10 @@ class DHCPCAPLease(object):
 
     def info_lease(self):
         """Print lease information."""
+        for k, v in LEASE_ATTRS2LEASE_LOG. items():
+            logger.debug("'%s'=>'%s'", v, getattr(self, k))
+        for k, v in ENV_OPTIONS_REQ.items():
+            logger.debug("option '%s'=>'1'", k)
         logger.info('address %s', self.address)
         logger.info('plen %s (%s)', self.subnet_mask_cidr, self.subnet_mask)
         logger.info('gateway %s', self.router)

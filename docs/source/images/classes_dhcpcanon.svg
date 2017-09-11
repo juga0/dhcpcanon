@@ -142,8 +142,8 @@
 <text text-anchor="start" x="174.5" y="-376.3" font-family="Times,serif" font-size="14.00">address : _CountingAttr</text>
 <text text-anchor="start" x="174.5" y="-361.3" font-family="Times,serif" font-size="14.00">broadcast_address : _CountingAttr</text>
 <text text-anchor="start" x="174.5" y="-346.3" font-family="Times,serif" font-size="14.00">domain : _CountingAttr</text>
-<text text-anchor="start" x="174.5" y="-331.3" font-family="Times,serif" font-size="14.00">expiry</text>
-<text text-anchor="start" x="174.5" y="-316.3" font-family="Times,serif" font-size="14.00">expiry : _CountingAttr</text>
+<text text-anchor="start" x="174.5" y="-331.3" font-family="Times,serif" font-size="14.00">expire</text>
+<text text-anchor="start" x="174.5" y="-316.3" font-family="Times,serif" font-size="14.00">expire : _CountingAttr</text>
 <text text-anchor="start" x="174.5" y="-301.3" font-family="Times,serif" font-size="14.00">interface : _CountingAttr</text>
 <text text-anchor="start" x="174.5" y="-286.3" font-family="Times,serif" font-size="14.00">lease_time : _CountingAttr</text>
 <text text-anchor="start" x="174.5" y="-271.3" font-family="Times,serif" font-size="14.00">name_server : _CountingAttr</text>

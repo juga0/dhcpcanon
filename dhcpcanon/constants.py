@@ -72,14 +72,11 @@ STATES2NAMES = {
 
 # NM integration
 #####################
-REASONS_NM = [
-    'bound', 'renew', 'rebind',
-    'timeout',
-    'nak', 'expire',
-    'end',
-    'fail',
-    'abend'
-]
+REASONS_NM = ['bound', 'renew', 'rebind', 'expiry', 'fail', 'timeout',
+              'nak', 'end', 'abend']
+
+REASONS_CL = ['MEDIUM', 'PREINIT', 'BOUND', 'RENEW', 'REBIND', 'REBOOT',
+              'EXPIRE', 'FAIL', 'STOP', 'RELEASE', 'NBI', 'TIMEOUT']
 
 STATES2REASONS = {
     STATE_PREINIT: 'PREINIT',
@@ -89,13 +86,13 @@ STATES2REASONS = {
     STATE_END: 'END',
     STATE_REBINDING: 'REBIND',
     STATE_RENEWING: 'RENEW',
-    # "EXPIRE"
-    STATE_ERROR: "TIMEOUT",
-    # "FAIL"
-    # "STOP"
+    STATE_ERROR: "FAIL",
+    # NOTE: there could be implemented a way toknow the reason for failure so
+    # that it can be passed to NetworkManager, as dhclient does, ie:
+    # "STOP", "EXPIRE"
 }
 
-# similar to systemd
+# systemd events
 DHCP_EVENTS = {
     'STOP': 0,
     'IP_ACQUIRE': 1,
@@ -104,32 +101,86 @@ DHCP_EVENTS = {
     'RENEW': 4,
 }
 
-SCRIPT_ENV_KEYS = ['reason', 'medium', 'client', 'pid', 'interface',
-                   'ip_address', 'subnet_mask', 'network_number',
-                   'broadcast_address', 'domain_name_servers', 'routers',
-                   'dhcp_server_identifier', 'next_server', 'domain_name',
-                   'dhcp_lease_time', 'dhcp_renewal_time',
-                   'dhcp_rebinding_time', 'expire', 'renew', 'rebind']
+SCRIPT_ENV_KEYS = ['reason', 'medium', 'interface',
+                   # 'client', 'pid',
+                   'new_ip_address', 'new_subnet_mask', 'new_network_number',
+                   'new_domain_name_servers', 'new_domain_name', 'new_routers',
+                   'new_broadcast_address', 'new_next_server',
+                   'new_dhcp_server_id']
 
-LEASEATTRS_SAMEAS_ENVKEYS = [
-    'interface', 'subnet_mask', 'broadcast_address', 'next_server', 'rebind',
-    'renew']
+LEASEATTRS_SAMEAS_ENVKEYS = ['interface', 'reason']
+# 'client', 'pid',
+# these are not set as environment but put in lease file
+# , 'rebind', 'renew', 'expiry'
 
 LEASEATTRS2ENVKEYS = {
-    'ip_address': 'address',
-    'routers': 'router',
-    'network_number': 'subnet',
-    'domain_name': 'domain',
-    'domain_name_servers': 'name_server',
-    'dhcp_lease_time': 'lease_time',
-    'dhcp_rebinding_time': 'rebinding_time',
-    'dhcp_renewal_time': 'renewal_time',
-    'expire': 'expiry',
-    'dhcp_server_identifier': 'server_id',
+    'address': 'new_ip_address',
+    'subnet_mask': 'new_subnet_mask',
+    'broadcast_address': 'new_broadcast_address',
+    'next_server': 'new_next_server',
+    'server_id': 'new_server_id',
+
+    'network': 'new_network_number',
+    'domain': 'new_domain_name',
+    'name_server': 'new_domain_name_servers',
+    'router': 'new_routers',
 }
 
-FSM_ATTRS = ['request_attempts', 'discover_attempts', 'script',
-             'time_sent_request', 'current_state', 'client']
+LEASE_ATTRS2LEASE_FILE = {
+    'interface': 'interface',
+
+    'address': 'fixed-address',
+
+    'subnet_mask': 'option subnet-mask',
+    'broadcast_address': 'option broadcast-address',
+
+    'domain': 'option domain-name',
+    'name_server': 'option domain-name-servers',
+    'router': 'option routers',
+
+    'lease_time': 'option dhcp-lease-time',
+    'rebinding_time': 'option dhcp-rebinding-time',
+    'renewal_time': 'option dhcp-renewal-time',
+    'server_id': 'option dhcp-server-identifier',
+    'renew': 'renew',
+    'rebind': 'rebind',
+    'expiry': 'expiry',
+}
+
+LEASE_ATTRS2LEASE_LOG = {
+    'interface': 'interface',
+
+    'subnet_mask': 'option subnet_mask',
+    'broadcast_address': 'option broadcast_address',
+
+    'address': 'ip_address',
+
+    'router': 'option routers',
+    'domain': 'option domain_name',
+    'name_server': 'option domain_name_servers',
+
+    'lease_time': 'option dhcp_lease_time',
+    'renewal_time': 'option dhcp_renewal_time',
+    'rebinding_time': 'option dhcp_rebinding_time',
+    'server_id': 'option dhcp_server_identifier',
+    'expiry': 'expiry',
+}
+
+ENV_OPTIONS_REQ = {
+    'requested_subnet_mask': '1',
+    'requested_router': '1',
+    'requested_domain_name_server': '1',
+    'requested_domain_name': '1',
+    'requested_router_discovery': '1',
+    'requested_static_route': '1',
+    'requested_vendor_specific': '1',
+    'requested_netbios_nameserver': '1',
+    'requested_netbios_node_type': '1',
+    'requested_netbios_scope': '1',
+    'requested_classless_static_route_option': '1',
+    'requested_private_classless_static_route': '1',
+    'requested_private_proxy_autodiscovery': '1',
+}
 
 PRL = b"\x01\x03\x06\x0f\x1f\x21\x2b\x2c\x2e\x2f\x79\xf9\xfc"
 """
@@ -148,11 +199,14 @@ SD_DHCP_OPTION_PRIVATE_CLASSLESS_STATIC_ROUTE  = 249
 SD_DHCP_OPTION_PRIVATE_PROXY_AUTODISCOVERY     = 252
 """
 
+FSM_ATTRS = ['request_attempts', 'discover_attempts', 'script',
+             'time_sent_request', 'current_state', 'client']
+
 XID_MIN = 1
 XID_MAX = 900000000
 
 SCRIPT_PATH = '/sbin/dhcpcanon-script'
-PID_PATH = '/var/run/dhclient.pid'
-LEASE_PATH = '/var/lib/dhcp/dhclient.leases'
-CONF_PATH = '/etc/dhcp/dhclient.conf'
+PID_PATH = '/var/run/dhcpcanon.pid'
+LEASE_PATH = '/var/lib/dhcp/dhcpcanon.leases'
+CONF_PATH = '/etc/dhcp/dhcpcanon.conf'
 RESOLVCONF = '/sbin/resolvconf'

@@ -359,6 +359,7 @@ class DHCPCAPFSM(Automaton):
         logger.info('(%s) state changed %s -> bound', self.client.iface,
                     STATES2NAMES[self.current_state])
         self.current_state = STATE_BOUND
+        self.client.lease.info_lease()
         if self.script is not None:
             self.script.script_init(self.client.lease, self.current_state)
             self.script.script_go()
