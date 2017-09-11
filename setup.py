@@ -56,12 +56,12 @@ setup(
     url=dhcpcanon.__website__,
     packages=find_packages(exclude=['contrib', 'docs', 'tests*']),
     install_requires=[
-        'scapy>=2.2";python_version<="2.7"',
-        'scapy-python3>=0.21;python_version>="3.4"',
+        "attrs>=16.3",
         "netaddr>=0.7",
         "pip>=8.1",
-        "attrs>=16.3",
-        "pyroute2>=0.4"
+        "pyroute2>=0.3",
+        'scapy>=2.2";python_version<="2.7"',
+        'scapy-python3>=0.20;python_version>="3.4"',
     ],
     extras_require={
         'dev': ['ipython', 'pyflakes', 'pep8'],
