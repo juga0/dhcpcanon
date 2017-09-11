@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 # vim:ts=4:sw=4:expandtab 2
 # Copyright 2016, 2017 juga (juga at riseup dot net), MIT license.
-"""."""
+"""Netowrk utils for the DHCP client implementation of the Anonymity Profile
+([:rfc:`7844`])."""
 import logging
 import subprocess
 
