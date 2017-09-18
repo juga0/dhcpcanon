@@ -88,6 +88,8 @@ Documentation for developers
 
 :ref:`implementation`
 
+:ref:`install_run_cases`
+
 :ref:`privileges`
 
 :ref:`integration`
@@ -101,6 +103,8 @@ Recommended documentation not included in this repository:
 :ref:`Related RFCs <rfcs>`
 
 :ref:`RFC7844 comments and summary <rfc7844comm>`
+
+`Main Website <http://dhcpap.github.io`__
 
 License
 -------
