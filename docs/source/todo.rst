@@ -17,11 +17,11 @@ TODO
 
 [X] create systemd service
 
-[won't fix] create init.d daemon
+[X] create init.d daemon: Won't fix.
 
 [X] limit privileges
 
-[ ] include MAC anonymization module
+[X] include MAC anonymization module: Debian package suggest it.
 
 [X] create apparmor profile
 
