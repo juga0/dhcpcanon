@@ -72,9 +72,7 @@ install: all
 	mkdir -p $(DESTDIR)$(man8dir)
 	for i in $(DST_MAN8); do $(INSTALL_DATA) "$$i" $(DESTDIR)$(man8dir); done
 
-	if [ -z $(DESTDIR) ]; then python setup.py install; else \
-		python setup.py install --root $(DESTDIR) \
-		--install-scripts=$(DESTDIR)$(sbindir); fi
+	$(PYTHON) setup.py install  --record installed.txt $(if $(DESTDIR),--root=$(DESTDIR),--install-scripts=$(DESTDIR)$(sbindir))
 
 	if [ -z $(WITH_SYSTEMD)]; then \
 		adduser --system dhcpcanon; \
