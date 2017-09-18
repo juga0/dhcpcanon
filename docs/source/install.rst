@@ -14,6 +14,11 @@ It can be installed with a package manager or in command line::
 The main script will be installed in ``/sbin/dhcpcanon``, a systemd service
 will be enabled and run by default, so there is no need to run anything manually.
 
+**Important**: when running ``dhcpcanon`` the hardware address
+(`MAC <https://en.wikipedia.org/wiki/MAC_address>`__) should be randomized.
+You can use `macchanger <https://github.com/alobbs/macchanger>`__,
+`macouflage <https://github.com/subgraph/macouflage>`__ or other.
+
 Installation from source code
 ==============================
 
@@ -49,6 +54,11 @@ an alternative location, for instance::
 Note however that without systemd ``dhcpcanon`` will need to be run with root
 privileges, while the systemd service drop ``dhcpcanon`` root privileges and
 only keeps the required network capabilities.
+
+You would also need to install 
+`resolvconf-admin <https://github.com/dkg/resolvoconf-admin'`_
+to be able to run it as non root user and set up DNS servers provided by the DHCP server.
+It will be possible to set up DNS servers with ``systemd`` too soon.
 
 An alternative to do not run ``dhcpcanon`` with root privileges nor systemd,
 is to use `ambient-rs wrapper <https://github.com/infinity0/ambient-rs>`

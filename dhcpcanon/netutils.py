@@ -9,7 +9,7 @@ import subprocess
 from pyroute2 import IPRoute
 from pyroute2.netlink import NetlinkError
 
-from .constants import RESOLVCONF
+from .constants import RESOLVCONF, RESOLVCONF_ADMIN
 
 logger = logging.getLogger(__name__)
 
@@ -47,14 +47,83 @@ def set_net(lease):
     else:
         logger.debug('Default gateway set to %s', lease.router)
     ipr.close()
-    cmd = [RESOLVCONF, '-a', lease.interface]
-    proc = subprocess.Popen(cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
-                            stderr=subprocess.PIPE)
-    stdin = '\n'.join(['nameserver ' + nm for nm in lease.name_server.split()])
-    stdin = str.encode(stdin)
+    set_dns()
+
+
+def set_dns(lease):
+    if os.path.exists(RESOLVCONF_ADMIN):
+        cmd = [RESOLVCONF_ADMIN, 'add' lease.interface, lease.name_server]
+        proc = subprocess.Popen(cmd, stdout=subprocess.PIPE,
+                                stderr=subprocess.PIPE)
+        try:
+            (stdout, stderr) = proc.communicate()
+        except TypeError as e:
+            logger.error(e)
+        return
+    # TODO: check systemd-resolved
+    if os.path.exists(RESOLVCONF):
+        cmd = [RESOLVCONF, '-a', lease.interface]
+        proc = subprocess.Popen(cmd, stdin=subprocess.PIPE,
+                                tdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        stdin = '\n'.join(['nameserver ' + nm for nm in
+                           lease.name_server.split()])
+        stdin = str.encode(stdin)
+        try:
+            (stdout, stderr) = proc.communicate(stdin)
+        except TypeError as e:
+            logger.error(e)
+        logger.debug('result %s, stdout %s, stderr %s', proc.returncode,
+                     stdout, stderr)
+
+
+def systemd_resolved_status():
+    # NOTE: not used currently
+    from dbus import SystemBus, SessionBus
+    bus = SystemBus()
+    systemd = bus.get_object('org.freedesktop.systemd1',
+                             '/org/freedesktop/systemd1')
+    manager = Interface(systemd,
+                        dbus_interface='org.freedesktop.systemd1.Manager')
+    unit = manager.LoadUnit('sytemd-resolved.service')
+    proxy = bus.get_object('org.freedesktop.systemd1', str(unit))
+    resolved = Interface(proxy, dbus_interface='org.freedesktop.systemd1.Unit')
+    r = proxy.Get('org.freedesktop.systemd1.Unit',
+                  'ActiveState',
+                  dbus_interface='org.freedesktop.DBus.Properties')
+
+
+def systemd_resolved_status():
+    # NOTE: not used currently
+    from pydbus import SystemBus
+    bus = SystemBus()
+    systemd = bus.get('org.freedesktop.systemd1')
+    unit = systemd.LoadUnit('sytemd-resolved.service')
+    resolved = bus.get('.systemd1', unit[0])
+    resolved.Get('org.freedesktop.systemd1.Unit', 'ActiveState')
+
+
+def systemd_resolved_start():
+    # NOTE: not used currently
+    from pydbus import SystemBus
+    bus = SystemBus()
+    systemd = bus.get(".systemd1")
     try:
-        (stdout, stderr) = proc.communicate(stdin)
-    except TypeError as e:
-        logger.error(e)
-    logger.debug('result %s, stdout %s, stderr %s', proc.returncode, stdout,
-                 stderr)
+        systemd.StartUnit("systemd-resolved.service", "fail")
+    except:
+        # g-io-error-quark: GDBus.Error:org.freedesktop.systemd1.NoSuchUnit:
+        # Unit foo.service not found. (36)
+        logger.error("Could not start systemd-resolved")
+
+
+def systemd_resolved_get_dns():
+    # busctl introspect org.freedesktop.resolve1
+    # /org/freedesktop/resolve1/link/_35 |grep DNS
+    pass
+
+
+def systemd_resolved_set_dns():
+    # ip l
+    # busctl call org.freedesktop.resolve1
+    # /org/freedesktop/resolve1 org.freedesktop.resolve1.Manager
+    # SetLinkDNS 'ia(iay)' 5 1 2 4 8 8 8 8
+    pass
