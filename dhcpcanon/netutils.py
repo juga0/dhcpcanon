@@ -4,6 +4,7 @@
 """Netowrk utils for the DHCP client implementation of the Anonymity Profile
 ([:rfc:`7844`])."""
 import logging
+import os.path
 import subprocess
 
 from pyroute2 import IPRoute
@@ -47,12 +48,12 @@ def set_net(lease):
     else:
         logger.debug('Default gateway set to %s', lease.router)
     ipr.close()
-    set_dns()
+    set_dns(lease)
 
 
 def set_dns(lease):
     if os.path.exists(RESOLVCONF_ADMIN):
-        cmd = [RESOLVCONF_ADMIN, 'add' lease.interface, lease.name_server]
+        cmd = [RESOLVCONF_ADMIN, 'add', lease.interface, lease.name_server]
         proc = subprocess.Popen(cmd, stdout=subprocess.PIPE,
                                 stderr=subprocess.PIPE)
         try:
@@ -78,7 +79,7 @@ def set_dns(lease):
 
 def systemd_resolved_status():
     # NOTE: not used currently
-    from dbus import SystemBus, SessionBus
+    from dbus import SystemBus, Interface
     bus = SystemBus()
     systemd = bus.get_object('org.freedesktop.systemd1',
                              '/org/freedesktop/systemd1')
@@ -86,18 +87,22 @@ def systemd_resolved_status():
                         dbus_interface='org.freedesktop.systemd1.Manager')
     unit = manager.LoadUnit('sytemd-resolved.service')
     proxy = bus.get_object('org.freedesktop.systemd1', str(unit))
-    resolved = Interface(proxy, dbus_interface='org.freedesktop.systemd1.Unit')
+    # resolved = Interface(proxy,
+    #                      dbus_interface='org.freedesktop.systemd1.Unit')
     r = proxy.Get('org.freedesktop.systemd1.Unit',
                   'ActiveState',
                   dbus_interface='org.freedesktop.DBus.Properties')
+    if str(r) == 'active':
+        return True
+    return True
 
 
-def systemd_resolved_status():
+def pydbus_systemd_resolved_status():
     # NOTE: not used currently
     from pydbus import SystemBus
     bus = SystemBus()
     systemd = bus.get('org.freedesktop.systemd1')
-    unit = systemd.LoadUnit('sytemd-resolved.service')
+    unit = systemd.LoadUnit('systemd-resolved.service')
     resolved = bus.get('.systemd1', unit[0])
     resolved.Get('org.freedesktop.systemd1.Unit', 'ActiveState')
 
