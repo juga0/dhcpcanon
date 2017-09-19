@@ -36,6 +36,8 @@ man8dir = $(mandir)/man8
 # for systemd
 tmpfilesdir=$(prefix)/lib/tmpfiles.d
 systemunitdir=$(prefix)/lib/systemd/system
+# for systemd udev
+networkdir=$(prefix)/lib/systemd/network
 
 # for apparmor
 apparmordir=$(sysconfdir)/apparmor.d
@@ -48,6 +50,7 @@ SRC_DOC = README.md LICENSE
 SRC_TMPFILES = tmpfiles.d/dhcpcanon.conf
 SRC_UNITFILE = systemd/dhcpcanon.service
 SRC_APPARMOR = apparmor.d/sbin.dhcpcanon
+SRC_LINKFILE = systemd/network/90-dhcpcanon.link
 SRC_ALL = $(SRC_SCRIPT) $(SRC_DOC) $(SRC_MAN8)
 
 DST_MAN8 = $(SRC_MAN8)
@@ -56,6 +59,7 @@ DST_DOC = $(SRC_DOC)
 DST_TMPFILES = $(SRC_TMPFILES)
 DST_UNITFILE = $(SRC_UNITFILE)
 DST_APPARMOR = $(SRC_APPARMOR)
+DST_LINKFILE = $(SRC_LINKFILE)
 DST_ALL = $(DST_SCRIPT) $(DST_DOC) $(DST_MAN8)
 
 TEST_PY = dhcpcanon-test.py
@@ -84,6 +88,11 @@ install: all
 		systemd-tmpfiles --create --root=$(DESTDIR)$(tmpfilesdir)/dhcpcanon.conf; \
 	fi
 
+	if [ -z $(WITH_SYSTEMD_UDEV)]; then \
+		mkdir -p $(DESTDIR)$(networkdir); \
+		for i in $(DST_LINKFILE); do $(INSTALL_DATA) "$$i" $(DESTDIR)$(networkdir); done; \
+	fi
+
 	if [ -z $(WITH_APPARMOR)]; then \
 		mkdir -p $(DESTDIR)$(apparmordir); \
 		for i in $(DST_APPARMOR); do $(INSTALL_DATA) "$$i" $(DESTDIR)$(apparmordir); done; \
@@ -101,6 +110,7 @@ uninstall:
 	for i in $(notdir $(DST_UNITFILE)); do rm $(DESTDIR)$(systemunitdir)/"$$i"; done
 	for i in $(notdir $(DST_TMPFILES)); do rm $(DESTDIR)$(tmpfilesdir)/"$$i"; done
 	for i in $(notdir $(DST_APPARMOR)); do rm $(DESTDIR)$(apparmordir)/"$$i"; done
+	for i in $(notdir $(DST_LINKFILE)); do rm $(DESTDIR)$(networkdir)/"$$i"; done
 
 clean:
 	python setup.py clean
