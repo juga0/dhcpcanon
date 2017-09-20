@@ -55,8 +55,8 @@ Note however that without systemd ``dhcpcanon`` will need to be run with root
 privileges, while the systemd service drop ``dhcpcanon`` root privileges and
 only keeps the required network capabilities.
 
-You would also need to install 
-`resolvconf-admin <https://github.com/dkg/resolvoconf-admin'`_
+You would also need to install
+`resolvconf-admin <https://github.com/dkg/resolvoconf-admin>`_
 to be able to run it as non root user and set up DNS servers provided by the DHCP server.
 It will be possible to set up DNS servers with ``systemd`` too soon.
 
@@ -64,7 +64,9 @@ An alternative to do not run ``dhcpcanon`` with root privileges nor systemd,
 is to use `ambient-rs wrapper <https://github.com/infinity0/ambient-rs>`
 and run::
 
-    RUST_BACKTRACE=1 ./target/debug/ambient -c NET_RAW,NET_ADMIN,NET_BIND_SERVICE /usr/bin/python3 -m dhcpcanon.dhcpcanon -v
+    RUST_BACKTRACE=1 ./target/debug/ambient \
+    -c NET_RAW,NET_ADMIN,NET_BIND_SERVICE \
+    /usr/bin/python3 -m dhcpcanon.dhcpcanon -v
 
 Installation with pip
 ==========================

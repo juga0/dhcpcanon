@@ -104,7 +104,7 @@ Recommended documentation not included in this repository:
 
 :ref:`RFC7844 comments and summary <rfc7844comm>`
 
-`Main Website <http://dhcpap.github.io`__
+`Main Website <http://dhcpap.github.io>`__
 
 License
 -------
