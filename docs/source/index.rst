@@ -15,6 +15,7 @@ Contents:
    install
    download
    running
+   install_run_cases
    todo
    contributing
    soa
