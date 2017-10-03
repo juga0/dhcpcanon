@@ -22,7 +22,7 @@ from .dhcpcapfsm import DHCPCAPFSM
 
 logging.config.dictConfig(LOGGING)
 logger = logging.getLogger('dhcpcanon')
-
+print("logger", logger)
 
 def main():
     parser = argparse.ArgumentParser()
@@ -82,6 +82,7 @@ def main():
     parser.add_argument('-4', action='store_true')
     args = parser.parse_args()
     logger.debug('args %s', args)
+    logger.debug('logger handlesrs %s', logger.handlers)
 
     # do not put interfaces in promiscuous mode
     conf.sniff_promisc = conf.promisc = 0

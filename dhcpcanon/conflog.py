@@ -30,6 +30,12 @@ LOGGING = {
             'formatter': 'verbose',
             'level': 'DEBUG',
         },
+        'logfile': {
+            'class': 'logging.FileHandler',
+            'filename': '/var/log/dhcpcanon.log',
+            'formatter': 'verbose',
+            'level': 'DEBUG',
+        },
         'stdoutscapy': {
             'class': 'logging.StreamHandler',
             'stream': sys.stdout,
@@ -45,8 +51,13 @@ LOGGING = {
     },
     'loggers': {
         'dhcpcanon': {
-            'handlers': ['syslog', 'stdout'],
+            'handlers': ['syslog', 'stdout', 'logfile'],
             'level': logging.INFO,
+            'propagate': False
+        },
+        'dhcpcanon.*': {
+            'handlers': ['syslog', 'stdout', 'logfile'],
+            'level': logging.DEBUG,
             'propagate': False
         },
         "scapy": {
