@@ -99,9 +99,10 @@ def set_dns_systemd_resolved(lease):
     # org.freedesktop.resolve1.Manager SetLinkDNS 'ia(iay)' 2 1 2 4 1 2 3 4
     # is SetLinkDNS(2, [(2, [8, 8, 8, 8])]_
     iay = [(2, [int(b) for b in ns.split('.')])
-           for ns in lease.name_server.split() if '.' in ns
-           else (10, [ord(x) for x in
-                      socket.inet_pton(socket.AF_INET6, ns)])
+           for ns in lease.name_server.split()]
+        #    if '.' in ns
+        #    else (10, [ord(x) for x in
+        #               socket.inet_pton(socket.AF_INET6, ns)])
     bus = SystemBus()
     resolved = bus.get_object('org.freedesktop.resolve1',
                               '/org/freedesktop/resolve1')
