@@ -7,7 +7,9 @@
 import argparse
 import logging
 import logging.config
+import sys
 
+from daemonize import Daemonize
 from scapy.config import conf
 
 # in python3 this seems to be the only way to to disable:
@@ -22,7 +24,9 @@ from .dhcpcapfsm import DHCPCAPFSM
 
 logging.config.dictConfig(LOGGING)
 logger = logging.getLogger('dhcpcanon')
-print("logger", logger)
+syslh = logging.handlers.SysLogHandler(address="/dev/log")
+fd = syslh.socket.fileno()
+
 
 def main():
     parser = argparse.ArgumentParser()
@@ -112,6 +116,20 @@ def main():
                          delay_selecting=args.delay_selecting)
     dhcpcap.run()
 
-
-if __name__ == '__main__':
+print(sys.argv)
+print('fd', fd)
+try:
+    i = sys.argv.index('-pf')
+    pid = sys.argv[i+1]
+except (ValueError, IndexError) as e:
+    pid = PID_PATH
+    print('arg -pf not passed')
+print('pid', pid)
+print(__name__)
+if '-d' in sys.argv:
+    print('DAEMONIZING')
+    daemon = Daemonize(app="dhcpcanon", pid=pid, action=main, keep_fds=[fd])
+    daemon.start()
+else:
+    print('not daemonizing')
     main()
