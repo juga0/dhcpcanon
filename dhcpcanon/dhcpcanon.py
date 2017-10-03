@@ -25,7 +25,10 @@ from .dhcpcapfsm import DHCPCAPFSM
 logging.config.dictConfig(LOGGING)
 logger = logging.getLogger('dhcpcanon')
 syslh = logging.handlers.SysLogHandler(address="/dev/log")
-fd = syslh.socket.fileno()
+sysfd = syslh.socket.fileno()
+varlh = logging.FileHandler(filename="/var/log/dhcpcanon.log")
+varfd = varlh.stream.fileno()
+fds = [sysfd, varfd]
 
 
 def main():
@@ -117,7 +120,7 @@ def main():
     dhcpcap.run()
 
 print(sys.argv)
-print('fd', fd)
+print('fds', fds)
 try:
     i = sys.argv.index('-pf')
     pid = sys.argv[i+1]
@@ -128,7 +131,7 @@ print('pid', pid)
 print(__name__)
 if '-d' in sys.argv:
     print('DAEMONIZING')
-    daemon = Daemonize(app="dhcpcanon", pid=pid, action=main, keep_fds=[fd])
+    daemon = Daemonize(app="dhcpcanon", pid=pid, action=main, keep_fds=fds)
     daemon.start()
 else:
     print('not daemonizing')
