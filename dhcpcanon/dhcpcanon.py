@@ -129,10 +129,15 @@ except (ValueError, IndexError) as e:
     print('arg -pf not passed')
 print('pid', pid)
 print(__name__)
-if '-d' in sys.argv:
-    print('DAEMONIZING')
-    daemon = Daemonize(app="dhcpcanon", pid=pid, action=main, keep_fds=fds)
-    daemon.start()
-else:
-    print('not daemonizing')
+import pdb
+pdb.set_trace()
+# if '-d' in sys.argv:
+#     print('DAEMONIZING')
+#     daemon = Daemonize(app="dhcpcanon", pid=pid, action=main, keep_fds=fds,
+#                        verbose=True)
+#     daemon.start()
+# else:
+#     print('not daemonizing')
+#     main()
+if __name__ == '__main__':
     main()
