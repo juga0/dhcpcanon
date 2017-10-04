@@ -5,6 +5,7 @@
 from __future__ import absolute_import, unicode_literals
 
 import logging
+import os
 import subprocess
 
 import attr
@@ -33,14 +34,17 @@ class ClientScript(object):
     def __attrs_post_init__(self, scriptfile=None, env=None):
         """."""
         logger.debug('Modifying ClientScript obj after creating it.')
-        self.scriptname = scriptfile or SCRIPT_PATH
+        self.scriptname = self.scriptname or scriptfile or SCRIPT_PATH
         if env is None:
             self.env = dict.fromkeys(SCRIPT_ENV_KEYS, str(''))
         else:
             self.env = env
+        self.env['medium'] = str()
+        self.env['pid'] = str(os.getpid())
 
     def script_init(self, lease, state, prefix='', medium=''):
         """Initialize environment to pass to the external script."""
+        logger.debug('self.scriptname %s', self.scriptname)
         if self.scriptname is not None:
             logger.debug('Modifying ClientScript obj, setting env.')
             if isinstance(state, int):
@@ -48,13 +52,13 @@ class ClientScript(object):
             else:
                 reason = state
             self.env['reason'] = str(reason)
-            self.env['medium'] = str(medium)
-            # self.env['client'] = str('dhcpcanon')
-            # self.env['pid'] = str(os.getpid())
+            self.env['medium'] = self.env.get('medium') or str(medium)
+            self.env['client'] = str('dhcpcanon')
+            self.env['pid'] = str(os.getpid())
             for k in LEASEATTRS_SAMEAS_ENVKEYS:
                 self.env[k] = str(lease.__getattribute__(k))
             for k, v in LEASEATTRS2ENVKEYS.items():
-                self.env[k] = str(lease.__getattribute__(v))
+                self.env[v] = str(lease.__getattribute__(k))
             self.env.update(ENV_OPTIONS_REQ)
         else:
             logger.debug('There is not script path.')
@@ -64,14 +68,13 @@ class ClientScript(object):
         scriptname = self.scriptname or scriptname
         if scriptname is not None:
             env = self.env or env
-            logger.debug('Calling script %s', scriptname)
-            logger.debug('with env %s', env)
-            sp = None
+            logger.info('Calling script %s', scriptname)
+            logger.info('with env %s', env)
+            proc = subprocess.Popen([scriptname], env=env,
+                                    stderr=subprocess.STDOUT)
             try:
-                sp = subprocess.check_output([scriptname],
-                                             stderr=subprocess.STDOUT, env=env)
-            except subprocess.CalledProcessError as e:
-                sp = e.output
-                logger.debug('sp err %s', sp)
-                return sp
-        return None
+                (stdout, stderr) = proc.communicate()
+                return True
+            except TypeError as e:
+                logger.error(e)
+        return False
