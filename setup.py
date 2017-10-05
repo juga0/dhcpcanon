@@ -57,6 +57,7 @@ setup(
     packages=find_packages(exclude=['contrib', 'docs', 'tests*']),
     install_requires=[
         "attrs>=16.3",
+        "dbus-python>=1.2",
         "netaddr>=0.7",
         "pip>=8.1",
         "pyroute2>=0.3",
