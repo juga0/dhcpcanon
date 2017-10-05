@@ -21,7 +21,6 @@ def set_net(lease):
     except IndexError as e:
         logger.error('Interface %s not found, can not set IP.',
                      lease.interface)
-        exit(1)
     try:
         ipr.addr('add', index, address=lease.address,
                  mask=int(lease.subnet_mask_cidr))
