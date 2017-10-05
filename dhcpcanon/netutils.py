@@ -5,7 +5,6 @@
 ([:rfc:`7844`])."""
 import logging
 import os.path
-import socket
 import subprocess
 
 from dbus import SystemBus, Interface, DBusException
@@ -54,10 +53,10 @@ def set_net(lease):
 
 def set_dns(lease):
     if systemd_resolved_status() is True:
-        set_dns_systemd_resolved
-    if os.path.exists(RESOLVCONF_ADMIN):
-        set_dns_resolvconf_admin(leae)
-    if os.path.exists(RESOLVCONF):
+        set_dns_systemd_resolved(lease)
+    elif os.path.exists(RESOLVCONF_ADMIN):
+        set_dns_resolvconf_admin(lease)
+    elif os.path.exists(RESOLVCONF):
         set_dns_resolvconf(lease)
 
 
@@ -67,9 +66,10 @@ def set_dns_resolvconf_admin(lease):
                             stderr=subprocess.PIPE)
     try:
         (stdout, stderr) = proc.communicate()
+        return True
     except TypeError as e:
         logger.error(e)
-    return
+    return False
 
 
 def set_dns_resolvconf(lease):
@@ -81,10 +81,10 @@ def set_dns_resolvconf(lease):
     stdin = str.encode(stdin)
     try:
         (stdout, stderr) = proc.communicate(stdin)
+        return True
     except TypeError as e:
         logger.error(e)
-    logger.debug('result %s, stdout %s, stderr %s', proc.returncode,
-                 stdout, stderr)
+    return False
 
 
 def set_dns_systemd_resolved(lease):
@@ -99,9 +99,9 @@ def set_dns_systemd_resolved(lease):
     # is SetLinkDNS(2, [(2, [8, 8, 8, 8])]_
     iay = [(2, [int(b) for b in ns.split('.')])
            for ns in lease.name_server.split()]
-        #    if '.' in ns
-        #    else (10, [ord(x) for x in
-        #               socket.inet_pton(socket.AF_INET6, ns)])
+    #        if '.' in ns
+    #        else (10, [ord(x) for x in
+    #            socket.inet_pton(socket.AF_INET6, ns)])
     bus = SystemBus()
     resolved = bus.get_object('org.freedesktop.resolve1',
                               '/org/freedesktop/resolve1')

@@ -108,7 +108,7 @@ SCRIPT_ENV_KEYS = ['reason', 'medium', 'interface',
                    'new_broadcast_address', 'new_next_server',
                    'new_dhcp_server_id']
 
-LEASEATTRS_SAMEAS_ENVKEYS = ['interface']  #, 'reason']
+LEASEATTRS_SAMEAS_ENVKEYS = ['interface']  # , 'reason']
 # 'client', 'pid',
 # these are not set as environment but put in lease file
 # , 'rebind', 'renew', 'expiry'
