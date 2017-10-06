@@ -59,6 +59,7 @@ setup(
         "attrs>=16.3",
         "dbus-python>=1.2",
         "netaddr>=0.7",
+        "lockfile>=0.12",
         "pip>=8.1",
         "pyroute2>=0.3",
         'scapy>=2.2";python_version<="2.7"',

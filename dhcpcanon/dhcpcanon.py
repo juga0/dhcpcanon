@@ -8,6 +8,8 @@ import argparse
 import logging
 import logging.config
 
+from lockfile.pidlockfile import (PIDLockFile, AlreadyLocked,
+                                  LockTimeout, LockFailed)
 from scapy.config import conf
 
 # in python3 this seems to be the only way to to disable:
@@ -96,14 +98,17 @@ def main():
     if args.interface:
         conf.iface = args.interface
     logger.debug('interface %s' % conf.iface)
-    # FIXME: disabled for now
-    # if args.pf is not None:
-    #     import daemon
-    #     from daemon import pidfile
-    #     pf = pidfile.TimeoutPIDLockFile(args.pf)
-    #     logger.debug('using pid file %s', pf)
-    #     context = daemon.DaemonContext(pidfile=pf)
-    #     # FIXME: it does not get daemonized
+    if args.pf is not None:
+        # This is only needed for nm
+        pf = PIDLockFile(args.pf, timeout=5)
+        try:
+            pf.acquire()
+            logger.debug('using pid file %s', pf)
+        except AlreadyLocked as e:
+            pf.break_lock()
+            pf.acquire()
+        except (LockTimeout, LockFailed) as e:
+            logger.error(e)
     dhcpcap = DHCPCAPFSM(iface=conf.iface,
                          server_port=SERVER_PORT,
                          client_port=CLIENT_PORT,
