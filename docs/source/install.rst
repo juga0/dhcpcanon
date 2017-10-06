@@ -61,7 +61,7 @@ to be able to run it as non root user and set up DNS servers provided by the DHC
 It will be possible to set up DNS servers with ``systemd`` too soon.
 
 An alternative to do not run ``dhcpcanon`` with root privileges nor systemd,
-is to use `ambient-rs wrapper <https://github.com/infinity0/ambient-rs>`
+is to use `ambient-rs wrapper <https://github.com/infinity0/ambient-rs>`_
 and run::
 
     RUST_BACKTRACE=1 ./target/debug/ambient \
