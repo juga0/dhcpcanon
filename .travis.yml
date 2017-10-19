@@ -7,6 +7,9 @@ python:
 before_install:
     - sudo apt update && sudo apt install -y inkscape libdbus-1-dev libdbus-glib-1-dev
 
+install:
+    - pip install -r requirements_dev.txt
+
 env:
     - TOX_ENV=lint
     - TOX_ENV=py27,stats
