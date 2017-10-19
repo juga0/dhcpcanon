@@ -83,7 +83,7 @@ clean:
 .PHONY: html
 html:
 	$(FSMSVG)
-	$(UMLSVG)
+	#$(UMLSVG)
 	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html
 	@echo
 	@echo "Build finished. The HTML pages are in $(BUILDDIR)/html."
@@ -163,7 +163,7 @@ epub3:
 .PHONY: latex
 latex:
 	$(FSMSVG)
-	$(UMLSVG)
+	#$(UMLSVG)
 	$(PDFs)
 	$(SPHINXBUILD) -b latex $(ALLSPHINXOPTS) $(BUILDDIR)/latex
 	@echo
@@ -174,7 +174,7 @@ latex:
 .PHONY: latexpdf
 latexpdf:
 	$(FSMSVG)
-	$(UMLSVG)
+	#$(UMLSVG)
 	$(PDFs)
 	$(SPHINXBUILD) -b latex $(ALLSPHINXOPTS) $(BUILDDIR)/latex
 	@echo "Running LaTeX files through pdflatex..."
