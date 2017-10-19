@@ -78,7 +78,7 @@ install: all
 
 	$(PYTHON) setup.py install  --record installed.txt $(if $(DESTDIR),--root=$(DESTDIR),--install-scripts=$(DESTDIR)$(sbindir))
 
-	if [ -z $(WITH_SYSTEMD)]; then \
+	if [ -n "$(WITH_SYSTEMD)" ]; then \
 		adduser --system dhcpcanon; \
 		mkdir -p $(DESTDIR)$(systemunitdir); \
 		for i in $(DST_UNITFILE); do $(INSTALL_DATA) "$$i" $(DESTDIR)$(systemunitdir); done; \
@@ -88,12 +88,12 @@ install: all
 		systemd-tmpfiles --create --root=$(DESTDIR)$(tmpfilesdir)/dhcpcanon.conf; \
 	fi
 
-	if [ -z $(WITH_SYSTEMD_UDEV)]; then \
+	if [ -n "$(WITH_SYSTEMD_UDEV)" ]; then \
 		mkdir -p $(DESTDIR)$(networkdir); \
 		for i in $(DST_LINKFILE); do $(INSTALL_DATA) "$$i" $(DESTDIR)$(networkdir); done; \
 	fi
 
-	if [ -z $(WITH_APPARMOR)]; then \
+	if [ -n "$(WITH_APPARMOR)" ]; then \
 		mkdir -p $(DESTDIR)$(apparmordir); \
 		for i in $(DST_APPARMOR); do $(INSTALL_DATA) "$$i" $(DESTDIR)$(apparmordir); done; \
 		for i in $(DST_APPARMOR); do aa-complain $(DESTDIR)$(apparmordir)/"$$i"; done; \
