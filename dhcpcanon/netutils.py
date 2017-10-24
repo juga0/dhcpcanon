@@ -75,7 +75,7 @@ def set_dns_resolvconf_admin(lease):
 def set_dns_resolvconf(lease):
     cmd = [RESOLVCONF, '-a', lease.interface]
     proc = subprocess.Popen(cmd, stdin=subprocess.PIPE,
-                            tdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                            stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     stdin = '\n'.join(['nameserver ' + nm for nm in
                        lease.name_server.split()])
     stdin = str.encode(stdin)
