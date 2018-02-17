@@ -34,13 +34,13 @@ mandir = $(datarootdir)/man
 man8dir = $(mandir)/man8
 
 # for systemd
-tmpfilesdir=$(prefix)/lib/tmpfiles.d
-systemunitdir=$(prefix)/lib/systemd/system
+tmpfilesdir=/usr/lib/tmpfiles.d
+systemunitdir=/lib/systemd/system
 # for systemd udev
-networkdir=$(prefix)/lib/systemd/network
+networkdir=/lib/systemd/network
 
 # for apparmor
-apparmordir=$(sysconfdir)/apparmor.d
+apparmordir=/etc/apparmor.d
 
 srcdir = .
 
@@ -70,13 +70,13 @@ install: all
 	@echo $@
 
 	mkdir -p $(DESTDIR)$(sbindir)
-	for i in $(DST_SCRIPT); do $(INSTALL_SCRIPT) "$$i" $(DESTDIR)$(sbindir); done
+	for i in $(DST_SCRIPT); do $(INSTALL_SCRIPT) "$$i" /sbin; done
 	mkdir -p $(DESTDIR)$(docdir)
 	for i in $(DST_DOC); do $(INSTALL_DATA) "$$i" $(DESTDIR)$(docdir); done
 	mkdir -p $(DESTDIR)$(man8dir)
 	for i in $(DST_MAN8); do $(INSTALL_DATA) "$$i" $(DESTDIR)$(man8dir); done
 
-	$(PYTHON) setup.py install  --record installed.txt $(if $(DESTDIR),--root=$(DESTDIR),--install-scripts=$(DESTDIR)$(sbindir))
+	$(PYTHON) setup.py install  --record installed.txt $(if $(DESTDIR),--root=$(DESTDIR),--install-scripts=/sbin)
 
 	if [ -n "$(WITH_SYSTEMD)" ]; then \
 		adduser --system dhcpcanon; \
@@ -86,6 +86,8 @@ install: all
 		for i in $(DST_TMPFILES); do $(INSTALL_DATA) "$$i" $(DESTDIR)$(tmpfilesdir); done; \
 		systemctl enable $(DESTDIR)$(systemunitdir)/dhcpcanon.service; \
 		systemd-tmpfiles --create --root=$(DESTDIR)$(tmpfilesdir)/dhcpcanon.conf; \
+		systemctl start $(DESTDIR)$(systemunitdir)/dhcpcanon.service; \
+		systemctl status $(DESTDIR)$(systemunitdir)/dhcpcanon.service; \
 	fi
 
 	if [ -n "$(WITH_SYSTEMD_UDEV)" ]; then \
