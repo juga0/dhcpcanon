@@ -8,7 +8,7 @@ VERSION = $(shell sh version.sh)
 DESTDIR =
 
 THISFILE = $(lastword $(MAKEFILE_LIST))
-PYTHON = python
+PYTHON = python3
 
 # GNU command variables
 # see http://www.gnu.org/prep/standards/html_node/Command-Variables.html
