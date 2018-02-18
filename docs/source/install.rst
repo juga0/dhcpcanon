@@ -19,8 +19,8 @@ will be enabled and run by default, so there is no need to run anything manually
 You can use `macchanger <https://github.com/alobbs/macchanger>`__,
 `macouflage <https://github.com/subgraph/macouflage>`__ or other.
 
-Installation from source code
-==============================
+Installation from source code in Debian/Ubuntu
+===============================================
 
 In case you would like to have a newer version or it is not packaged for your
 distribution, you can install it from the source code.
@@ -35,6 +35,16 @@ Obtain the source code::
 
 Install ``dhcpcanon`` and system files::
 
+    sudo ./install.sh
+
+
+for advanced users
+--------------------
+
+Follow the two first steps in the previous paragraph.
+
+To install ``dhcpcanon`` and the ``systemd`` service::
+
     sudo make install WITH_SYSTEMD=true
 
 In Debian this will install all the required files under ``/usr/local``.
@@ -42,8 +52,15 @@ In Debian this will install all the required files under ``/usr/local``.
 
     systemctl start dhcpcanon
 
-for advanced users
---------------------
+It's possible to also install support for udev::
+
+    sudo apt install sudo make install WITH_SYSTEMD=true
+    sudo make install WITH_SYSTEMD=true WITH_SYSTEMD_UDEV=true
+
+And apparmor profile::
+
+    sudo apt install apparmor
+    sudo make install WITH_APPARMOR=true
 
 In the case that you would like to install without root privileges,
 you can install it without the systemd service and you can specify
