@@ -103,16 +103,16 @@ install: all
 
 uninstall:
 	@echo $@
-	for i in $(notdir $(DST_SCRIPT)); do rm $(DESTDIR)$(sbindir)/"$$i"; done
-	for i in $(notdir $(DST_DOC)); do rm $(DESTDIR)$(docdir)/"$$i"; done
-	for i in $(notdir $(DST_MAN8)); do rm $(DESTDIR)$(man8dir)/"$$i"; done
+	for i in $(notdir $(DST_SCRIPT)); do rm -f $(DESTDIR)$(sbindir)/"$$i"; done
+	for i in $(notdir $(DST_DOC)); do rm -f $(DESTDIR)$(docdir)/"$$i"; done
+	for i in $(notdir $(DST_MAN8)); do rm -f $(DESTDIR)$(man8dir)/"$$i"; done
 	# it will only work in the case that the file has not been removed
 	cat installed.txt | xargs rm -rf
 	# systemd files
-	for i in $(notdir $(DST_UNITFILE)); do rm $(DESTDIR)$(systemunitdir)/"$$i"; done
-	for i in $(notdir $(DST_TMPFILES)); do rm $(DESTDIR)$(tmpfilesdir)/"$$i"; done
-	for i in $(notdir $(DST_APPARMOR)); do rm $(DESTDIR)$(apparmordir)/"$$i"; done
-	for i in $(notdir $(DST_LINKFILE)); do rm $(DESTDIR)$(networkdir)/"$$i"; done
+	for i in $(notdir $(DST_UNITFILE)); do rm -f $(DESTDIR)$(systemunitdir)/"$$i"; done
+	for i in $(notdir $(DST_TMPFILES)); do rm -f $(DESTDIR)$(tmpfilesdir)/"$$i"; done
+	for i in $(notdir $(DST_APPARMOR)); do rm -f $(DESTDIR)$(apparmordir)/"$$i"; done
+	for i in $(notdir $(DST_LINKFILE)); do rm -f $(DESTDIR)$(networkdir)/"$$i"; done
 
 clean:
 	python setup.py clean
