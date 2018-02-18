@@ -366,7 +366,7 @@ class DHCPCAPFSM(Automaton):
         else:
             try:
                 set_net(self.client.lease)
-            except:
+            except Exception as e:
                 logger.error('Can not set IP', exc_info=True)
                 # raise self.END()
         # TODO: go daemon?
