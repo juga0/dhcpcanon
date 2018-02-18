@@ -27,7 +27,7 @@ distribution, you can install it from the source code.
 
 Install system dependencies, in Debian/Ubuntu::
 
-    sudo apt install python-dev
+    sudo apt install python3-dev
 
 Obtain the source code::
 
@@ -92,7 +92,7 @@ The pip package does not install either system files and it can be installed
 without root, but it still needs to be run as root, as commented in the last
 section.::
 
-    pip install dhcpcanon
+    pip3 install dhcpcanon
 
 In Debian this will install the files in ``/home/youruser/.local``
 Note also that if you install it in a virtualenv, when executing ``dhcpcanon``
@@ -107,12 +107,12 @@ It is recommended to install ``dhcpcanon`` in a python virtual environment.
 
 Check https://virtualenv.pypa.io/en/latest/installation.html. In Debian::
 
-    sudo apt install python-virtualenv
+    sudo apt install python3-virtualenv
 
 Create a virtual environment::
 
     mkdir ~/.virtualenvs
-    virtualenv ~/.virtualenvs/dhcpcanonenv
+    virtualenv ~/.virtualenvs/dhcpcanonenv -p /usr/bin/python3
     source ~/.virtualenvs/dhcpcanonenv/bin/activate
 
 Get the sources::
@@ -120,4 +120,4 @@ Get the sources::
 
 Install it::
 
-    pip install -e .
+    pip3 install -e .
