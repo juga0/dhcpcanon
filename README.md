@@ -9,7 +9,7 @@ dhcpcanon - DHCP anonymity profile
 
 DHCP client disclosing less identifying information.
 
-Python implmentation of the DHCP Anonymity Profile
+Python implementation of the DHCP Anonymity Profile
 ([RFC7844](https://tools.ietf.org/html/rfc7844)) designed for users that
 wish to remain anonymous to the visited network minimizing disclosure of
 identifying information.
@@ -108,7 +108,7 @@ Acknowledgments
 To all the persons that have given suggestions and comments about this
 implementation, the authors of the
 [RFC 7844](https://tools.ietf.org/html/rfc7844),
-the [Prototype Fund Project](https://prototypefund.de) of the
+the [Prototype Fund Project](https://prototypefund.de) of
 the [Open Knowledge Foundation Germany](https://okfn.de/) and the
 [Federal Ministry of Education and Research](https://www.bmbf.de/)
 who partially funds this work.
