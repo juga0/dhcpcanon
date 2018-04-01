@@ -55,7 +55,7 @@ help:
 	@echo "  dummy      to check syntax errors of document sources"
 
 # Not in auto-generated conf
-FSMSVG := python -c "from dhcpcanon.dhcpcapfsm import DHCPCAPFSM; DHCPCAPFSM.graph(target='>$(IMAGEDIRS)/dhcpcapfsm.svg')";mkdir -p $(BUILDDIRIMAGES);cp $(IMAGEDIRS)/*.svg $(BUILDDIRIMAGES)
+FSMSVG := python -c "from dhcpcanon.dhcpcapfsm import DHCPCAPFSM; DHCPCAPFSM.graph(target='$(IMAGEDIRS)/dhcpcapfsm.svg')";mkdir -p $(BUILDDIRIMAGES);cp $(IMAGEDIRS)/*.svg $(BUILDDIRIMAGES)
 fsmsvg:
 	@echo "Generating FSM SVG"
 	$(FSMSVG)
