@@ -82,7 +82,7 @@ clean:
 
 .PHONY: html
 html:
-	$(FSMSVG)
+	#$(FSMSVG)
 	#$(UMLSVG)
 	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html
 	@echo
