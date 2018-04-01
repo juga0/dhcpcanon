@@ -5,7 +5,7 @@ dhcpcanon - DHCP anonymity profile
 
 DHCP client disclosing less identifying information.
 
-Python implmentation of the DHCP Anonymity Profiles :rfc:`7844`
+Python implementation of the DHCP Anonymity Profiles :rfc:`7844`
 designed for users that wish to remain anonymous to the visited network
 minimizing disclosure of identifying information.
 
