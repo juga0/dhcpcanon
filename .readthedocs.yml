@@ -1,0 +1,9 @@
+build:
+  image: latest
+
+python:
+    version: 3.5
+    pip_install: true
+    extra_requirements:
+        - doc
+# requirements_file: requirements_docs.txt
