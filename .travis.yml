@@ -15,7 +15,7 @@ before_install:
     # - ls -l ~/virtualenv
 
 install:
-    - pip install -r requirements_dev.txt
+    - pip install "dhcpcanon[dev, test, doc]"
 
 env:
   global:
