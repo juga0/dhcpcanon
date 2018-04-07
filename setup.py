@@ -45,6 +45,9 @@ if systemd_unit_dir():
     ]
 else:
     data_files = []
+
+test_requirements = ['coverage', 'tox', 'pytest']
+
 setup(
     name='dhcpcanon',
     version=dhcpcanon.__version__,
@@ -66,17 +69,16 @@ setup(
     ],
     python_requires=">=3.5",
     extras_require={
-        'dev': ['ipython', 'pyflakes', 'pep8'],
-        'test': ['coverage', 'coveralls', 'codecov', 'tox', 'pytest'],
+        'dev': ['flake8'],
+        'test': test_requirements,
         'doc': ['sphinx', 'sphinx-bootstrap-theme', 'pylint']
     },
+    tests_require=test_requirements,
     entry_points={
         'console_scripts': [
             'dhcpcanon = dhcpcanon.dhcpcanon:main',
         ]
     },
-    # setup_requires=['pytest-runner'],
-    tests_require=['pytest'],
     # NOTE: not installing system files as the user might want to install them
     # in a custom prefix or without systemd
     # data_files=data_files,
