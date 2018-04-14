@@ -46,7 +46,7 @@ srcdir = .
 
 SRC_MAN8 = man/dhcpcanon.8
 SRC_SCRIPT = sbin/dhcpcanon-script
-SRC_DOC = README.md LICENSE
+SRC_DOC = README.rst LICENSE
 SRC_TMPFILES = tmpfiles.d/dhcpcanon.conf
 SRC_UNITFILE = systemd/dhcpcanon.service
 SRC_APPARMOR = apparmor.d/sbin.dhcpcanon
