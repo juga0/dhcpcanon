@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+# vim:ts=4:sw=4:expandtab 2
 # SPDX-FileCopyrightText: 2016, juga <juga at riseup dot net>
 # SPDX-License-Identifier: MIT
 """"""
