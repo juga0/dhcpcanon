@@ -1,3 +1,5 @@
+# SPDX-FileCopyrightText: 2016, juga <juga at riseup dot net>
+# SPDX-License-Identifier: MIT
 # Makefile for Sphinx documentation
 #
 

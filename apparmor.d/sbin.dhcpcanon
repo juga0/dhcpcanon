@@ -1,6 +1,8 @@
 # vim:syntax=apparmor
 # Last Modified: Fri Jul 17 11:46:19 2009
-# Author: Jamie Strandboge <jamie@canonical.com>
+# SPDX-FileCopyrightText: 2009, Jamie Strandboge <jamie@canonical.com>
+# SPDX-FileCopyrightText: 2017,  juga <juga@riseup.net>
+# SPDX-License-Identifier: MIT
 # Modified for dhcpcanon by: juga <juga@riseup.net>, 2017.
 #include <tunables/global>
 

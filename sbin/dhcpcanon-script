@@ -1,5 +1,12 @@
 #!/bin/sh
 
+# SPDX-FileCopyrightText: 1997, Dan Halbert
+# SPDX-FileCopyrightText: 1999, Brian J. Murrell
+# SPDX-FileCopyrightText: 2003, Matt Zimmerman and Eloy Paris
+# SPDX-FileCopyrightText: 2005, Andrew Pollock
+# SPDX-FileCopyrightText: 2017, juga
+# SPDX-License-Identifier: MIT
+
 # dhclient-script for Linux. Dan Halbert, March, 1997.
 # Updated for Linux 2.[12] by Brian J. Murrell, January 1999.
 # Modified for Debian.  Matt Zimmerman and Eloy Paris, December 2003

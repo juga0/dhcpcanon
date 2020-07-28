@@ -2,6 +2,9 @@
 #
 # This package is not self-contained and the build products may require other
 # dependencies to function; it is given as a reference for distro packagers.
+#
+# SPDX-FileCopyrightText: 2016, juga <juga at riseup dot net>
+# SPDX-License-Identifier: MIT
 
 PACKAGE = dhcpcanon
 VERSION = $(shell sh version.sh)

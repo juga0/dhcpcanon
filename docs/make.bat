@@ -1,5 +1,8 @@
 @ECHO OFF
 
+REM SPDX-FileCopyrightText: 2016, juga <juga at riseup dot net>
+REM SPDX-License-Identifier: MIT
+
 REM Command file for Sphinx documentation
 
 if "%SPHINXBUILD%" == "" (

@@ -1,3 +1,6 @@
+.. SPDX-FileCopyrightText: 2016, juga <juga at riseup dot net>
+.. SPDX-License-Identifier: CC-BY-SA-4.0
+
 dhcpcanon - DHCP anonymity profile
 ==================================
 
@@ -104,7 +107,7 @@ License
 -------
 
 ``dhcpcanon`` is copyright 2016-2018 by juga ( juga at riseup dot net)
-and is licensed by the terms of the MIT license.
+and is licensed by the terms of the MIT license. The documentation is under CC-BY-SA-4.0.
 
 Acknowledgments
 ---------------

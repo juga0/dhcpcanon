@@ -1,6 +1,5 @@
-# -*- coding: utf-8 -*-
-# vim:ts=4:sw=4:expandtab
-# Copyright 2016, 2017 juga (juga at riseup dot net), MIT license.
+# SPDX-FileCopyrightText: 2016, juga <juga at riseup dot net>
+# SPDX-License-Identifier: MIT
 """."""
 from scapy.all import BOOTP, DHCP, IP, UDP, Ether
 

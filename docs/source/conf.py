@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
 #
+# SPDX-FileCopyrightText: 2016, juga <juga at riseup dot net>
+# SPDX-License-Identifier: MIT
+#
 # DHCP anonymity profile documentation build configuration file, created by
 # sphinx-quickstart on Sat Jul 23 19:57:52 2016.
 #

@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# SPDX-FileCopyrightText: 2016, juga <juga at riseup dot net>
+# SPDX-License-Identifier: MIT
+
 mkdir -p /sbin
 for i in sbin/dhcpcanon-script; do install "$i" /sbin; done
 mkdir -p /share/doc/dhcpcanon
